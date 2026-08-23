@@ -14,6 +14,7 @@ import { applyScreenshot as applyScreenshotHost } from './screenshot.js';
 import { applyRewind as applyRewindHost } from './rewind.js';
 import { applyDonePill as applyDonePillHost } from './done-pill.js';
 import { isModuleEnabled as isModuleEnabledHost } from './modules.js';
+import { applyFileExplorer as applyFileExplorerHost } from './file-explorer.js';
 export const name = 'dsh-webui';
 export const inject = ['settings', 'tools', 'web', 'systemPrompt', 'webServer', 'sandboxPolicy', 'fs', 'workspaceRegistry', 'credentials', 'sessions', 'sessionPersistence', 'llm', 'shell'];
 // ── 推理等级补全 ────────────────────────────────────────────────────────────
@@ -149,6 +150,8 @@ export async function apply(ctx, config = {}) {
     // 10) 会话增强模块（statem-li/dsh-webui 增量；模块 key 门控，缺省启用）：
     //     对话截图（/api/webui-screenshot）、对话退回（/api/webui-rewind）、
     //     对话完成胶囊（/api/webui-done-pill 记录面板）。
+    if (isModuleEnabledHost({}, 'fileExplorer'))
+        applyFileExplorerHost(ctx);
     if (isModuleEnabledHost({}, 'screenshot'))
         applyScreenshotHost(ctx);
     if (isModuleEnabledHost({}, 'rewind'))

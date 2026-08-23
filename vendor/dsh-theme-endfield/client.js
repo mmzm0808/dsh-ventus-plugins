@@ -2425,11 +2425,22 @@ function apply(ctx) {
                'opacity: 1' is load-bearing, not redundant: the animated rules start at
                'opacity: 0' and rely on the keyframes to bring the word in, so cancelling
                only 'animation' would leave a permanently invisible plate. */
-            [data-endfield-thunder][data-endfield-thunder-still],
+            /* 静音路径（动画子开关关闭 / 系统减少动态）：不做缩放砸入，但保留
+               渐隐渐现——大白字突然出现/消失会吓到人（用户反馈）。3s 淡入
+               淡出与 JS 的 3s 摘除时序同步，结束时自然透明。 */
+            [data-endfield-thunder][data-endfield-thunder-still] {
+              animation: endfield-thunder-fade 3000ms linear 1 both;
+            }
             [data-endfield-thunder][data-endfield-thunder-still] [data-endfield-thunder-word] {
               animation: none;
               opacity: 1;
               transform: none;
+            }
+            @keyframes endfield-thunder-fade {
+              0%   { opacity: 0; }
+              8%   { opacity: 1; }
+              80%  { opacity: 1; }
+              100% { opacity: 0; }
             }
             /* Belt-and-braces for reduced motion: the attribute above already covers it,
                but this keeps the guarantee in CSS even if a future edit reaches the DOM

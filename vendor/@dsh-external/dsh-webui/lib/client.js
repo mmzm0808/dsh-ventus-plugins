@@ -274540,26 +274540,35 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		//#endregion
 		//#region src/client/usage/dashboard/charts/Heatmap.tsx
 		/** 单个格子的最大边长（px）；列用 1fr 摊满可用宽度，正方形格子受此上限约束。 */
-		const CELL_MAX = 64;
+		const CELL_MAX = 96;
 		const GAP = 6;
 		/** tooltip 距离格子顶部的间隔（px）。 */
 		const TIP_GAP = 8;
-		function Heatmap({ cells, onSelect, rows = 5 }) {
+		/** 格子短标签：日期/月份里的数字（「2026-08-08」→「8」，「1 月」→「1」）。 */
+		function shortLabel(label) {
+			const m = label.match(/\d+/);
+			if (m === null) return label;
+			const d = Number(m[0]);
+			return Number.isFinite(d) ? String(d) : m[0];
+		}
+		/**
+		* 连续颜色条：浅青 → 深紫，按 value / maxValue 比例插值（hue 190° 青 →
+		* 270° 紫，亮度 86% 浅 → 38% 深）。任意两个不同用量都呈现可分辨的色差，
+		* 不做档位分桶。
+		*/
+		function cellColor(v, max) {
+			if (v <= 0 || max <= 0) return "var(--dsw-alias-border-l2)";
+			const r = Math.min(1, v / max);
+			return `hsl(${190 + 80 * r}, 68%, ${86 - 48 * r}%)`;
+		}
+		/** 格子文字颜色随底色亮度切换（浅底深字 / 深底白字）。 */
+		function textColor(v, max) {
+			if (v <= 0 || max <= 0) return "var(--dsw-alias-label-tertiary)";
+			return 86 - 48 * Math.min(1, v / max) < 56 ? "rgba(255,255,255,.95)" : "rgba(6,30,42,.92)";
+		}
+		function Heatmap({ cells, onSelect, rows = 5, max }) {
 			const [hover, setHover] = (0, react.useState)(null);
-			const levels = (v) => {
-				if (v <= 0) return 0;
-				if (v < 1e3) return 1;
-				if (v < 1e4) return 2;
-				if (v < 1e5) return 3;
-				return 4;
-			};
-			const colors = [
-				"var(--dsw-alias-border-l2)",
-				"#2a4a7a",
-				"#3a6db5",
-				"#4f8cff",
-				"#7c6bff"
-			];
+			const peak = max ?? cells.reduce((m, c) => Math.max(m, c.value), 0);
 			const cols = Math.max(1, Math.ceil(cells.length / rows));
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				style: {
@@ -274570,8 +274579,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					maxWidth: cols * CELL_MAX + (cols - 1) * GAP
 				},
 				children: cells.map((c) => {
-					const idx = Math.min(4, levels(c.value));
-					return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+					const bg = cellColor(c.value, peak);
+					const fg = textColor(c.value, peak);
+					return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						onMouseEnter: (e) => {
 							const r = e.currentTarget.getBoundingClientRect();
 							setHover({
@@ -274582,14 +274592,41 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						},
 						onMouseLeave: () => setHover(null),
 						onClick: () => onSelect?.(c),
+						title: "",
 						style: {
 							aspectRatio: "1",
 							minWidth: 0,
 							borderRadius: 6,
-							background: colors[idx],
+							background: bg,
 							cursor: onSelect ? "pointer" : "default",
-							opacity: c.value > 0 ? 1 : .35
-						}
+							opacity: c.value > 0 ? 1 : .4,
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+							justifyContent: "center",
+							gap: 2,
+							padding: 4,
+							boxSizing: "border-box",
+							overflow: "hidden"
+						},
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							style: {
+								fontSize: 12,
+								fontWeight: 700,
+								lineHeight: 1,
+								color: fg
+							},
+							children: shortLabel(c.label)
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							style: {
+								fontSize: 9,
+								lineHeight: 1,
+								color: fg,
+								opacity: .92,
+								whiteSpace: "nowrap"
+							},
+							children: c.value > 0 ? formatUnits(c.value) : "—"
+						})]
 					}, c.key);
 				})
 			}), hover !== null && typeof document !== "undefined" && (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -274648,6 +274685,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [usage, setUsage] = (0, react.useState)(null);
 			const [mode, setMode] = (0, react.useState)("day");
 			const [selectedDay, setSelectedDay] = (0, react.useState)(null);
+			const [selectedYear, setSelectedYear] = (0, react.useState)(() => (/* @__PURE__ */ new Date()).getFullYear());
+			const [selectedMonth, setSelectedMonth] = (0, react.useState)(() => (/* @__PURE__ */ new Date()).getMonth() + 1);
 			const [error, setError] = (0, react.useState)(null);
 			const [retryTick, setRetryTick] = (0, react.useState)(0);
 			const isMobile = useIsMobile();
@@ -274705,7 +274744,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				};
 				return mode === "month" ? group(7).slice(-12) : group(4);
 			})();
-			const monthPrefix = `${year}-${String(month).padStart(2, "0")}`;
+			const monthPrefix = `${selectedYear}-${String(selectedMonth).padStart(2, "0")}`;
 			const monthDays = usage.filter((d) => d.date.startsWith(monthPrefix));
 			const daysInMonth = new Date(year, month, 0).getDate();
 			const monthCells = Array.from({ length: daysInMonth }, (_, i) => {
@@ -274722,7 +274761,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				};
 			});
 			const yearCells = Array.from({ length: 12 }, (_, i) => {
-				const key = `${year}-${String(i + 1).padStart(2, "0")}`;
+				const key = `${selectedYear}-${String(i + 1).padStart(2, "0")}`;
 				const days = usage.filter((d) => d.date.startsWith(key));
 				const sum = sumTokens(days);
 				return {
@@ -274823,17 +274862,41 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							},
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								style: {
-									fontSize: 13,
-									fontWeight: 600,
-									marginBottom: 12,
-									color: "var(--dsw-alias-label-primary)"
+									display: "flex",
+									alignItems: "center",
+									gap: 8,
+									marginBottom: 12
 								},
-								children: [
-									year,
-									" 年 ",
-									month,
-									" 月热力"
-								]
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									style: {
+										fontSize: 13,
+										fontWeight: 600,
+										color: "var(--dsw-alias-label-primary)"
+									},
+									children: [
+										selectedYear,
+										" 年 ",
+										selectedMonth,
+										" 月热力"
+									]
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									onClick: () => {
+										setSelectedYear((/* @__PURE__ */ new Date()).getFullYear());
+										setSelectedMonth((/* @__PURE__ */ new Date()).getMonth() + 1);
+									},
+									style: {
+										marginLeft: "auto",
+										padding: "2px 8px",
+										fontSize: 11,
+										borderRadius: 6,
+										border: "1px solid var(--dsw-alias-border-l1)",
+										background: "transparent",
+										color: "var(--dsw-alias-label-secondary)",
+										cursor: "pointer"
+									},
+									children: "回到本月"
+								})]
 							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								style: { overflowX: "auto" },
 								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Heatmap, {
@@ -274853,17 +274916,49 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							},
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								style: {
-									fontSize: 13,
-									fontWeight: 600,
-									marginBottom: 12,
-									color: "var(--dsw-alias-label-primary)"
+									display: "flex",
+									alignItems: "center",
+									gap: 8,
+									marginBottom: 12
 								},
-								children: [year, " 年度热力"]
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									style: {
+										fontSize: 13,
+										fontWeight: 600,
+										color: "var(--dsw-alias-label-primary)"
+									},
+									children: [selectedYear, " 年度热力"]
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("select", {
+									value: selectedYear,
+									onChange: (e) => setSelectedYear(Number(e.target.value)),
+									style: {
+										marginLeft: "auto",
+										padding: "2px 6px",
+										fontSize: 12,
+										borderRadius: 6,
+										border: "1px solid var(--dsw-alias-border-l1)",
+										background: "var(--dsw-alias-bg-layer-2)",
+										color: "var(--dsw-alias-label-primary)",
+										cursor: "pointer"
+									},
+									children: [
+										now.getFullYear(),
+										now.getFullYear() - 1,
+										now.getFullYear() - 2
+									].map((y) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("option", {
+										value: y,
+										children: [y, " 年"]
+									}, y))
+								})]
 							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								style: { overflowX: "auto" },
 								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Heatmap, {
 									cells: yearCells,
-									rows: 1
+									rows: 2,
+									onSelect: (c) => {
+										setSelectedMonth(Number(c.key.slice(5, 7)));
+										setSelectedYear(Number(c.key.slice(0, 4)));
+									}
 								})
 							})]
 						})]
@@ -284202,6 +284297,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		const BODY_CLASS = "dsh-sidebar-float";
 		const INIT_CLASS = "dsh-sidebar-float-init";
 		const NO_ANIM_CLASS = "dsh-sidebar-float-no-anim";
+		/** 收起动画中间态标记（宽度收缩 + 内容淡出）。 */
+		const HIDING_CLASS = "dsh-sidebar-float-hiding";
 		const HOTZONE_CLASS = "dsh-sidebar-hotzone";
 		const HOTZONE_OFF_CLASS = "dsh-sidebar-hotzone-off";
 		/** 展开态侧边栏右侧拖拽手柄。 */
@@ -284211,7 +284308,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		/** 低于该宽度视为窄屏（与内核 SIDEBAR_AUTO_COLLAPSE=1024 对齐），悬浮模式不启用。 */
 		const WIDE_BREAKPOINT = 1024;
 		/** 展开过渡时长（需求：100-200ms）。 */
-		const EXPAND_MS = 160;
+		const EXPAND_MS = 500;
 		/** 移出折叠延迟（需求：秒收；仅给「移向侧边栏」留极短过渡）。 */
 		const COLLAPSE_DELAY_MS = 80;
 		/** 热区悬停宽度（px）。 */
@@ -284320,6 +284417,17 @@ body.${BODY_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed])
 }
 body.${BODY_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) > div:nth-child(1) {
   transition: left ${EXPAND_MS}ms var(--ds-ease-in-out, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+/* 收起动画中间态：悬浮层保持 absolute，宽度从展开值平滑收缩到 rail
+   宽度（56px），内容同步淡出——完成后才切 data-sidebar-collapsed（static
+   rail 就位，宽度一致无跳变，避免「滑出后 rail 从别处弹出」的闪烁）。 */
+body.${BODY_CLASS}.${HIDING_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) > div:nth-child(1) {
+  width: ${RAIL_WIDTH}px !important;
+}
+body.${BODY_CLASS}.${HIDING_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) > div:nth-child(1) > * {
+  opacity: 0;
+  transition: opacity ${EXPAND_MS}ms ease;
 }
 
 /* 悬浮模式隐藏侧边栏拖拽手柄（悬浮层固定宽度，无需拖动） */
@@ -284450,11 +284558,50 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 				else if (!open && !collapsed) doToggle();
 				syncHotzone();
 			};
-			/** 设定意图状态并立即对齐。 */
+			/**
+			* 设定意图状态并对齐布局；展开/收起各带 500ms 动画（宽度收缩/展开，
+			* 与官方 rail 同位置，杜绝「悬浮层滑出后 rail 从别处弹出」的闪烁）：
+			*  - 展开：先把悬浮层钉在 rail 宽度（无过渡）→ 切展开 → 下一帧移除
+			*    inline 宽度，回落到 CSS 展开宽并沿 transition 平滑滑开；
+			*  - 收起：加 HIDING 类（宽度收缩到 rail + 内容淡出）→ transitionend
+			*    后才切 data-sidebar-collapsed（static rail 就位，宽度一致零跳变）。
+			*/
 			const setOpen = (next) => {
 				if (open === next) return;
 				open = next;
-				reconcile();
+				const frame = frameEl;
+				if (frame === null) {
+					reconcile();
+					if (next) scheduleRecheck();
+					return;
+				}
+				if (next) {
+					frame.classList.remove(HIDING_CLASS);
+					frame.style.transition = "none";
+					frame.style.setProperty("width", `${RAIL_WIDTH}px`);
+					reconcile();
+					requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
+							frame.style.removeProperty("transition");
+							frame.style.removeProperty("width");
+						});
+					});
+				} else if (!isCollapsed()) {
+					frame.classList.add(HIDING_CLASS);
+					frame.style.removeProperty("transition");
+					const onEnd = (e) => {
+						if (e.propertyName !== "width") return;
+						finish();
+					};
+					const finish = () => {
+						frame.removeEventListener("transitionend", onEnd);
+						frame.classList.remove(HIDING_CLASS);
+						frame.style.removeProperty("width");
+						reconcile();
+					};
+					frame.addEventListener("transitionend", onEnd);
+					window.setTimeout(finish, 620);
+				} else reconcile();
 				if (next) scheduleRecheck();
 			};
 			/** 是否有任意从侧边栏打开的窗口打开（设置/工作台/技能/记忆等，通用检测）。 */
@@ -284478,7 +284625,7 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 				recheckTimer = window.setTimeout(() => {
 					recheckTimer = 0;
 					if (!pointInside(lastX, lastY)) armHide();
-				}, 240);
+				}, 580);
 			};
 			/** 判断坐标是否落在热区 / 侧边栏（并集）内（仅悬浮 + 宽屏）。
 			纯几何判断：弹窗（确认框/设置等）打开时只是不折叠（见 armHide），
@@ -287835,6 +287982,258 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			{
 				icon: "bulb",
 				text: "迈斯纳效应：超导体完全排斥磁场，超导态的标志之一"
+			},
+			{
+				icon: "bulb",
+				text: "量子点接触：纳米级一维通道，电导以 2e²/h 台阶式量子化的实验平台"
+			},
+			{
+				icon: "bulb",
+				text: "普朗克耗散极限：单通道热导的普适上限 π²k_B²T/(3h)，与材料无关"
+			},
+			{
+				icon: "bulb",
+				text: "自旋注入：铁磁体向非磁体注入自旋流，自旋电子学的基础操作"
+			},
+			{
+				icon: "bulb",
+				text: "自旋扩散长度：自旋信息在非磁体中传播而不失相的特征距离"
+			},
+			{
+				icon: "bulb",
+				text: "迁移率：单位电场下载流子的平均漂移速度，衡量输运质量的核心指标"
+			},
+			{
+				icon: "bulb",
+				text: "库仑阻塞：纳米结构中单个电子的充电能 E_C = e²/2C 阻断后续电子输运"
+			},
+			{
+				icon: "bulb",
+				text: "近藤效应：磁性杂质与传导电子自旋纠缠形成单态，低温下电阻反常上升"
+			},
+			{
+				icon: "bulb",
+				text: "量子隧穿：粒子穿透经典禁区的势垒，扫描隧道显微镜（STM）的工作原理"
+			},
+			{
+				icon: "bulb",
+				text: "约瑟夫森效应：两个超导体弱耦合时，超电流与相位差满足 I = I_c·sin(φ)"
+			},
+			{
+				icon: "bulb",
+				text: "磁通量子化：超导环内磁通只能取 h/2e 的整数倍，宏观量子现象"
+			},
+			{
+				icon: "bulb",
+				text: "伦敦穿透深度：磁场渗入超导体的特征长度（约几十纳米）"
+			},
+			{
+				icon: "bulb",
+				text: "相干长度：超导序参量变化的特征长度，决定涡旋芯尺度"
+			},
+			{
+				icon: "bulb",
+				text: "第 II 类超导体：磁场以磁通涡旋（Abrikosov 涡旋）形式进入，维持零电阻"
+			},
+			{
+				icon: "bulb",
+				text: "涡旋晶格：磁通涡旋在超导体中排列成三角晶格，可用针尖直接成像"
+			},
+			{
+				icon: "bulb",
+				text: "朗道能级：磁场中电子轨道运动量子化，能级间隔 ħω_c，量子霍尔阶梯的起源"
+			},
+			{
+				icon: "bulb",
+				text: "填充因子 ν：朗道能级占据数，量子霍尔电导 σ = νe²/h 的平台参数"
+			},
+			{
+				icon: "bulb",
+				text: "分数量子霍尔效应：ν = 1/3 等分数平台，Laughlin 波函数描述（1998 年诺贝尔奖）"
+			},
+			{
+				icon: "bulb",
+				text: "任意子：交换两次不等于回自身的准粒子，分数统计，拓扑量子计算的载体"
+			},
+			{
+				icon: "bulb",
+				text: "手性边缘态：量子霍尔体系中沿边缘单向传播、无背散射的导电通道"
+			},
+			{
+				icon: "bulb",
+				text: "三维拓扑绝缘体表面态：自旋-动量锁定的狄拉克锥，背散射被时间反演保护"
+			},
+			{
+				icon: "bulb",
+				text: "高阶拓扑绝缘体：体-边-铰链对应，铰链/角落出现低维拓扑态"
+			},
+			{
+				icon: "bulb",
+				text: "弱拓扑绝缘体：由量子自旋霍尔层堆叠而成，层间弱耦合的拓扑相"
+			},
+			{
+				icon: "bulb",
+				text: "Chern 绝缘体：无需外磁场、靠自发磁化实现陈数非零的拓扑绝缘体"
+			},
+			{
+				icon: "bulb",
+				text: "轴子绝缘体：时间反演破缺但陈数为零的磁拓扑相，呈现拓扑磁电效应"
+			},
+			{
+				icon: "bulb",
+				text: "平带：色散近乎平坦的能带，动能被压制，相互作用主导（强关联温床）"
+			},
+			{
+				icon: "bulb",
+				text: "魔角石墨烯：两层石墨烯扭转约 1.1° 形成莫尔超晶格平带，可呈现超导（2018 年）"
+			},
+			{
+				icon: "bulb",
+				text: "莫尔超晶格：两套周期晶格叠加形成的长周期干涉图案，可重构能带"
+			},
+			{
+				icon: "bulb",
+				text: "交换相互作用：电子波函数反对称性带来的有效自旋耦合，磁性的微观起源"
+			},
+			{
+				icon: "bulb",
+				text: "海森堡模型：局域自旋间交换耦合 J·S₁·S₂ 的哈密顿量，磁性理论的基石"
+			},
+			{
+				icon: "bulb",
+				text: "居里温度：铁磁体失去自发磁化、转变为顺磁的温度 T_C"
+			},
+			{
+				icon: "bulb",
+				text: "斯格明子：拓扑保护的磁性涡旋结构，可作信息载体（赛道存储）"
+			},
+			{
+				icon: "bulb",
+				text: "反常霍尔效应：磁性材料中无外磁场即有霍尔电压，源于贝里曲率与自旋轨道耦合"
+			},
+			{
+				icon: "bulb",
+				text: "拓扑霍尔效应：斯格明子等拓扑自旋结构对霍尔信号的额外贡献"
+			},
+			{
+				icon: "bulb",
+				text: "自旋波：自旋在格点上集体进动的波，量子化为磁振子"
+			},
+			{
+				icon: "bulb",
+				text: "磁各向异性：自旋沿特定晶向排列的能量偏好，决定磁化方向"
+			},
+			{
+				icon: "bulb",
+				text: "莫特绝缘体：库仑排斥 U 超过带宽 W 时，本应金属的材料变为绝缘体"
+			},
+			{
+				icon: "bulb",
+				text: "重费米子：近藤屏蔽使准粒子有效质量增大千倍，低温比热/磁化率剧增"
+			},
+			{
+				icon: "bulb",
+				text: "量子临界点：零温下量子涨落驱动的相变点，非费米液体行为的温床"
+			},
+			{
+				icon: "bulb",
+				text: "自旋液体：自旋高度纠缠但不形成长程序的量子磁态，可承载任意子激发"
+			},
+			{
+				icon: "bulb",
+				text: "量子点：三维都受限的准零维系统，能级离散（人造原子）"
+			},
+			{
+				icon: "bulb",
+				text: "量子限域：特征尺寸小于电子波长时，能级离散化、带隙展宽"
+			},
+			{
+				icon: "bulb",
+				text: "纳米线：一维输运通道，弹道输运与拓扑超导研究的平台"
+			},
+			{
+				icon: "bulb",
+				text: "界面超导：氧化物异质界面（如 LaAlO₃/SrTiO₃）出现二维超导"
+			},
+			{
+				icon: "bulb",
+				text: "等离子体激元：电子气集体振荡的量子，可局域增强光场"
+			},
+			{
+				icon: "bulb",
+				text: "极化激元：光子与激子/声子强耦合的混合准粒子，兼具光速与物质相互作用"
+			},
+			{
+				icon: "bulb",
+				text: "声学声子与光学声子：晶格振动的两支——同相与反相振动模式"
+			},
+			{
+				icon: "bulb",
+				text: "电-声耦合强度 λ：电子与声子相互作用无量纲常数，BCS 超导的关键参数"
+			},
+			{
+				icon: "bulb",
+				text: "光子晶体：介电常数周期调制，形成光子带隙与拓扑光子态"
+			},
+			{
+				icon: "bulb",
+				text: "拓扑光子学：把电子拓扑概念移植到光子系统，抗散射光波导"
+			},
+			{
+				icon: "bulb",
+				text: "准一维导体：链状结构材料（如碳纳米管），输运各向异性明显"
+			},
+			{
+				icon: "bulb",
+				text: "碳纳米管：卷成筒状的石墨烯，可金属可半导体，一维弹道输运"
+			},
+			{
+				icon: "bulb",
+				text: "硅烯/锗烯：类石墨烯的二维蜂窝材料，自旋轨道耦合更强"
+			},
+			{
+				icon: "bulb",
+				text: "过渡金属二硫族化物（TMDC）：MoS₂ 等二维半导体，谷/自旋锁定"
+			},
+			{
+				icon: "bulb",
+				text: "六角氮化硼（hBN）：二维宽禁带绝缘体，石墨烯器件的理想衬底"
+			},
+			{
+				icon: "bulb",
+				text: "能带反转：导带与价带在动量点交叉互换，拓扑相变的标志"
+			},
+			{
+				icon: "bulb",
+				text: "佩尔斯失稳：一维晶格畸变打开带隙，金属-绝缘体转变（如聚乙炔）"
+			},
+			{
+				icon: "bulb",
+				text: "电荷密度波：电子密度周期调制伴随晶格畸变的集体相"
+			},
+			{
+				icon: "bulb",
+				text: "自旋密度波：自旋密度周期调制的磁性相，铬金属的基态"
+			},
+			{
+				icon: "bulb",
+				text: "铁电体：自发电极化可被外场翻转的材料，存储与传感器应用"
+			},
+			{
+				icon: "bulb",
+				text: "压电效应：机械形变产生电压/逆效应，声学与传感器基础"
+			},
+			{
+				icon: "bulb",
+				text: "拓扑声子：晶格振动也具有拓扑分类，边缘声子模式抗散射"
+			},
+			{
+				icon: "bulb",
+				text: "量子度量张量（量子几何）：波函数度规，与 Berry 曲率同源，描述态空间几何"
+			},
+			{
+				icon: "bulb",
+				text: "轨道磁化：量子几何贡献的轨道角动量磁化，贝里曲率非零体系的额外磁性"
 			}
 		];
 		/** 轮播间隔（ms）。 */
@@ -288008,7 +288407,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			maxWidth: "min(720px, calc(100vw - 48px))",
 			...width !== null ? { width } : {},
 			borderRadius: "calc(15px * var(--dps))",
-			border: "1px solid rgba(255,255,255,.14)",
+			border: "1px solid color-mix(in srgb, var(--edge-accent, var(--dsw-alias-state-business-primary)) 55%, transparent)",
 			background: "rgba(12,12,13,.88)",
 			boxShadow: "0 8px 24px rgba(0,0,0,.35)",
 			color: unread > 0 ? "#ffffff" : "rgba(255,255,255,.74)",
