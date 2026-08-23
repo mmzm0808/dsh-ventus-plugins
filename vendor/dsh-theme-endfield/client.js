@@ -2095,6 +2095,13 @@ function apply(ctx) {
       [data-endfield-watermark] {
         pointer-events: none !important;
       }
+      /* persist 水印居中基准修正：展开态下列的 containing block 是整个边框盒
+         （含 56px 左内边距），字居中于边框盒中心 600；等高线等其他背景以
+         内容区（padding 起点）为基准（628）。固定 28px 偏移使 ENDFIELD 字
+         在折叠/展开全程水平位置恒定（内容区中心 628），不再随细栏宽度跳动。 */
+      body.dsh-sidebar-float div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-endfield-watermark][data-endfield-watermark="persist"] {
+        transform: translateX(28px);
+      }
       /* ---------- watermark strength, per colour scheme ----------
          One variable per scheme instead of one number in JS, because the two
          schemes genuinely need different alphas and a scheme flip must re-resolve
