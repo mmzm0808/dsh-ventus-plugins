@@ -1,0 +1,4 @@
+# dsh-ventus-progress bundle patch
+- insert:
+    - id: dsh-ventus-progress
+      name: 'dsh-ventus-progress'

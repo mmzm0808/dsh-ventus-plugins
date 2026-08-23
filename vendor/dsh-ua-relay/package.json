@@ -1,0 +1,23 @@
+{
+  "name": "dsh-ua-relay",
+  "version": "0.1.0",
+  "description": "UA-rewriting reverse relay for B.AI (bankofai.io): routes DSH provider traffic through a browser User-Agent so the gateway stops rejecting it.",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.mjs",
+  "exports": {
+    ".": { "default": "./lib/index.mjs" },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4"
+  }
+}

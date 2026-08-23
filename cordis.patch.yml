@@ -1,0 +1,9 @@
+# dsh-ventus-plugins bundle patch
+#
+# 聚合插件作为单一 bundle 挂载进 profile（bundles 列表 + 本 insert 行）。
+# 12 个子插件由 lib/index.js 的 host 聚合逐个 ctx.plugin 挂载，配置在
+# lib/index.js 内保持原值；子插件的 client 全部内嵌在 lib/client.js。
+# 与多插件时代相比：插件列表只显示本聚合插件，功能与设置零变化。
+- insert:
+    - id: ventus-plugins
+      name: dsh-ventus-plugins

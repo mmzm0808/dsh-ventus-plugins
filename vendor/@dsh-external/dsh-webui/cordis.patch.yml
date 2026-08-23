@@ -1,0 +1,4 @@
+# webui 插件挂载声明（bundle 层：id 与 name 取包名，供 loader 按 specifier 导入）
+- insert:
+    - id: "@dsh-external/dsh-webui"
+      name: "@dsh-external/dsh-webui"

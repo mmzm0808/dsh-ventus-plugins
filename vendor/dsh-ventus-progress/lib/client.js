@@ -1,0 +1,24 @@
+window.__ModuleLoader__.load({id:`dsh-ventus-progress`,factory:e=>{var t={exports:{}},n=t.exports;Object.defineProperty(n,Symbol.toStringTag,{value:`Module`});function r(){let e=document.createElement(`div`);return e.className=`vp-hover`,e.style.cssText=[`position:fixed;z-index:6000;min-width:240px;max-width:340px;max-height:280px;`,`overflow-y:auto;display:none;flex-direction:column;gap:10px;padding:10px 12px;`,`border:1px solid var(--dsw-alias-border-l2,#333);border-radius:10px;`,`background:var(--dsw-alias-bg-layer-2,#16181d);`,`box-shadow:var(--dsw-shadow-lv3,0 8px 32px rgba(0,0,0,.45));pointer-events:none`].join(``),document.body.appendChild(e),e}function i(e){let t=e.stages.map(e=>`<div class="vp-seg ${`vp-seg-${e.status}`}" style="width:${e.weight/100*100}%" title="${e.label} · ${e.status} · ${e.subPercent}%"><span class="vp-seg-label">${a(e.label)}</span></div>`).join(``);return`<div class="vp-item">
+    <div class="vp-item-head"><span class="vp-item-name">${a(e.taskName||e.subagentId)}</span>
+    <span class="vp-item-pct">${Math.round(e.percent)}%</span>
+    ${e.finished?`<span class="vp-finished">完成</span>`:``}</div>
+    <div class="vp-bar">${t}</div>
+    ${e.currentText===``?``:`<div class="vp-current">${a(e.currentText)}</div>`}
+  </div>`}function a(e){return e.replace(/[&<>"']/g,e=>({"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`,"'":`&#39;`})[e]??e)}function o(e,t){let n=e.trim();if(n!==``)return t.find(e=>e.taskName!==``&&n.includes(e.taskName)||e.currentText!==``&&e.currentText.includes(n)||n.includes(e.taskName))}function s(){let e=r(),t=[],n=null,a=0,s=async()=>{try{let e=await(await fetch(`/api/ventus-progress/list`,{cache:`no-store`})).json();Array.isArray(e.entries)&&(t=e.entries)}catch{}},c=n=>{let r=o(n.getAttribute(`aria-label`)??n.textContent??``,t);r===void 0?e.innerHTML=`<div class="vp-empty">当前子代理尚无进度任务</div>`:e.innerHTML=i(r);let a=n.getBoundingClientRect(),s=window.innerWidth,c=a.right+10<s?a.right+10:a.left-e.offsetWidth-10;e.style.left=`${Math.max(4,c)}px`,e.style.top=`${Math.min(a.top,window.innerHeight-40)}px`,e.style.display=`flex`},l=()=>{e.style.display=`none`},u=e=>{let t=e.closest(`[role="tree"]`);if(t===null)return!1;let n=t.getAttribute(`aria-label`)??``;return n.includes(`子代理`)||n.toLowerCase().includes(`subagent`)},d=e=>{let t=e.target.closest(`[role="treeitem"]`);t!==null&&u(t)&&n!==t&&(n=t,a!==0&&(window.clearTimeout(a),a=0),a=window.setTimeout(()=>{c(t)},200))},f=e=>{let t=e.target.closest(`[role="treeitem"]`);t!==null&&t===n||(n=null,a!==0&&(window.clearTimeout(a),a=0),l())};document.addEventListener(`mouseover`,d,!0),document.addEventListener(`mouseout`,f,!0),s();let p=window.setInterval(s,2e3);return()=>{window.clearInterval(p),a!==0&&window.clearTimeout(a),document.removeEventListener(`mouseover`,d,!0),document.removeEventListener(`mouseout`,f,!0),e.remove()}}let c=[];function l(){let e=`ventus-progress-styles`;if(document.getElementById(e)!==null)return()=>{};let t=document.createElement(`style`);return t.id=e,t.dataset.plugin=`@dsh-external/dsh-ventus-progress`,t.textContent=`
+.vp-bar{display:flex;width:100%;height:12px;border-radius:6px;overflow:hidden;background:var(--dsw-alias-bg-module-hover,#24272e)}
+.vp-seg{position:relative;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.vp-seg-label{font-size:9px;color:#fff;text-shadow:0 0 2px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:0 2px}
+.vp-seg-completed{background:var(--dsw-alias-state-business-primary,#4a9eff)}
+.vp-seg-running{background:color-mix(in srgb,var(--dsw-alias-state-business-primary,#4a9eff) 60%,#22d3ee);animation:vp-pulse 1.6s ease-in-out infinite}
+.vp-seg-pending{background:var(--dsw-alias-bg-module-hover,#2a2d35)}
+.vp-seg-failed{background:var(--dsw-alias-state-danger,#f87171)}
+.vp-item{display:flex;flex-direction:column;gap:6px}
+.vp-item-head{display:flex;align-items:center;gap:8px}
+.vp-item-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:600;color:var(--dsw-alias-label-primary,#ddd)}
+.vp-item-pct{font-size:12px;font-weight:700;color:var(--dsw-alias-state-business-primary,#4a9eff);font-variant-numeric:tabular-nums}
+.vp-finished{font-size:11px;color:var(--dsw-alias-state-success,#34d399)}
+.vp-current{font-size:11px;color:var(--dsw-alias-label-secondary,#bbb);white-space:pre-wrap;word-break:break-word}
+.vp-empty{font-size:12px;color:var(--dsw-alias-label-tertiary,#888)}
+@keyframes vp-pulse{0%,100%{opacity:1}50%{opacity:.55}}
+`,document.head.appendChild(t),()=>{document.getElementById(e)?.remove()}}function u(e){e.effect(()=>{let e=[];try{e.push(l()),e.push(s())}catch(e){console.error(`[ventus-progress] client apply error:`,e)}return()=>{for(let t of e.splice(0))t()}},`ventus-progress: hover`)}return n.apply=u,n.inject=c,t.exports}});
+//# sourceMappingURL=client.js.map

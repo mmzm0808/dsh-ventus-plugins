@@ -1,0 +1,6 @@
+- insert:
+    - id: ua-relay
+      name: dsh-ua-relay
+      config:
+        targets:
+          bai: https://api.bankofai.io
