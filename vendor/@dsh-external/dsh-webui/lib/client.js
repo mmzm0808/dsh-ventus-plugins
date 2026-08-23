@@ -284297,8 +284297,6 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		const BODY_CLASS = "dsh-sidebar-float";
 		const INIT_CLASS = "dsh-sidebar-float-init";
 		const NO_ANIM_CLASS = "dsh-sidebar-float-no-anim";
-		/** 收起动画中间态标记（轻微左移 + 淡出）。 */
-		const HIDING_CLASS = "dsh-sidebar-float-hiding";
 		const HOTZONE_CLASS = "dsh-sidebar-hotzone";
 		const HOTZONE_OFF_CLASS = "dsh-sidebar-hotzone-off";
 		/** 展开态侧边栏右侧拖拽手柄。 */
@@ -284309,6 +284307,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		const WIDE_BREAKPOINT = 1024;
 		/** 展开过渡时长（需求：100-200ms）。 */
 		const EXPAND_MS = 160;
+		/** 展开/收起丝滑动画时长（ms）：WAAPI 驱动，纯 transform/opacity。 */
+		const ANIM_MS = 200;
+		/** 动画缓动：快出缓停，接近官方 --ds-ease-in-out。 */
+		const ANIM_EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
 		/** 移出折叠延迟（需求：秒收；仅给「移向侧边栏」留极短过渡）。 */
 		const COLLAPSE_DELAY_MS = 80;
 		/** 热区悬停宽度（px）。 */
@@ -284384,21 +284386,14 @@ body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div
   min-width: ${RAIL_WIDTH}px !important;
   max-width: ${RAIL_WIDTH}px !important;
   box-shadow: none;
-  /* rail 悬浮于对话区左缘 padding 区之上（不遮挡对话内容） */
-  z-index: 20;
-  /* rail 出现淡入：切 collapsed 时从透明过渡到可见 */
-  opacity: 0;
-  transition: opacity 250ms ease;
+  transition: none;
 }
-/* 折叠态：对话区保持与展开态完全一致的布局（横跨轨道 + 左内边距），
-   侧边栏展开/收起动画（纯 transform/opacity）不影响对话区位置、宽度与
-   背景（花纹/水印跟随 centerCol 恒定）。 */
 body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div:nth-child(2) {
-  grid-column: 1 / span 2;
-  padding-left: ${RAIL_WIDTH}px;
+  grid-column: auto;
+  padding-left: 0;
 }
 body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div:nth-child(3) {
-  grid-column: 3;
+  grid-column: auto;
 }
 
 /* 防御：折叠态下 footer 动作区连同其容器必须收进 rail 内容盒——
@@ -284421,17 +284416,6 @@ body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] [clas
    折叠体验一致）；折叠态已回归官方网格，不再叠加任何占位。 */
 body.${BODY_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) > div:nth-child(2) {
   padding-left: ${RAIL_WIDTH}px;
-}
-body.${BODY_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) > div:nth-child(1) {
-  /* 动画纯 transform + opacity：不触发布局/ResizeObserver 联动 */
-  transition: transform ${EXPAND_MS}ms var(--ds-ease-in-out, cubic-bezier(0.33, 1, 0.68, 1)),
-              opacity ${EXPAND_MS}ms var(--ds-ease-in-out, cubic-bezier(0.33, 1, 0.68, 1));
-  will-change: transform, opacity;
-}
-/* 收起动画中间态：轻微左移 + 淡出（HIDING） */
-body.${BODY_CLASS}.${HIDING_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) > div:nth-child(1) {
-  transform: translateX(-16px);
-  opacity: 0;
 }
 
 /* 悬浮模式隐藏侧边栏拖拽手柄（悬浮层固定宽度，无需拖动） */
@@ -284562,60 +284546,71 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 				else if (!open && !collapsed) doToggle();
 				syncHotzone();
 			};
+			/** 侧边栏悬浮层（rail 面板）元素：frame 的第一个子（官方侧边栏列）。 */
+			const railOf = () => frameEl !== null && frameEl.children[0] instanceof HTMLElement ? frameEl.children[0] : null;
+			/** 取消侧边栏悬浮层进行中的动画（WAAPI）。 */
+			const cancelRailAnims = () => {
+				const rail = railOf();
+				if (rail === null) return;
+				for (const a of rail.getAnimations()) a.cancel();
+			};
 			/**
-			* 设定意图状态并对齐布局；展开/收起各带 500ms 丝滑动画（纯 transform +
-			* opacity，零布局联动——对话区/背景不受任何影响）：
-			*  - 展开：起点 = 轻微左移 + 透明（无过渡落位）→ 切展开 → 下一帧移除
-			*    inline 值，CSS transform/opacity 过渡滑入；
-			*  - 收起：加 HIDING（左移 16px + 淡出）→ transitionend 后才切
-			*    data-sidebar-collapsed，官方 rail 淡入于对话区 padding 区。
+			* 设定意图状态并驱动展开/收起动画。动画由 Web Animations API 驱动，只作用
+			* 于侧边栏悬浮层（rail）自身的 transform/opacity——不写 frame 内联样式、
+			* 不触发布局/ResizeObserver 联动，主题背景（等高线/水印/开场动画）不受影响：
+			*  - 展开：先翻转布局 store，rail 从轻微左移 + 透明滑入原位；
+			*  - 收起：rail 左移 + 淡出，动画结束后才翻转折叠（官方 rail 落位）。
+			* 快速悬停时旧动画被取消、新动画立即接管，不会产生跳变残留。
 			*/
 			const setOpen = (next) => {
 				if (open === next) return;
 				open = next;
-				const frame = frameEl;
-				if (frame === null) {
+				const rail = railOf();
+				const canAnimate = rail !== null && typeof rail.animate === "function";
+				if (next) {
+					cancelRailAnims();
 					reconcile();
-					if (next) scheduleRecheck();
+					if (canAnimate) rail.animate([{
+						transform: "translateX(-16px)",
+						opacity: "0"
+					}, {
+						transform: "translateX(0)",
+						opacity: "1"
+					}], {
+						duration: ANIM_MS,
+						easing: ANIM_EASE
+					});
+					scheduleRecheck();
 					return;
 				}
-				if (next) {
-					frame.classList.remove(HIDING_CLASS);
-					frame.style.transition = "none";
-					frame.style.transform = "translateX(-16px)";
-					frame.style.opacity = "0";
+				if (isCollapsed()) {
 					reconcile();
-					requestAnimationFrame(() => {
-						requestAnimationFrame(() => {
-							frame.style.removeProperty("transition");
-							frame.style.removeProperty("transform");
-							frame.style.removeProperty("opacity");
-						});
-					});
-				} else if (!isCollapsed()) {
-					frame.style.removeProperty("transition");
-					frame.classList.add(HIDING_CLASS);
-					const onEnd = (e) => {
-						if (e.propertyName !== "opacity") return;
-						finish();
-					};
-					const finish = () => {
-						frame.removeEventListener("transitionend", onEnd);
-						frame.classList.remove(HIDING_CLASS);
-						frame.style.removeProperty("transform");
-						frame.style.removeProperty("opacity");
-						reconcile();
-						requestAnimationFrame(() => {
-							if (frameEl !== null) frameEl.style.opacity = "1";
-							requestAnimationFrame(() => {
-								if (frameEl !== null) frameEl.style.removeProperty("opacity");
-							});
-						});
-					};
-					frame.addEventListener("transitionend", onEnd);
-					window.setTimeout(finish, 280);
-				} else reconcile();
-				if (next) scheduleRecheck();
+					return;
+				}
+				cancelRailAnims();
+				if (!canAnimate) {
+					reconcile();
+					return;
+				}
+				let settled = false;
+				const settle = () => {
+					if (settled || open) return;
+					settled = true;
+					cancelRailAnims();
+					reconcile();
+				};
+				rail.animate([{
+					transform: "translateX(0)",
+					opacity: "1"
+				}, {
+					transform: "translateX(-16px)",
+					opacity: "0"
+				}], {
+					duration: ANIM_MS,
+					easing: ANIM_EASE,
+					fill: "both"
+				}).finished.then(settle).catch(() => {});
+				window.setTimeout(settle, 400);
 			};
 			/** 是否有任意从侧边栏打开的窗口打开（设置/工作台/技能/记忆等，通用检测）。 */
 			const modalOpen = () => isSidebarWindowOpen();
