@@ -284388,15 +284388,12 @@ body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div
   box-shadow: none;
   transition: none;
 }
-/* 折叠态：中心列保持与展开态完全一致的占位（横跨第 1/2 轨 + 左内边距）。
-   等高线/水印等跟随 center col 定位的主题背景在折叠/展开/动画全程
-   位置与尺寸恒定——背景零跳动，细栏占位也永不消失。 */
 body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div:nth-child(2) {
-  grid-column: 1 / span 2;
-  padding-left: ${RAIL_WIDTH}px;
+  grid-column: auto;
+  padding-left: 0;
 }
 body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div:nth-child(3) {
-  grid-column: 3;
+  grid-column: auto;
 }
 
 /* 防御：折叠态下 footer 动作区连同其容器必须收进 rail 内容盒——
@@ -284561,9 +284558,8 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 			* 设定意图状态并驱动展开/收起动画。动画由 Web Animations API 驱动，只作用
 			* 于侧边栏悬浮层（rail）自身的 transform/opacity——不写 frame 内联样式、
 			* 不触发布局/ResizeObserver 联动，主题背景（等高线/水印/开场动画）不受影响：
-			*  - 展开：先让细栏滑入（保持折叠布局——细栏占位、背景不动），动画结束
-			*    才翻转展开（细栏变宽栏悬浮，覆盖内容）；
-			*  - 收起：宽栏左移 + 淡出，动画结束后才翻转折叠（细栏落位）。
+			*  - 展开：翻转布局 + rail 滑入并行（细栏变宽栏，纯 transform/opacity）；
+			*  - 收起：rail 左移 + 淡出，动画结束后才翻转折叠（官方 rail 落位）。
 			* 快速悬停时旧动画被取消、新动画立即接管，不会产生跳变残留。
 			*/
 			const setOpen = (next) => {
@@ -284573,12 +284569,8 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 				const canAnimate = rail !== null && typeof rail.animate === "function";
 				if (next) {
 					cancelRailAnims();
-					if (!canAnimate) {
-						reconcile();
-						scheduleRecheck();
-						return;
-					}
-					const anim = rail.animate([{
+					reconcile();
+					if (canAnimate) rail.animate([{
 						transform: "translateX(-16px)",
 						opacity: "0"
 					}, {
@@ -284588,15 +284580,6 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 						duration: ANIM_MS,
 						easing: ANIM_EASE
 					});
-					let flipped = false;
-					const flip = () => {
-						if (flipped || !open) return;
-						flipped = true;
-						cancelRailAnims();
-						reconcile();
-					};
-					anim.finished.then(flip).catch(() => {});
-					window.setTimeout(flip, 400);
 					scheduleRecheck();
 					return;
 				}

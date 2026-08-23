@@ -265,7 +265,10 @@ function apply(ctx) {
       if (col !== null) {
         const cr = col.getBoundingClientRect()
         if (cr.width > 0 && cr.height > 0) {
-          cx = cr.left + cr.width / 2
+          // 基准是「对话内容区」而非整列边框盒：悬浮侧边栏折叠/展开时
+          // 内容区起点恒为 56px（padding），水印水平位置恒定不跳。
+          const padL = parseFloat(getComputedStyle(col).paddingLeft) || 0
+          cx = cr.left + padL + (cr.width - padL) / 2
           cy = cr.top + cr.height / 2
         }
       }
@@ -1115,21 +1118,27 @@ function apply(ctx) {
 
     const contourSizeTo = (host) => {
       const r = host.getBoundingClientRect()
+      // 以「对话内容区」（padding 起点）为基准而非整列边框盒：悬浮侧边栏
+      // 折叠/展开时列的边框盒左缘会移动（56px 轨道 ↔ 全宽），但内容区
+      // 起点恒为 56px——跟随内容区使等高线层在折叠/展开全程位置恒定，
+      // 背景零跳动（等高线是视口定位装饰，本来就不随对话滚动）。
+      const padL = parseFloat(getComputedStyle(host).paddingLeft) || 0
+      const left = r.left + padL
       // 右侧悬浮栏（better-sidebar）展开时会覆盖对话区右缘，花纹右缘让开
       // 它的左缘，保证花纹在「实际可见的对话区」内居中、不被右侧栏遮挡。
       let right = r.right
       const bsbPanel = document.querySelector('[data-dsh-panel-host] [class*="panel"]')
       if (bsbPanel !== null) {
         const br = bsbPanel.getBoundingClientRect()
-        if (br.width > 50 && br.left > r.left && br.left < r.right) right = br.left
+        if (br.width > 50 && br.left > left && br.left < r.right) right = br.left
       }
-      const w = Math.max(1, Math.round(right - r.left))
+      const w = Math.max(1, Math.round(right - left))
       const h = Math.max(1, Math.round(r.height))
       // Position follows the conversation column on EVERY call (sidebar
       // collapse/expand and details open/close move it without resizing it);
       // the terrain field rebuilds only when the size actually changed.
       if (contourWrap !== null) {
-        contourWrap.style.left = Math.round(r.left) + 'px'
+        contourWrap.style.left = Math.round(left) + 'px'
         contourWrap.style.top = Math.round(r.top) + 'px'
       }
       if (contourGeom !== null && contourGeom.w === w && contourGeom.h === h) return false
