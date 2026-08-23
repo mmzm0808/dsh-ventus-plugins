@@ -2399,22 +2399,6 @@ function apply(ctx) {
                 0 0 46px rgba(var(--edge-accent-rgb), 0.45);
               animation: endfield-thunder-word 3000ms cubic-bezier(0.16, 1, 0.3, 1) 1 both;
             }
-            /* The slam: overshoot in, hold, then fade. Keyframe percentages are the 3s
-               hold expressed as one timeline, so a single animation covers entry, hold and
-               exit and nothing has to be re-timed in JS. */
-            @keyframes endfield-thunder-word {
-              0%   { opacity: 0; transform: scale(2.4); }
-              7%   { opacity: 1; transform: scale(0.94); }
-              12%  { transform: scale(1); }
-              80%  { opacity: 1; transform: scale(1); }
-              100% { opacity: 0; transform: scale(1.06); }
-            }
-            @keyframes endfield-thunder-plate {
-              0%   { opacity: 0; }
-              5%   { opacity: 1; }
-              80%  { opacity: 1; }
-              100% { opacity: 0; }
-            }
             /* The STATIC path: the word appears at full size and opacity, holds its 3s,
                then the JS timer removes it. Two independent reasons reach this attribute
                (see showThunder): the 动画 sub-switch being off — which is the DEFAULT — and
@@ -2436,12 +2420,6 @@ function apply(ctx) {
               opacity: 1;
               transform: none;
             }
-            @keyframes endfield-thunder-fade {
-              0%   { opacity: 0; }
-              8%   { opacity: 1; }
-              80%  { opacity: 1; }
-              100% { opacity: 0; }
-            }
             /* Belt-and-braces for reduced motion: the attribute above already covers it,
                but this keeps the guarantee in CSS even if a future edit reaches the DOM
                without going through showThunder(). */
@@ -2455,6 +2433,27 @@ function apply(ctx) {
             }
 
         scrollbar-color: var(--edge-line) transparent;
+      }
+      /* ---- thunder 大字动画的 keyframes（顶层声明——嵌套在 * 块内会被
+         CSS Nesting 解析器整条丢弃，导致动画永不运行）---- */
+      @keyframes endfield-thunder-word {
+        0%   { opacity: 0; transform: scale(2.4); }
+        7%   { opacity: 1; transform: scale(0.94); }
+        12%  { transform: scale(1); }
+        80%  { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(1.06); }
+      }
+      @keyframes endfield-thunder-plate {
+        0%   { opacity: 0; }
+        5%   { opacity: 1; }
+        80%  { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      @keyframes endfield-thunder-fade {
+        0%   { opacity: 0; }
+        8%   { opacity: 1; }
+        80%  { opacity: 1; }
+        100% { opacity: 0; }
       }
       /* ---------- Light mode: deepen tertiary/secondary labels for icon visibility ---------- */
       body:not([data-ds-dark-theme]) {

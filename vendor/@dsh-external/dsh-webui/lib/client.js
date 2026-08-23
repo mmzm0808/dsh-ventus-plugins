@@ -284388,12 +284388,15 @@ body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div
   box-shadow: none;
   transition: none;
 }
+/* 折叠态：中心列保持与展开态完全一致的占位（横跨第 1/2 轨 + 左内边距），
+   展开/收起动画期间对话区、主题背景（等高线/水印/ENDFIELD）位置恒定——
+   细栏占位永不消失，背景永不跳动。rail 静态落位在 padding 区左缘。 */
 body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div:nth-child(2) {
-  grid-column: auto;
-  padding-left: 0;
+  grid-column: 1 / span 2;
+  padding-left: ${RAIL_WIDTH}px;
 }
 body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div:nth-child(3) {
-  grid-column: auto;
+  grid-column: 3;
 }
 
 /* 防御：折叠态下 footer 动作区连同其容器必须收进 rail 内容盒——
