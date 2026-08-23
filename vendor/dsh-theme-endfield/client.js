@@ -2132,6 +2132,12 @@ function apply(ctx) {
         border: 2px solid rgba(0, 0, 0, 0.25);
         cursor: pointer;
       }
+      /* usage 侧边栏置顶：容器 z-index 12 会被 better-sidebar 右上角
+         文件按钮（toggleCluster z 8 之上还有更高的层叠上下文）遮挡，
+         提升到 60，远高于文件按钮。 */
+      [data-dsu] {
+        z-index: 60 !important;
+      }
       /* persist 水印居中基准修正：展开态下列的 containing block 是整个边框盒
          （含 56px 左内边距），字居中于边框盒中心 600；等高线等其他背景以
          内容区（padding 起点）为基准（628）。固定 28px 偏移使 ENDFIELD 字

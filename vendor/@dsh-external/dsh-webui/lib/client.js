@@ -274544,12 +274544,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		const GAP = 6;
 		/** tooltip 距离格子顶部的间隔（px）。 */
 		const TIP_GAP = 8;
-		/** 格子短标签：日期/月份里的数字（「2026-08-08」→「8」，「1 月」→「1」）。 */
+		/** 格子短标签：取末尾数字段（「2026-08-08」→「8」，「1 月」→「1」）。
+		原实现取第一个数字段，完整日期「2026-08-01」会显示成年份 2026。 */
 		function shortLabel(label) {
-			const m = label.match(/\d+/);
+			const m = label.match(/(\d+)(?:\D*)$/);
 			if (m === null) return label;
-			const d = Number(m[0]);
-			return Number.isFinite(d) ? String(d) : m[0];
+			const d = Number(m[1]);
+			return Number.isFinite(d) ? String(d) : m[1];
 		}
 		/**
 		* 连续颜色条：浅青 → 深紫，按 value / maxValue 比例插值（hue 190° 青 →
