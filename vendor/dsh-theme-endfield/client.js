@@ -27,8 +27,12 @@ function insertCss(css) {
   }
   // Idempotency: the installed bundle can be applied more than once (boot loader +
   // cordis composition both mount it). Never stack duplicate theme stylesheets.
-  document.querySelectorAll('style[data-plugin="dsh-theme-endfield"]').forEach((old) => old.remove())
+  // 清理只看专属标记 data-endfield-css（本插件创建的样式才带）；不要用
+  // data-plugin 选择器——其他插件手写的 <style>（如 usage 的 data-dsu-css）
+  // 可能被外部打上 data-plugin=dsh-theme-endfield 而遭误删（实测误删事故）。
+  document.querySelectorAll('style[data-endfield-css]').forEach((old) => old.remove())
   const el = document.createElement('style')
+  el.dataset.endfieldCss = ''
   el.setAttribute('data-plugin', 'dsh-theme-endfield')
   el.textContent = css
   document.head.appendChild(el)
@@ -172,8 +176,9 @@ function apply(ctx) {
     const findVisibleHeadline = () => {
       if (typeof document === 'undefined') return null
       // '<hash>_headline' on the authored build, '_headline_<hash>' on Vite
-      // builds — match both.
-      const all = document.querySelectorAll('[class*="pXSMma_headline"], [class*="_headline_"]')
+      // builds — match both; plus any *headline* class (hash drift immune,
+      // e.g. '<hash>_headlineText' on newer official builds).
+      const all = document.querySelectorAll('[class*="pXSMma_headline"], [class*="_headline_"], [class*="_headline"]')
       for (const h of all) {
         const r = h.getBoundingClientRect()
         if (r.width > 0 && r.height > 0) return h
@@ -225,7 +230,17 @@ function apply(ctx) {
       const r = headline.getBoundingClientRect()
       if (r.width === 0 || r.height === 0) return
       const cy = r.top + r.height / 2
-      const cx = r.left + r.width / 2
+      /* 以「对话区中心」为对齐基准，而不是 headline 自身的中心：
+         headline 所在 hero 容器在不同页面（新会话 / 工作区 / 老对话）的
+         宿主宽度不同——跟随 headline 会让水印在新会话页/工作区偏到整窗
+         中心（实测 bug）。对话区中心（centerCol）才是用户语义上的居中；
+         headline 拿不到时回退到它自己的中心。 */
+      let cx = r.left + r.width / 2
+      const col = findCenterCol()
+      if (col !== null) {
+        const cr = col.getBoundingClientRect()
+        if (cr.width > 0 && cr.height > 0) cx = cr.left + cr.width / 2
+      }
       const vw = (typeof window !== 'undefined' && window.innerWidth) || (typeof document !== 'undefined' ? document.documentElement.clientWidth : 0)
       const top = (cy - 55) + 'px'
       const tx = 'translateX(' + (cx - vw / 2) + 'px)'

@@ -11764,6 +11764,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 			if (document.querySelector(`style[data-${NS}-css]`) === null) {
 				styleEl = document.createElement("style");
 				styleEl.dataset[`${NS}Css`] = "";
+				styleEl.dataset.plugin = "dsh-deepseek-usage";
 				styleEl.textContent = CSS;
 				document.head.appendChild(styleEl);
 			}

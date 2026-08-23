@@ -21,7 +21,10 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const VENDOR = join(ROOT, 'vendor')
 const OUT = join(ROOT, 'lib', 'client.js')
 
-/** 各子插件 client 入口与注册 id（与包 exports["./client"] 及 dsh.client 一致）。 */
+/** 各子插件 client 入口与注册 id（与包 exports["./client"] 及 dsh.client 一致）。
+ *  注意：@nanmicoder/dsh-agent-teams 的用户显式禁用（host 侧不挂载），其 client
+ *  若嵌入会轮询 /plugins/dsh-agent-teams/state（host 无此路由 → 404 风暴），
+ *  故不列入——与 host 侧行为保持一致。 */
 const CLIENT_ENTRIES = [
   ['dsh-better-sidebar', 'dsh-better-sidebar/lib/client.js'],
   ['dsh-deepseek-usage', 'dsh-deepseek-usage/lib/client.js'],
@@ -32,7 +35,6 @@ const CLIENT_ENTRIES = [
   ['@dsh-external/dsh-super-injector', '@dsh-external/dsh-super-injector/lib/client.js'],
   ['@dsh-external/dsh-visualize', '@dsh-external/dsh-visualize/lib/client.js'],
   ['@dsh-external/dsh-webui', '@dsh-external/dsh-webui/lib/client.js'],
-  ['@nanmicoder/dsh-agent-teams', '@nanmicoder/dsh-agent-teams/lib/client.js'],
   ['@nanmicoder/dsh-auto-mode', '@nanmicoder/dsh-auto-mode/lib/client.js'],
   ['dsh-usage-skill', 'dsh-usage-skill/lib/client.js'],
 ]

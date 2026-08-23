@@ -1,6 +1,7 @@
 import { copyFile, mkdir, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
 import "@deepseek-ai/dsh-host-webserver";
 //#region src/host/store.ts
@@ -207,9 +208,7 @@ function apply(ctx, config = {}) {
 }
 /** 复制 skills/ventus-progress/SKILL.md 到 DSH_HOME/skills/ventus-progress/。 */
 async function installSkill(ctx) {
-	const home = process.env.DSH_HOME;
-	if (home === void 0) return;
-	const targetDir = join(home, "skills", "ventus-progress");
+	const targetDir = join(process.env.DSH_HOME ?? join(homedir(), ".dsh"), "skills", "ventus-progress");
 	await mkdir(targetDir, { recursive: true });
 	const sourceDir = join(dirname(fileURLToPath(import.meta.url)), "..", "skills", "ventus-progress");
 	const files = await readdir(sourceDir).catch(() => []);

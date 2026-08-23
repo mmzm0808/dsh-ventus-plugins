@@ -2463,10 +2463,15 @@ window.__ModuleLoader__.load({
 		/**
 		 * Client plugin body: register the dictionaries and the sidebar footer action.
 		 * @param ctx - client root context.
+		 *
+		 * 【整合定制】sidebar.footer.action 已按用户要求禁用：该入口在侧边栏
+		 * 渲染「用量/余额」与「技能」两个按钮，与官方「技能」按钮功能重复，
+		 * 用户要求侧边栏只保留官方的工作台/技能/记忆三按钮。字典注册保留
+		 * （其他插件可能引用 NS 文案），面板组件保留导出（不挂载即可）。
 		 */
 		function apply(ctx) {
 			ctx.effect(() => ctx.locale.register(NS, { zh, en }), "usage-stats: dictionaries");
-			ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({
+			if (false) ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({
 				name: "sidebar.footer.action",
 				id: "usage-stats",
 				locale: NS,

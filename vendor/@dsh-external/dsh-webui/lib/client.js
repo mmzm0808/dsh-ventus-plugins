@@ -284458,6 +284458,28 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 				if (sb !== void 0 && x >= sb.left && x < sb.right && y >= sb.top && y < sb.bottom) return true;
 				return false;
 			};
+			/** 判断指针是否落在「从侧边栏派生的 portal 浮层」上（历史项三点菜单、
+			tooltip、列表弹层等）。用 elementFromPoint 精确定位——只有指针真实
+			悬停在浮层元素上才算，绝不因为「某弹层存在」就放行（避免居中弹窗
+			打开时侧边栏被撑开的老问题）。返回 true 只用于「保活不折叠」，不用于
+			「强制展开」。 */
+			const pointOverSidebarPopup = (x, y) => {
+				if (!floatMode || !active) return false;
+				let node = null;
+				try {
+					node = document.elementFromPoint(x, y);
+				} catch {
+					return false;
+				}
+				for (let el = node; el !== null; el = el.parentElement) {
+					if (el === document.body || el === document.documentElement) return false;
+					if (el.hasAttribute("data-radix-popper-content-wrapper")) return true;
+					if (el.hasAttribute("data-dsh-sidebar-window")) return true;
+					const role = el.getAttribute("role");
+					if (role === "menu" || role === "listbox" || role === "tooltip" || role === "dialog") return true;
+				}
+				return false;
+			};
 			let moveRaf = 0;
 			const onPointerMove = (event) => {
 				if (!floatMode) return;
@@ -284470,7 +284492,8 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 					if (pointInside(lastX, lastY)) {
 						cancelHide();
 						setOpen(true);
-					} else armHide();
+					} else if (pointOverSidebarPopup(lastX, lastY)) cancelHide();
+					else armHide();
 				});
 			};
 			const onPointerLeave = () => {
