@@ -2628,22 +2628,21 @@ function apply(ctx) {
       :is([role='tab'], [role='menuitem'], [role='option'], [role='link'], [role='treeitem'], [role='checkbox'], [role='switch'], [role='radio'], [role='combobox'], [class*='nav-item' i], [class*='menu-item' i], [class*='list-item' i], [class*='session-item' i], [class*='workspace-item' i], [class*='search-result' i], [class*='item' i], [class*='tab' i], [class*='card' i], [class*='row' i], [class*='tool' i], [class*='composer' i]):hover {
         color: var(--dsw-alias-label-primary) !important;
       }
-      /* ---------- Workspace browser rows (YDXeBa) ---------- */
-      .YDXeBa_slot {
-        color: var(--dsw-alias-brand-primary) !important;
-      }
-      .YDXeBa_projectRow:hover,
-      .YDXeBa_sessionRow:hover,
-      .YDXeBa_sessionRow.YDXeBa_selected,
-      .YDXeBa_searchResultRow:hover,
-      .YDXeBa_searchResultRow.YDXeBa_selected {
+      /* ---------- Workspace browser rows（稳定后缀匹配，跨构建）----------
+         会话横条：默认透明（透出面板玻璃）；hover/选中 = 半透明信号黄
+         （主题色），亮暗模式统一——不再是暗色模式的实色黄。 */
+      [class$='_projectRow']:hover,
+      [class$='_sessionRow']:hover,
+      [class$='_sessionRow'][class*='selected'],
+      [class$='_searchResultRow']:hover,
+      [class$='_searchResultRow'][class*='selected'] {
         background: rgba(var(--edge-accent-rgb), 0.22) !important;
       }
-      .YDXeBa_projectRow:hover *,
-      .YDXeBa_sessionRow:hover *,
-      .YDXeBa_sessionRow.YDXeBa_selected *,
-      .YDXeBa_searchResultRow:hover *,
-      .YDXeBa_searchResultRow.YDXeBa_selected * {
+      [class$='_projectRow']:hover *,
+      [class$='_sessionRow']:hover *,
+      [class$='_sessionRow'][class*='selected'] *,
+      [class$='_searchResultRow']:hover *,
+      [class$='_searchResultRow'][class*='selected'] * {
         color: #000 !important;
       }
       /* ---------- Light mode: workspace folder / icon buttons ink ---------- */
@@ -2663,7 +2662,7 @@ function apply(ctx) {
       body[data-ds-dark-theme] .YDXeBa_sessionRow.YDXeBa_selected,
       body[data-ds-dark-theme] .YDXeBa_searchResultRow:hover,
       body[data-ds-dark-theme] .YDXeBa_searchResultRow.YDXeBa_selected {
-        background: var(--edge-accent) !important;
+        background: rgba(var(--edge-accent-rgb), 0.22) !important;
       }
       body[data-ds-dark-theme] [class*='badge' i]:hover,
       body[data-ds-dark-theme] [class*='badge' i][data-active] {
