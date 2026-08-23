@@ -24,20 +24,25 @@ stats are all preserved.
 
 ## ✨ Feature Overview
 
-| Category | Sub-plugin | Description |
-|---|---|---|
-| 🎨 Theme | `dsh-theme-endfield` | Arknights: Endfield industrial editorial theme: cream paper, ink text, signal-yellow accents, zero radius. Contour background, ENDFIELD watermark, glass/solid sidebar surface (dropdown in theme settings), docked hero (toggleable) |
-| 📊 Usage | `dsh-deepseek-usage` | Floating ball: live balance, today's R0 multiplier, model hit-rate badge; panel: cumulative/today spend, requests, tokens, per-model usage, trends, login/logout, screenshot |
-| 📈 Usage & skills | `dsh-usage-skill` | Token usage heatmaps (day/month/year), multi-provider balance cards, skill bundle manager (**sidebar entry disabled per user request**; components and dictionaries kept) |
-| 📁 Right rail | `dsh-better-sidebar` | VSCode-like right sidebar: file tree / editor (CodeMirror multi-language) / terminal / git / browser, per-session isolation; editor footer info bar (total + selected chars) |
-| 🔍 Search | `dsh-ventus-search` | Bing / 360 / Bilibili multi-engine search + Readability content fetch, registered as DSH search provider with settings card |
-| 🐋 Desktop pet | `dsh-ventus-whale` | Interactive 3D orca pet overlay: drag / rotate / context menu; size, sensitivity, text configurable |
-| 📶 Subagent progress | `dsh-ventus-progress` | Parses `progress-json` progress models from subagents; hover subagent entries to see staged progress bars; ships a skill that teaches the model to emit progress models |
-| 🛠️ Toolchain | `@dsh-external/dsh-webui` | View tiles / message navigation / tool-call aggregation / Markdown rendering / reasoning-effort sync / AnySearch; **floating sidebar** (with popup-keep-open fix) and prompt-optimize popover |
-| 🧩 Module injection | `@dsh-external/dsh-super-injector` | Runtime injection of local DSH plugin packages (junction + loader.create, no restart), hot reload + management UI |
-| 👁️ Visualization | `@dsh-external/dsh-visualize` | `visualize` tool + bundled skill: render interactive HTML fragments as sandboxed cards (Codex `/visualize` semantics) |
-| ⚖️ Permission policy | `@nanmicoder/dsh-auto-mode` | Sandbox-first automatic permission policy (the **Auto** permission option, patched into this package) |
-| 🌐 UA relay | `dsh-ua-relay` | UA-rewriting reverse relay for B.AI (bankofai.io), target `https://api.bankofai.io` |
+<table>
+  <thead>
+    <tr><th style="width:12%">Category</th><th style="width:22%">Sub-plugin</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>🎨 Theme</td><td><code>dsh-theme-endfield</code></td><td>Arknights: Endfield industrial editorial theme: cream paper, ink text, signal-yellow accents, zero radius. Contour background, ENDFIELD watermark, glass/solid sidebar surface (dropdown in theme settings), docked hero (toggleable)</td></tr>
+    <tr><td>📊 Usage</td><td><code>dsh-deepseek-usage</code></td><td>Floating ball: live balance, today's R0 multiplier, model hit-rate badge; panel: cumulative/today spend, requests, tokens, per-model usage, trends, login/logout, screenshot</td></tr>
+    <tr><td>📈 Usage & skills</td><td><code>dsh-usage-skill</code></td><td>Token usage heatmaps (day/month/year), multi-provider balance cards, skill bundle manager (**sidebar entry disabled per user request**; components and dictionaries kept)</td></tr>
+    <tr><td>📁 Right rail</td><td><code>dsh-better-sidebar</code></td><td>VSCode-like right sidebar: file tree / editor (CodeMirror multi-language) / terminal / git / browser, per-session isolation; editor footer info bar (total + selected chars)</td></tr>
+    <tr><td>🔍 Search</td><td><code>dsh-ventus-search</code></td><td>Bing / 360 / Bilibili multi-engine search + Readability content fetch, registered as DSH search provider with settings card</td></tr>
+    <tr><td>🐋 Desktop pet</td><td><code>dsh-ventus-whale</code></td><td>Interactive 3D orca pet overlay: drag / rotate / context menu; size, sensitivity, text configurable</td></tr>
+    <tr><td>📶 Subagent progress</td><td><code>dsh-ventus-progress</code></td><td>Parses `progress-json` progress models from subagents; hover subagent entries to see staged progress bars; ships a skill that teaches the model to emit progress models</td></tr>
+    <tr><td>🛠️ Toolchain</td><td><code>@dsh-external/dsh-webui</code></td><td>View tiles / message navigation / tool-call aggregation / Markdown rendering / reasoning-effort sync / AnySearch; **floating sidebar** (with popup-keep-open fix) and prompt-optimize popover</td></tr>
+    <tr><td>🧩 Module injection</td><td><code>@dsh-external/dsh-super-injector</code></td><td>Runtime injection of local DSH plugin packages (junction + loader.create, no restart), hot reload + management UI</td></tr>
+    <tr><td>👁️ Visualization</td><td><code>@dsh-external/dsh-visualize</code></td><td>`visualize` tool + bundled skill: render interactive HTML fragments as sandboxed cards (Codex `/visualize` semantics)</td></tr>
+    <tr><td>⚖️ Permission policy</td><td><code>@nanmicoder/dsh-auto-mode</code></td><td>Sandbox-first automatic permission policy (the **Auto** permission option, patched into this package)</td></tr>
+    <tr><td>🌐 UA relay</td><td><code>dsh-ua-relay</code></td><td>UA-rewriting reverse relay for B.AI (bankofai.io), target `https://api.bankofai.io`</td></tr>
+  </tbody>
+</table>
 
 > `@nanmicoder/dsh-agent-teams` (multi-agent team collaboration) stays
 > **disabled** per user request: its activity scanner repeatedly scans whole

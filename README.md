@@ -23,20 +23,25 @@
 
 ## ✨ 功能总览
 
-| 分类 | 子插件 | 说明 |
-|---|---|---|
-| 🎨 主题 | `dsh-theme-endfield` | 终末地工业编辑部风格主题：米纸底、墨字、信号黄强调、直角。等高线背景、ENDFIELD 水印、玻璃/纯色侧边栏表面（主题设置下拉框）、hero 贴底（可开关） |
-| 📊 用量监测 | `dsh-deepseek-usage` | 右侧悬浮球：实时余额、今日 R0 涨价倍率、模型命中率徽标；展开面板：累计/今日消费、请求数、Tokens、分模型用量、趋势图、登录/退出、截图 |
-| 📈 用量与技能 | `dsh-usage-skill` | Token 用量热力图（日/月/年）、多 Provider 余额卡、技能包管理面板（**侧边栏入口已按用户要求禁用**，仅保留组件导出与字典） |
-| 📁 右侧重栏 | `dsh-better-sidebar` | VSCode 式右侧栏：文件树 / 编辑器（CodeMirror 多语言高亮）/ 终端 / Git / 浏览器，按会话隔离；文本编辑器底部信息栏（总字数 + 选中字数） |
-| 🔍 搜索 | `dsh-ventus-search` | Bing / 360 / Bilibili 多引擎搜索 + Readability 正文抓取，注册为 DSH 搜索 provider，带设置卡与总开关 |
-| 🐋 桌宠 | `dsh-ventus-whale` | 3D 虎鲸桌宠浮窗：拖拽 / 旋转 / 右键菜单，设置页配置大小、灵敏度、显示文字 |
-| 📶 子代理进度 | `dsh-ventus-progress` | 解析子代理输出的 `progress-json` 进度模型，子代理条目悬停显示分段进度条与当前任务文字；自带 skill 引导 AI 输出进度模型 |
-| 🛠️ 工具链 | `@dsh-external/dsh-webui` | 视图图块 / 消息导航 / 工具调用聚合 / Markdown 渲染 / 模型推理等级同步 / AnySearch；**悬浮侧边栏**（含三点菜单浮窗不收起修复）与提示词优化浮窗 |
-| 🧩 模组注入 | `@dsh-external/dsh-super-injector` | 运行时注入任意本地 DSH 插件包（junction + loader.create，不重启），热重载 + 插件管理 UI |
-| 👁️ 可视化 | `@dsh-external/dsh-visualize` | `visualize` 工具 + 配套 skill：模型渲染交互式 HTML 片段为沙箱卡片（Codex `/visualize` 语义） |
-| ⚖️ 权限策略 | `@nanmicoder/dsh-auto-mode` | 沙箱优先的自动权限策略：工作区写 + 语义审查 + 一次性宽授权（**Auto 权限项**，已并入本包 patch） |
-| 🌐 UA 中继 | `dsh-ua-relay` | B.AI（bankofai.io）UA 重写反代：绕过网关 UA 拦截，配置目标 `https://api.bankofai.io` |
+<table>
+  <thead>
+    <tr><th style="width:12%">分类</th><th style="width:22%">子插件</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>🎨 主题</td><td><code>dsh-theme-endfield</code></td><td>终末地工业编辑部风格主题：米纸底、墨字、信号黄强调、直角。等高线背景、ENDFIELD 水印、玻璃/纯色侧边栏表面（主题设置下拉框）、hero 贴底（可开关）</td></tr>
+    <tr><td>📊 用量监测</td><td><code>dsh-deepseek-usage</code></td><td>右侧悬浮球：实时余额、今日 R0 涨价倍率、模型命中率徽标；展开面板：累计/今日消费、请求数、Tokens、分模型用量、趋势图、登录/退出、截图</td></tr>
+    <tr><td>📈 用量与技能</td><td><code>dsh-usage-skill</code></td><td>Token 用量热力图（日/月/年）、多 Provider 余额卡、技能包管理面板（**侧边栏入口已按用户要求禁用**，仅保留组件导出与字典）</td></tr>
+    <tr><td>📁 右侧重栏</td><td><code>dsh-better-sidebar</code></td><td>VSCode 式右侧栏：文件树 / 编辑器（CodeMirror 多语言高亮）/ 终端 / Git / 浏览器，按会话隔离；文本编辑器底部信息栏（总字数 + 选中字数）</td></tr>
+    <tr><td>🔍 搜索</td><td><code>dsh-ventus-search</code></td><td>Bing / 360 / Bilibili 多引擎搜索 + Readability 正文抓取，注册为 DSH 搜索 provider，带设置卡与总开关</td></tr>
+    <tr><td>🐋 桌宠</td><td><code>dsh-ventus-whale</code></td><td>3D 虎鲸桌宠浮窗：拖拽 / 旋转 / 右键菜单，设置页配置大小、灵敏度、显示文字</td></tr>
+    <tr><td>📶 子代理进度</td><td><code>dsh-ventus-progress</code></td><td>解析子代理输出的 `progress-json` 进度模型，子代理条目悬停显示分段进度条与当前任务文字；自带 skill 引导 AI 输出进度模型</td></tr>
+    <tr><td>🛠️ 工具链</td><td><code>@dsh-external/dsh-webui</code></td><td>视图图块 / 消息导航 / 工具调用聚合 / Markdown 渲染 / 模型推理等级同步 / AnySearch；**悬浮侧边栏**（含三点菜单浮窗不收起修复）与提示词优化浮窗</td></tr>
+    <tr><td>🧩 模组注入</td><td><code>@dsh-external/dsh-super-injector</code></td><td>运行时注入任意本地 DSH 插件包（junction + loader.create，不重启），热重载 + 插件管理 UI</td></tr>
+    <tr><td>👁️ 可视化</td><td><code>@dsh-external/dsh-visualize</code></td><td>`visualize` 工具 + 配套 skill：模型渲染交互式 HTML 片段为沙箱卡片（Codex `/visualize` 语义）</td></tr>
+    <tr><td>⚖️ 权限策略</td><td><code>@nanmicoder/dsh-auto-mode</code></td><td>沙箱优先的自动权限策略：工作区写 + 语义审查 + 一次性宽授权（**Auto 权限项**，已并入本包 patch）</td></tr>
+    <tr><td>🌐 UA 中继</td><td><code>dsh-ua-relay</code></td><td>B.AI（bankofai.io）UA 重写反代：绕过网关 UA 拦截，配置目标 `https://api.bankofai.io`</td></tr>
+  </tbody>
+</table>
 
 > `@nanmicoder/dsh-agent-teams`（多代理团队协作）已按用户要求保持**禁用**：
 > 其 activity scanner 在历史日志异常后会反复全局扫描导致 UI 假死；
@@ -48,41 +53,45 @@
 > `src/modules.ts` 的 `WEBUI_MODULE_KEYS` 定义全部 key，host/client 两端按同一份语义裁剪
 > （`isModuleEnabled`：缺省 = 启用，只有显式 `false` 才关闭）。本整合包沿用同一约定。
 
-| 分组 | key | 控制的功能 |
-|---|---|---|
-| 对话体验 | `messageWidth` | 消息气泡宽度设置 |
-| | `doneSound` | 回合结束提示音 + 完成卡片 |
-| | `donePill` | 对话完成胶囊 + 记录面板 |
-| | `approvalNotify` | 审批等待 toast 提醒 |
-| | `ctrlEnter` | 输入框 Ctrl+Enter 换行 |
-| | `sessionMotion` | 会话切换柔和过渡 |
-| | `sessionPin` | 会话置顶 / 归档 / 右键菜单 |
-| | `rewind` | 对话退回（文件回退 + 上下文分支） |
-| | `screenshot` | 单条消息截图 / 会话长图 |
-| | `promptOptimize` | 提示词优化图标 |
-| | `zhThinking` | 中文思考开关 |
-| | `peakValley` | DeepSeek 峰谷时刻卡片 |
-| | `chatStats` | 会话统计条 |
-| | `toolSummary` | 工具调用聚合 + 活动抽屉 |
-| 模型与供应商 | `reasoningSync` | `webui_sync_reasoning` 推理等级补全工具 |
-| | `modelSeats` | 模型座位接管 + 推理等级弹出 |
-| | `providerHub` | 供应商管理设置页 |
-| | `vision` | 辅助视觉 + 生图 + 生视频 + 生图画廊 |
-| | `webSearch` | AnySearch 网页搜索 |
-| | `mail` | 邮箱验证码 |
-| 技能 | `skills` | 技能 slash 两级导航源 + 技能开关路由 |
-| AI 浏览器 | `browser` | 浏览器工具 + dock UI + 设置开关 |
-| 自动化与计划 | `automation` | 自动化任务 + 真实执行引擎 |
-| | `planweave` | PlanWeave 计划项目 |
-| 记忆 | `memory` | 记忆引擎 + Memory Dream |
-| 用量与统计 | `usage` | 用量工作台 |
-| 文件与工作区 | `fileExplorer` | 文件浏览器 |
-| | `dirPicker` | 工作区目录选择器 |
-| 外观与壳 | `appearance` | 玻璃质感主题 |
-| | `sidebarFloat` | 悬浮侧边栏 |
-| | `updater` | 壳管理更新 |
-| | `proxy` | 网络代理 |
-
+<table>
+  <thead>
+    <tr><th style="width:12%">分组</th><th style="width:22%">key</th><th>控制的功能</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>对话体验</td><td><code>messageWidth</code></td><td>消息气泡宽度设置</td></tr>
+    <tr><td></td><td><code>doneSound</code></td><td>回合结束提示音 + 完成卡片</td></tr>
+    <tr><td></td><td><code>donePill</code></td><td>对话完成胶囊 + 记录面板</td></tr>
+    <tr><td></td><td><code>approvalNotify</code></td><td>审批等待 toast 提醒</td></tr>
+    <tr><td></td><td><code>ctrlEnter</code></td><td>输入框 Ctrl+Enter 换行</td></tr>
+    <tr><td></td><td><code>sessionMotion</code></td><td>会话切换柔和过渡</td></tr>
+    <tr><td></td><td><code>sessionPin</code></td><td>会话置顶 / 归档 / 右键菜单</td></tr>
+    <tr><td></td><td><code>rewind</code></td><td>对话退回（文件回退 + 上下文分支）</td></tr>
+    <tr><td></td><td><code>screenshot</code></td><td>单条消息截图 / 会话长图</td></tr>
+    <tr><td></td><td><code>promptOptimize</code></td><td>提示词优化图标</td></tr>
+    <tr><td></td><td><code>zhThinking</code></td><td>中文思考开关</td></tr>
+    <tr><td></td><td><code>peakValley</code></td><td>DeepSeek 峰谷时刻卡片</td></tr>
+    <tr><td></td><td><code>chatStats</code></td><td>会话统计条</td></tr>
+    <tr><td></td><td><code>toolSummary</code></td><td>工具调用聚合 + 活动抽屉</td></tr>
+    <tr><td>模型与供应商</td><td><code>reasoningSync</code></td><td>`webui_sync_reasoning` 推理等级补全工具</td></tr>
+    <tr><td></td><td><code>modelSeats</code></td><td>模型座位接管 + 推理等级弹出</td></tr>
+    <tr><td></td><td><code>providerHub</code></td><td>供应商管理设置页</td></tr>
+    <tr><td></td><td><code>vision</code></td><td>辅助视觉 + 生图 + 生视频 + 生图画廊</td></tr>
+    <tr><td></td><td><code>webSearch</code></td><td>AnySearch 网页搜索</td></tr>
+    <tr><td></td><td><code>mail</code></td><td>邮箱验证码</td></tr>
+    <tr><td>技能</td><td><code>skills</code></td><td>技能 slash 两级导航源 + 技能开关路由</td></tr>
+    <tr><td>AI 浏览器</td><td><code>browser</code></td><td>浏览器工具 + dock UI + 设置开关</td></tr>
+    <tr><td>自动化与计划</td><td><code>automation</code></td><td>自动化任务 + 真实执行引擎</td></tr>
+    <tr><td></td><td><code>planweave</code></td><td>PlanWeave 计划项目</td></tr>
+    <tr><td>记忆</td><td><code>memory</code></td><td>记忆引擎 + Memory Dream</td></tr>
+    <tr><td>用量与统计</td><td><code>usage</code></td><td>用量工作台</td></tr>
+    <tr><td>文件与工作区</td><td><code>fileExplorer</code></td><td>文件浏览器</td></tr>
+    <tr><td></td><td><code>dirPicker</code></td><td>工作区目录选择器</td></tr>
+    <tr><td>外观与壳</td><td><code>appearance</code></td><td>玻璃质感主题</td></tr>
+    <tr><td></td><td><code>sidebarFloat</code></td><td>悬浮侧边栏</td></tr>
+    <tr><td></td><td><code>updater</code></td><td>壳管理更新</td></tr>
+    <tr><td></td><td><code>proxy</code></td><td>网络代理</td></tr>
+  </tbody>
+</table>
 ### 各功能能力明细
 
 | 功能 | 能力 |
