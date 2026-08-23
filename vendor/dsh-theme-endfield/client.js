@@ -2132,10 +2132,11 @@ function apply(ctx) {
       }
       /* 对话区滚动容器（含内层）禁止横向滚动：内容横向溢出时
          PgUp/PgDn 的滚动会带动 scrollLeft，整体往左偏移。排除
-         textarea、含 textarea 的容器（composer 输入区及其上方
-         工具栏，禁了会裁剪按钮排）与代码块（保留内部滚动）。 */
+         textarea、含 textarea 的容器（composer 输入区及工具栏）、
+         代码块，以及一切浮窗容器（menu/popover/dropdown/popper/
+         dialog——禁了会裁剪上拉框/浮层，出不来）。 */
       [class$='_scrollBody'],
-      [class$='_scrollBody'] *:not(textarea):not(pre):not(code):not([class*='code']):not([class*='Code']):not(:has(textarea)) {
+      [class$='_scrollBody'] *:not(textarea):not(pre):not(code):not([class*='code']):not([class*='Code']):not(:has(textarea)):not([class*='menu']):not([class*='popover']):not([class*='dropdown']):not([class*='popper']):not([class*='Menu']):not([class*='Popover']):not([class*='Dropdown']):not([class*='Popper']):not([role='menu']):not([role='dialog']):not([role='listbox']):not([data-radix-popper-content-wrapper]) {
         overflow-x: hidden !important;
       }
       /* 输入框（composer textarea）保持原生横向滚动（长行内容、
