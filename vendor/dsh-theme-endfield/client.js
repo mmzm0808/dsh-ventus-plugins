@@ -2205,9 +2205,10 @@ function apply(ctx) {
          ancestor, so they OUT-SPECIFY the contour transparency rules above
          and win while the sheet is mounted; when the mode is transparent
          neither class exists and the sheet runs straight through. */
-      body.theme-endfield-surface-glass [class$='_sidebarCol'] [class*='_root'] {
-        /* 毛玻璃质感：底色 22% 蓝灰——透出背后内容（对话区消息/等高线
-           花纹）隐约可见；顶部/左缘白色反光渐变模拟玻璃反光，blur 磨砂。 */
+      body.theme-endfield-surface-glass [class$='_sidebarCol'] > [class*='_root'] {
+        /* 毛玻璃质感：只作用于面板根（sidebarCol 直接子）。会话列表区
+           （列表 root）保持透明——会话条纯文字，无生硬玻璃板。底色
+           22% 蓝灰透出背后内容，顶部/左缘白色反光渐变模拟玻璃反光。 */
         background:
           linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 30%, transparent 55%),
           linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 25%),
@@ -2261,7 +2262,7 @@ function apply(ctx) {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
       }
-      body.theme-endfield-surface-solid [class$='_sidebarCol'] [class*='_root'] {
+      body.theme-endfield-surface-solid [class$='_sidebarCol'] > [class*='_root'] {
         background: var(--edge-sidebar-solid, #101110) !important;
       }
       /* persist 水印锚定：对话列成为定位祖先（absolute inset0 的水印精确
