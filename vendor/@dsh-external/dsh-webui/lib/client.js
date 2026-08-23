@@ -284297,6 +284297,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		const BODY_CLASS = "dsh-sidebar-float";
 		const INIT_CLASS = "dsh-sidebar-float-init";
 		const NO_ANIM_CLASS = "dsh-sidebar-float-no-anim";
+		/** 收起动画中间态标记（轻微左移 + 淡出）。 */
+		const HIDING_CLASS = "dsh-sidebar-float-hiding";
 		const HOTZONE_CLASS = "dsh-sidebar-hotzone";
 		const HOTZONE_OFF_CLASS = "dsh-sidebar-hotzone-off";
 		/** 展开态侧边栏右侧拖拽手柄。 */
@@ -284382,14 +284384,21 @@ body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div
   min-width: ${RAIL_WIDTH}px !important;
   max-width: ${RAIL_WIDTH}px !important;
   box-shadow: none;
-  transition: none;
+  /* rail 悬浮于对话区左缘 padding 区之上（不遮挡对话内容） */
+  z-index: 20;
+  /* rail 出现淡入：切 collapsed 时从透明过渡到可见 */
+  opacity: 0;
+  transition: opacity 250ms ease;
 }
+/* 折叠态：对话区保持与展开态完全一致的布局（横跨轨道 + 左内边距），
+   侧边栏展开/收起动画（纯 transform/opacity）不影响对话区位置、宽度与
+   背景（花纹/水印跟随 centerCol 恒定）。 */
 body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div:nth-child(2) {
-  grid-column: auto;
-  padding-left: 0;
+  grid-column: 1 / span 2;
+  padding-left: ${RAIL_WIDTH}px;
 }
 body.${BODY_CLASS} div:has(> [data-shell-overlay])[data-sidebar-collapsed] > div:nth-child(3) {
-  grid-column: auto;
+  grid-column: 3;
 }
 
 /* 防御：折叠态下 footer 动作区连同其容器必须收进 rail 内容盒——
@@ -284414,7 +284423,15 @@ body.${BODY_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed])
   padding-left: ${RAIL_WIDTH}px;
 }
 body.${BODY_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) > div:nth-child(1) {
-  transition: left ${EXPAND_MS}ms var(--ds-ease-in-out, cubic-bezier(0.4, 0, 0.2, 1));
+  /* 动画纯 transform + opacity：不触发布局/ResizeObserver 联动 */
+  transition: transform ${EXPAND_MS}ms var(--ds-ease-in-out, cubic-bezier(0.33, 1, 0.68, 1)),
+              opacity ${EXPAND_MS}ms var(--ds-ease-in-out, cubic-bezier(0.33, 1, 0.68, 1));
+  will-change: transform, opacity;
+}
+/* 收起动画中间态：轻微左移 + 淡出（HIDING） */
+body.${BODY_CLASS}.${HIDING_CLASS} div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) > div:nth-child(1) {
+  transform: translateX(-16px);
+  opacity: 0;
 }
 
 /* 悬浮模式隐藏侧边栏拖拽手柄（悬浮层固定宽度，无需拖动） */
@@ -284545,11 +284562,59 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 				else if (!open && !collapsed) doToggle();
 				syncHotzone();
 			};
-			/** 设定意图状态并立即对齐。 */
+			/**
+			* 设定意图状态并对齐布局；展开/收起各带 500ms 丝滑动画（纯 transform +
+			* opacity，零布局联动——对话区/背景不受任何影响）：
+			*  - 展开：起点 = 轻微左移 + 透明（无过渡落位）→ 切展开 → 下一帧移除
+			*    inline 值，CSS transform/opacity 过渡滑入；
+			*  - 收起：加 HIDING（左移 16px + 淡出）→ transitionend 后才切
+			*    data-sidebar-collapsed，官方 rail 淡入于对话区 padding 区。
+			*/
 			const setOpen = (next) => {
 				if (open === next) return;
 				open = next;
-				reconcile();
+				const frame = frameEl;
+				if (frame === null) {
+					reconcile();
+					if (next) scheduleRecheck();
+					return;
+				}
+				if (next) {
+					frame.classList.remove(HIDING_CLASS);
+					frame.style.transition = "none";
+					frame.style.transform = "translateX(-16px)";
+					frame.style.opacity = "0";
+					reconcile();
+					requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
+							frame.style.removeProperty("transition");
+							frame.style.removeProperty("transform");
+							frame.style.removeProperty("opacity");
+						});
+					});
+				} else if (!isCollapsed()) {
+					frame.style.removeProperty("transition");
+					frame.classList.add(HIDING_CLASS);
+					const onEnd = (e) => {
+						if (e.propertyName !== "opacity") return;
+						finish();
+					};
+					const finish = () => {
+						frame.removeEventListener("transitionend", onEnd);
+						frame.classList.remove(HIDING_CLASS);
+						frame.style.removeProperty("transform");
+						frame.style.removeProperty("opacity");
+						reconcile();
+						requestAnimationFrame(() => {
+							if (frameEl !== null) frameEl.style.opacity = "1";
+							requestAnimationFrame(() => {
+								if (frameEl !== null) frameEl.style.removeProperty("opacity");
+							});
+						});
+					};
+					frame.addEventListener("transitionend", onEnd);
+					window.setTimeout(finish, 280);
+				} else reconcile();
 				if (next) scheduleRecheck();
 			};
 			/** 是否有任意从侧边栏打开的窗口打开（设置/工作台/技能/记忆等，通用检测）。 */
