@@ -12269,6 +12269,11 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 						scrollX: 0,
 						scrollY: 0,
 						onclone: (clonedDocument) => {
+							// 移除主题装饰层（等高线/模糊层等 body 级大 canvas）：
+							// html2canvas 克隆整个文档，大 canvas 会让克隆变慢
+							// 甚至挂起（截图按钮"完全没反应"，screenshotting 卡死）。
+							clonedDocument.querySelector('[data-endfield-contour]')?.remove();
+							clonedDocument.querySelector('[data-endfield-watermark]')?.remove();
 							const clonedBody = clonedDocument.querySelector(".dsu-body");
 							if (clonedBody) {
 								clonedBody.style.height = "auto";
@@ -12711,7 +12716,12 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 				const value = event.target.value;
 				applyRange(value);
 			});
-			host.querySelector("[data-action=\"screenshot\"]")?.addEventListener("click", () => void captureCurrentPage());
+			host.querySelector("[data-action=\"screenshot\"]")?.addEventListener("click", () => {
+				// 卡死保底：上次截图异常挂起时 screenshotting 卡 true，
+				// 后续点击直接 return（按钮"完全没反应"）。重置后重试。
+				if (screenshotting) screenshotting = false;
+				void captureCurrentPage();
+			});
 			host.querySelectorAll("[data-action=\"granularity\"]").forEach((button) => {
 				button.addEventListener("click", () => {
 					trendGranularity = button.getAttribute("data-granularity") === "day" ? "day" : "hour";
