@@ -287546,463 +287546,295 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		const FUN_LINES = [
 			{
 				icon: "sparkle",
-				text: "今天也是充满可能的一天！"
+				text: "拓扑不变量不受微扰影响——你代码的正确性也该如此稳健"
 			},
 			{
 				icon: "sparkle",
-				text: "你解决问题的样子真的很酷"
+				text: "费米面附近总有新物理，好奇心的边缘态永不闭合"
 			},
 			{
 				icon: "sparkle",
-				text: "每一行代码都在靠近目标"
+				text: "局域化的电子寸步难行，保持耦合才能导电"
 			},
 			{
 				icon: "sparkle",
-				text: "休息一下，灵感往往在放松时出现"
+				text: "弹道输运透射率 T=1，专注让每一步都不散射"
 			},
 			{
 				icon: "sparkle",
-				text: "已完成的每一个任务都算数"
+				text: "能隙保护了绝缘，专注保护了你的时间"
 			},
 			{
 				icon: "sparkle",
-				text: "保持好奇，世界会给你答案"
+				text: "量子化的电导 2e²/h 从不含糊，认真做事也一样精确"
 			},
 			{
 				icon: "sparkle",
-				text: "进步不必巨大，持续就很了不起"
+				text: "边缘态只在边界，却承载整个拓扑的本质——细节决定全局"
 			},
 			{
 				icon: "sparkle",
-				text: "深呼吸，一切都会顺利的"
+				text: "弱局域化压低电导，别让犹豫压低你的行动"
 			},
 			{
 				icon: "sparkle",
-				text: "记得喝水，身体是革命的本钱"
+				text: "库珀对靠吸引配对，好想法靠碰撞激发"
 			},
 			{
 				icon: "sparkle",
-				text: "星光不问赶路人，时光不负有心人"
+				text: "Berry 相位绕一圈回到原点，努力也会形成闭环"
 			},
 			{
 				icon: "sparkle",
-				text: "小步前进也是一种抵达"
+				text: "超导零电阻，专注零内耗"
 			},
 			{
 				icon: "sparkle",
-				text: "你的努力，时间看得见"
+				text: "声子传递晶格振动，分享传递能量"
 			},
 			{
 				icon: "sparkle",
-				text: "笑一笑，bug 都会少一点"
+				text: "拓扑序看不见摸不着，却决定相的本质——坚持也一样"
 			},
 			{
 				icon: "bulb",
-				text: "LLM 大语言模型：通过海量文本训练、能理解并生成自然语言的 AI 模型"
+				text: "电导量子化：一维弹道输运中电导以 G₀ = 2e²/h 为单位量子化（Landauer 公式）"
 			},
 			{
 				icon: "bulb",
-				text: "Token 词元：模型处理文本的最小单位，一个汉字通常是 1~2 个"
+				text: "Landauer 公式：弹道输运中 G = (2e²/h)·T，T 是透射概率"
 			},
 			{
 				icon: "bulb",
-				text: "Transformer：2017 年提出的注意力架构，现代大模型的基石"
+				text: "弹道输运：载流子平均自由程大于样品尺寸，输运不受散射限制"
 			},
 			{
 				icon: "bulb",
-				text: "Prompt 提示词：你发给 AI 的指令，写得越清晰回答越靠谱"
+				text: "扩散输运：载流子经历多次散射的经典输运，电导服从欧姆定律"
 			},
 			{
 				icon: "bulb",
-				text: "微调 Fine-tuning：用特定数据继续训练，让它更擅长某个领域"
+				text: "安德森局域化：强无序下波函数指数局域，金属可转变为绝缘体"
 			},
 			{
 				icon: "bulb",
-				text: "RAG 检索增强生成：先查资料再回答，让答案有据可依"
+				text: "弱局域化：量子干涉使扩散电导略降，外加磁场可抑制这种修正"
 			},
 			{
 				icon: "bulb",
-				text: "幻觉 Hallucination：AI 一本正经编造不存在的事实，记得核实"
+				text: "Shubnikov–de Haas 振荡：磁阻随 1/B 周期振荡，可反推费米面几何"
 			},
 			{
 				icon: "bulb",
-				text: "多模态 Multimodal：能同时理解文字、图片、音频等信息的模型"
+				text: "霍尔效应：磁场中载流子受洛伦兹力偏转，产生横向霍尔电压"
 			},
 			{
 				icon: "bulb",
-				text: "Agent 智能体：能自主规划步骤、调用工具、完成任务的 AI"
+				text: "量子霍尔效应：二维电子气在强磁场下霍尔电导精确量子化为 νe²/h"
 			},
 			{
 				icon: "bulb",
-				text: "上下文窗口 Context Window：模型一次能「看到」的最大文本长度"
+				text: "量子反常霍尔效应：无外磁场下自发磁化 + 拓扑带隙产生量子化霍尔电导（陈绝缘体）"
 			},
 			{
 				icon: "bulb",
-				text: "温度 Temperature：控制回答随机性的参数，越低越严谨"
+				text: "自旋霍尔效应：自旋流与电荷流分离，无需外磁场即可产生自旋积累"
 			},
 			{
 				icon: "bulb",
-				text: "Embedding 向量嵌入：把文字变成数字向量，可计算语义相似度"
+				text: "量子自旋霍尔效应：时间反演保护的一维螺旋边缘态，边缘电导 2e²/h（Kane–Mele 模型）"
 			},
 			{
 				icon: "bulb",
-				text: "思维链 Chain-of-Thought：让 AI 一步步推理，复杂题正确率大增"
+				text: "巨磁阻效应：磁性多层膜中电阻随磁化相对取向大幅变化（2007 年诺贝尔物理学奖）"
 			},
 			{
 				icon: "bulb",
-				text: "蒸馏 Distillation：用大模型教小模型，更快更便宜"
+				text: "Wiedemann–Franz 定律：金属中电子热导率与电导率之比正比于温度（洛伦兹数）"
 			},
 			{
 				icon: "bulb",
-				text: "对齐 Alignment：让 AI 行为符合人类意图与价值观"
+				text: "Seebeck 效应：温差产生电压，热电发电的基础"
 			},
 			{
 				icon: "bulb",
-				text: "RLHF 人类反馈强化学习：用人类偏好训练，回答更合意"
+				text: "Peltier 效应：电流通过两种材料界面时吸放热，热电制冷的基础"
 			},
 			{
 				icon: "bulb",
-				text: "机器学习 ML：让计算机从数据中自动学规律，无需显式编程"
+				text: "Kubo 公式：线性响应框架下由微扰计算电导等输运系数的基本公式"
 			},
 			{
 				icon: "bulb",
-				text: "深度学习 DL：用多层神经网络自动抽取特征的分支"
+				text: "拓扑绝缘体：体带隙绝缘，表面/边缘有无能隙的受保护导电态"
 			},
 			{
 				icon: "bulb",
-				text: "神经网络：模拟人脑神经元连接的计算模型，深度学习的基石"
+				text: "陈数（Chern number）：能带 Berry 曲率在整个布里渊区的积分，拓扑不变量"
 			},
 			{
 				icon: "bulb",
-				text: "参数 Parameter：模型内部可学习的数值，决定「记忆」与能力"
+				text: "Berry 相位：波函数沿参数空间闭合路径绝热演化获得的几何相位"
 			},
 			{
 				icon: "bulb",
-				text: "权重 Weight：神经网络连接的强度数值，训练时不断被调整"
+				text: "Berry 曲率：动量空间中的有效磁场，决定反常霍尔与拓扑性质"
 			},
 			{
 				icon: "bulb",
-				text: "训练 Training：用海量数据反复调整参数、让模型学会任务"
+				text: "Weyl 半金属：Weyl 节点是 Berry 曲率的源与汇（手性），体带无能隙"
 			},
 			{
 				icon: "bulb",
-				text: "推理 Inference：训练好的模型对输入计算并输出结果"
+				text: "Dirac 半金属：四重简并的 Dirac 节点，可裂解为两个 Weyl 节点"
 			},
 			{
 				icon: "bulb",
-				text: "数据集 Dataset：用于训练与评估模型的样本集合"
+				text: "费米弧：Weyl 半金属表面态连接两个 Weyl 点投影的弧状费米面"
 			},
 			{
 				icon: "bulb",
-				text: "语料库 Corpus：大规模文本集合，大模型训练的主要原料"
+				text: "体-边对应（bulk–boundary correspondence）：体内拓扑不变量决定边缘态的数量"
 			},
 			{
 				icon: "bulb",
-				text: "注意力机制 Attention：让模型聚焦输入中关键部分的技术"
+				text: "Z₂ 指标：时间反演不变二维拓扑绝缘体的 Z₂ 拓扑分类"
 			},
 			{
 				icon: "bulb",
-				text: "自注意力 Self-Attention：让每个词关联上下文中的所有词"
+				text: "Kane–Mele 模型：在石墨烯上实现量子自旋霍尔效应的经典模型"
 			},
 			{
 				icon: "bulb",
-				text: "多头注意力 Multi-Head：并行多组注意力，捕捉不同关系"
+				text: "Haldane 模型：无净磁通密度下实现陈绝缘体的玩具模型"
 			},
 			{
 				icon: "bulb",
-				text: "编码器 Encoder：把输入编码成向量表示的模块"
+				text: "马约拉纳费米子：粒子等于其反粒子的准粒子，拓扑超导体中可为非阿贝尔任意子"
 			},
 			{
 				icon: "bulb",
-				text: "解码器 Decoder：根据编码信息逐字生成的模块"
+				text: "拓扑超导体：p 波配对或近邻效应支撑马约拉纳零模的拓扑态"
 			},
 			{
 				icon: "bulb",
-				text: "位置编码 Positional Encoding：让模型感知词序的方法"
+				text: "安德烈耶夫反射：超导界面上电子反射为空穴，超导-正常结输运的特征"
 			},
 			{
 				icon: "bulb",
-				text: "残差连接 Residual：跨层直连通道，缓解深层网络退化"
+				text: "库珀对：声子介导吸引作用束缚的电子对，BCS 超导的基石"
 			},
 			{
 				icon: "bulb",
-				text: "归一化 Normalization：稳定数值分布、加速训练的技巧"
+				text: "BCS 理论：常规超导的微观理论，超导能隙 2Δ 保护库珀对（1957 年）"
 			},
 			{
 				icon: "bulb",
-				text: "激活函数 Activation：引入非线性，让网络能学复杂关系"
+				text: "边缘态：拓扑绝缘体边界上的无能隙导电通道，背散射被拓扑保护"
 			},
 			{
 				icon: "bulb",
-				text: "预训练 Pre-training：在大规模语料上无监督学习通用知识"
+				text: "量子化电导 2e²/h：一维无自旋简并通道的普适电导单位"
 			},
 			{
 				icon: "bulb",
-				text: "监督微调 SFT：用问答范例教模型按指令作答"
+				text: "拓扑荷：刻画拓扑结构（如涡旋、Weyl 节点）的整数拓扑量子数"
 			},
 			{
 				icon: "bulb",
-				text: "损失函数 Loss：衡量预测与目标的差距，指导参数更新"
+				text: "手性反常：外电场下 Weyl 节点间电荷沿手性的异常输运"
 			},
 			{
 				icon: "bulb",
-				text: "梯度下降 Gradient Descent：沿梯度方向迭代减小误差"
+				text: "能谷（valley）：能带中的局域极值，谷电子学利用不同谷自由度"
 			},
 			{
 				icon: "bulb",
-				text: "学习率 Learning Rate：每步参数更新的步幅"
+				text: "谷霍尔效应：不同能谷的载流子在电场中反向偏转"
 			},
 			{
 				icon: "bulb",
-				text: "批大小 Batch Size：一次训练喂给模型的样本数"
+				text: "准粒子：多体系统的元激发，如电子+声子云 = 极化子"
 			},
 			{
 				icon: "bulb",
-				text: "轮次 Epoch：完整过一遍训练数据的次数"
+				text: "声子：晶格振动的量子化元激发，介导常规超导配对"
 			},
 			{
 				icon: "bulb",
-				text: "过拟合 Overfitting：模型死记训练数据、泛化能力差"
+				text: "磁振子：自旋波量子，磁性材料中传递自旋信息的准粒子"
 			},
 			{
 				icon: "bulb",
-				text: "欠拟合 Underfitting：模型没学到足够规律，训练集都做不好"
+				text: "激子：库仑束缚的电子-空穴对，光学与光电器件的基础激发"
 			},
 			{
 				icon: "bulb",
-				text: "正则化 Regularization：抑制过拟合的一系列手段"
+				text: "极化子：电子与其诱导的晶格畸变耦合形成的准粒子"
 			},
 			{
 				icon: "bulb",
-				text: "早停 Early Stopping：验证集不再提升就提前结束训练"
+				text: "费米面：零温下占据与未占据电子态的分界面，决定金属输运性质"
 			},
 			{
 				icon: "bulb",
-				text: "量化 Quantization：压缩数值精度，减小体积加速推理"
+				text: "布里渊区：倒空间的原胞，能带理论的基本周期单元"
 			},
 			{
 				icon: "bulb",
-				text: "剪枝 Pruning：移除冗余参数，给模型瘦身"
+				text: "能带结构：周期势中电子的能量-动量色散关系"
 			},
 			{
 				icon: "bulb",
-				text: "迁移学习 Transfer Learning：把已学知识迁移到新任务"
+				text: "能隙（带隙）：价带顶与导带底之间的能量差，绝缘体与半导体的特征"
 			},
 			{
 				icon: "bulb",
-				text: "分词器 Tokenizer：把文本切分成词元序列的工具"
+				text: "电-声耦合：电子与晶格振动的相互作用，常规金属电阻的主要来源"
 			},
 			{
 				icon: "bulb",
-				text: "生成 Generation：模型逐字预测下一个词元的过程"
+				text: "石墨烯：单层碳原子蜂窝晶格，低能色散为狄拉克锥（无质量费米子）"
 			},
 			{
 				icon: "bulb",
-				text: "自回归 Autoregressive：用已生成的词预测下一个词"
+				text: "狄拉克锥：线性色散的能带交叉点，准粒子表现为无质量"
 			},
 			{
 				icon: "bulb",
-				text: "采样 Sampling：按概率分布随机选择下一个词"
+				text: "自旋-轨道耦合：电子自旋与轨道运动的相对论相互作用，拓扑绝缘体的关键"
 			},
 			{
 				icon: "bulb",
-				text: "Top-p 核采样：只在累计概率达 p 的候选词中采样"
+				text: "Rashba 效应：界面/结构不对称导致的自旋劈裂，自旋电子学重要机制"
 			},
 			{
 				icon: "bulb",
-				text: "Top-k 采样：只在概率最高的 k 个词中采样"
+				text: "拓扑相变：拓扑不变量改变驱动的量子相变，无需对称性破缺"
 			},
 			{
 				icon: "bulb",
-				text: "贪心解码 Greedy：每步都选概率最高的词，稳定但易重复"
+				text: "量子阱：窄带隙层夹在宽带隙层间，载流子被限制在二维"
 			},
 			{
 				icon: "bulb",
-				text: "束搜索 Beam Search：保留多条候选路径，兼顾质量与多样"
+				text: "二维电子气：限制在界面/异质结中的二维电子系统，量子霍尔效应的舞台"
 			},
 			{
 				icon: "bulb",
-				text: "停止词 Stop Token：标记生成结束的特殊词元"
+				text: "德哈斯-范阿尔芬效应：磁化率随 1/B 振荡，测量费米面的经典手段"
 			},
 			{
 				icon: "bulb",
-				text: "长度惩罚 Length Penalty：调节输出长短倾向的参数"
+				text: "超流：玻色子凝聚后无粘滞流动，量子宏观现象（液氦-4）"
 			},
 			{
 				icon: "bulb",
-				text: "推理 Reasoning：模型推导、计算、多步思考的能力"
+				text: "玻色-爱因斯坦凝聚：玻色子占据同一量子态，宏观量子相干（2001 年诺贝尔奖）"
 			},
 			{
 				icon: "bulb",
-				text: "提示工程 Prompt Engineering：设计输入让模型表现更好"
-			},
-			{
-				icon: "bulb",
-				text: "少样本提示 Few-shot：给几个范例，模型照着格式做"
-			},
-			{
-				icon: "bulb",
-				text: "零样本 Zero-shot：不给范例，直接提问"
-			},
-			{
-				icon: "bulb",
-				text: "上下文学习 In-Context Learning：靠提示词临时学会任务"
-			},
-			{
-				icon: "bulb",
-				text: "自一致性 Self-Consistency：多次采样投票，取多数答案"
-			},
-			{
-				icon: "bulb",
-				text: "思维树 Tree-of-Thoughts：多分支探索推理路径并回溯"
-			},
-			{
-				icon: "bulb",
-				text: "规划 Planning：把复杂任务拆解成可执行步骤"
-			},
-			{
-				icon: "bulb",
-				text: "向量数据库 Vector DB：存储并检索高维向量的数据库"
-			},
-			{
-				icon: "bulb",
-				text: "相似度检索 Similarity Search：按向量距离找最相关内容"
-			},
-			{
-				icon: "bulb",
-				text: "余弦相似度 Cosine：衡量两向量方向接近程度的指标"
-			},
-			{
-				icon: "bulb",
-				text: "知识库 Knowledge Base：供检索引用的结构化资料集合"
-			},
-			{
-				icon: "bulb",
-				text: "分块 Chunking：把长文档切成便于检索的小段"
-			},
-			{
-				icon: "bulb",
-				text: "重排序 Rerank：对召回结果二次排序，提升相关性"
-			},
-			{
-				icon: "bulb",
-				text: "语义搜索 Semantic Search：按含义而非关键词匹配"
-			},
-			{
-				icon: "bulb",
-				text: "混合检索 Hybrid：关键词 + 向量两种方式结合"
-			},
-			{
-				icon: "bulb",
-				text: "工具调用 Function Calling：模型按需调用外部函数或 API"
-			},
-			{
-				icon: "bulb",
-				text: "多智能体 Multi-Agent：多个智能体分工协作完成目标"
-			},
-			{
-				icon: "bulb",
-				text: "记忆 Memory：智能体跨轮次保留上下文与事实"
-			},
-			{
-				icon: "bulb",
-				text: "反思 Reflection：让智能体自我审查并改进输出"
-			},
-			{
-				icon: "bulb",
-				text: "自主性 Autonomy：智能体不依赖人逐步指挥的能力"
-			},
-			{
-				icon: "bulb",
-				text: "视觉语言模型 VLM：能看图识图、图文推理的模型"
-			},
-			{
-				icon: "bulb",
-				text: "文生图 Text-to-Image：根据文字描述生成图片"
-			},
-			{
-				icon: "bulb",
-				text: "扩散模型 Diffusion：逐步去噪生成图像的主流方法"
-			},
-			{
-				icon: "bulb",
-				text: "文生视频 Text-to-Video：根据文字生成视频"
-			},
-			{
-				icon: "bulb",
-				text: "语音识别 ASR：把语音转成文字"
-			},
-			{
-				icon: "bulb",
-				text: "语音合成 TTS：把文字转成语音"
-			},
-			{
-				icon: "bulb",
-				text: "OCR 文字识别：从图片中提取文字"
-			},
-			{
-				icon: "bulb",
-				text: "基准 Benchmark：标准化测试集，用来衡量模型能力"
-			},
-			{
-				icon: "bulb",
-				text: "困惑度 Perplexity：衡量语言模型预测能力的指标"
-			},
-			{
-				icon: "bulb",
-				text: "BLEU：机器翻译质量的自动评分指标"
-			},
-			{
-				icon: "bulb",
-				text: "ROUGE：摘要质量的自动评分指标"
-			},
-			{
-				icon: "bulb",
-				text: "安全性 Safety：防止模型输出有害、违规内容"
-			},
-			{
-				icon: "bulb",
-				text: "越狱 Jailbreak：用诱导话术突破模型安全限制"
-			},
-			{
-				icon: "bulb",
-				text: "红队测试 Red Teaming：主动攻击模型找漏洞"
-			},
-			{
-				icon: "bulb",
-				text: "偏见 Bias：模型放大训练数据中的刻板印象"
-			},
-			{
-				icon: "bulb",
-				text: "可解释性 Interpretability：理解模型为何如此决策"
-			},
-			{
-				icon: "bulb",
-				text: "数据污染 Data Contamination：测试题混进训练数据、分数虚高"
-			},
-			{
-				icon: "bulb",
-				text: "小模型 SLM：参数少、可本地运行的高效模型"
-			},
-			{
-				icon: "bulb",
-				text: "开源模型 Open-source：权重公开，可自由使用与微调"
-			},
-			{
-				icon: "bulb",
-				text: "流式输出 Streaming：边生成边返回，体验更顺滑"
-			},
-			{
-				icon: "bulb",
-				text: "系统提示词 System Prompt：设定角色与规则的顶层指令"
-			},
-			{
-				icon: "bulb",
-				text: "多轮对话 Multi-turn：带历史上下文的连续问答"
-			},
-			{
-				icon: "bulb",
-				text: "缓存 Cache：缓存重复请求，省钱又提速"
+				text: "迈斯纳效应：超导体完全排斥磁场，超导态的标志之一"
 			}
 		];
 		/** 轮播间隔（ms）。 */
