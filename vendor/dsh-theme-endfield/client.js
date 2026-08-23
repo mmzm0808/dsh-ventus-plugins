@@ -229,17 +229,21 @@ function apply(ctx) {
       if (!headline) return
       const r = headline.getBoundingClientRect()
       if (r.width === 0 || r.height === 0) return
-      const cy = r.top + r.height / 2
-      /* 以「对话区中心」为对齐基准，而不是 headline 自身的中心：
+      /* 以「对话区中心」为水平与垂直对齐基准，而不是 headline 自身：
          headline 所在 hero 容器在不同页面（新会话 / 工作区 / 老对话）的
-         宿主宽度不同——跟随 headline 会让水印在新会话页/工作区偏到整窗
-         中心（实测 bug）。对话区中心（centerCol）才是用户语义上的居中；
-         headline 拿不到时回退到它自己的中心。 */
+         宿主宽度与垂直位置不同——跟随 headline 会让水印在新会话页偏到
+         整窗中心（实测 bug），且在 hero 贴底后跟着 headline 沉到视口底部
+         （实测「位置偏下」）。对话区中心（centerCol）才是用户语义上的
+         居中；拿不到时回退到 headline 自身。 */
       let cx = r.left + r.width / 2
+      let cy = r.top + r.height / 2
       const col = findCenterCol()
       if (col !== null) {
         const cr = col.getBoundingClientRect()
-        if (cr.width > 0 && cr.height > 0) cx = cr.left + cr.width / 2
+        if (cr.width > 0 && cr.height > 0) {
+          cx = cr.left + cr.width / 2
+          cy = cr.top + cr.height / 2
+        }
       }
       const vw = (typeof window !== 'undefined' && window.innerWidth) || (typeof document !== 'undefined' ? document.documentElement.clientWidth : 0)
       const top = (cy - 55) + 'px'
