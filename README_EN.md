@@ -26,7 +26,7 @@ stats are all preserved.
 
 <table>
   <thead>
-    <tr><th style="width:12%">Category</th><th style="width:22%">Sub-plugin</th><th>Description</th></tr>
+    <tr><th style="width:24%">Category</th><th style="width:22%">Sub-plugin</th><th>Description</th></tr>
   </thead>
   <tbody>
     <tr><td>🎨 Theme</td><td><code>dsh-theme-endfield</code></td><td>Arknights: Endfield industrial editorial theme: cream paper, ink text, signal-yellow accents, zero radius. Contour background, ENDFIELD watermark, glass/solid sidebar surface (dropdown in theme settings), docked hero (toggleable)</td></tr>

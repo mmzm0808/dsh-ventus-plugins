@@ -25,7 +25,7 @@
 
 <table>
   <thead>
-    <tr><th style="width:12%">分类</th><th style="width:22%">子插件</th><th>说明</th></tr>
+    <tr><th style="width:24%">分类</th><th style="width:22%">子插件</th><th>说明</th></tr>
   </thead>
   <tbody>
     <tr><td>🎨 主题</td><td><code>dsh-theme-endfield</code></td><td>终末地工业编辑部风格主题：米纸底、墨字、信号黄强调、直角。等高线背景、ENDFIELD 水印、玻璃/纯色侧边栏表面（主题设置下拉框）、hero 贴底（可开关）</td></tr>
@@ -55,7 +55,7 @@
 
 <table>
   <thead>
-    <tr><th style="width:12%">分组</th><th style="width:22%">key</th><th>控制的功能</th></tr>
+    <tr><th style="width:24%">分组</th><th style="width:22%">key</th><th>控制的功能</th></tr>
   </thead>
   <tbody>
     <tr><td>对话体验</td><td><code>messageWidth</code></td><td>消息气泡宽度设置</td></tr>
