@@ -102,15 +102,27 @@ function apply(ctx) {
        conversation column keep their own rules. */
     const SURFACE_KEY = 'dsh-theme-endfield-sidebar-surface'
     const SURFACE_COLOR_KEY = 'dsh-theme-endfield-sidebar-color'
+    /* 表面透明度（0-100 百分比）：自定义纯色与透明模式共用一个滑块值。 */
+    const SURFACE_ALPHA_KEY = 'dsh-theme-endfield-sidebar-alpha'
     /* 纯色表面是否同时应用到对话区（子开关，见设置卡）。对话区比侧边栏
        多一层半透明（68%），花纹仍可透过，文字保持清晰。 */
     const SURFACE_CONV_KEY = 'dsh-theme-endfield-surface-conversation'
     const SURFACE_CLASS_GLASS = 'theme-endfield-surface-glass'
     const SURFACE_CLASS_SOLID = 'theme-endfield-surface-solid'
+    const SURFACE_CLASS_TRANSPARENT = 'theme-endfield-surface-transparent'
     const SURFACE_CLASS_CONV = 'theme-endfield-surface-conv'
     const readSurface = () => {
       const value = typeof localStorage !== 'undefined' ? localStorage.getItem(SURFACE_KEY) : null
       return (value === 'transparent' || value === 'solid') ? value : 'glass'
+    }
+    /* 透明度默认：透明模式 0（全透明，原始行为），自定义纯色 100（不透明）。 */
+    const readSurfaceAlpha = () => {
+      const value = typeof localStorage !== 'undefined' ? localStorage.getItem(SURFACE_ALPHA_KEY) : null
+      if (value !== null) {
+        const n = Number(value)
+        if (Number.isFinite(n)) return Math.max(0, Math.min(100, Math.round(n)))
+      }
+      return readSurface() === 'transparent' ? 0 : 100
     }
     const readSurfaceColor = () => {
       const value = typeof localStorage !== 'undefined' ? localStorage.getItem(SURFACE_COLOR_KEY) : null
@@ -123,8 +135,10 @@ function apply(ctx) {
       const on = isEnabled()
       document.body.classList.toggle(SURFACE_CLASS_GLASS, on && surface === 'glass')
       document.body.classList.toggle(SURFACE_CLASS_SOLID, on && surface === 'solid')
+      document.body.classList.toggle(SURFACE_CLASS_TRANSPARENT, on && surface === 'transparent')
       document.body.classList.toggle(SURFACE_CLASS_CONV, on && surface === 'solid' && isSurfaceConvOn())
       document.body.style.setProperty('--edge-sidebar-solid', readSurfaceColor())
+      document.body.style.setProperty('--edge-sidebar-alpha', readSurfaceAlpha() + '%')
     }
 
     /* ---------- background ENDFIELD watermark (settings-toggleable) ----------
@@ -2090,6 +2104,34 @@ function apply(ctx) {
       [data-endfield-watermark] {
         pointer-events: none !important;
       }
+      /* 表面透明度滑块（圆形 thumb）。 */
+      .edge-alpha-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 140px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--dsw-alias-interactive-bg-hover, rgba(255, 255, 255, 0.12));
+        outline: none;
+      }
+      .edge-alpha-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--edge-accent);
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        cursor: pointer;
+      }
+      .edge-alpha-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--edge-accent);
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        cursor: pointer;
+      }
       /* persist 水印居中基准修正：展开态下列的 containing block 是整个边框盒
          （含 56px 左内边距），字居中于边框盒中心 600；等高线等其他背景以
          内容区（padding 起点）为基准（628）。固定 28px 偏移使 ENDFIELD 字
@@ -2264,7 +2306,12 @@ function apply(ctx) {
         -webkit-backdrop-filter: none !important;
       }
       body.theme-endfield-surface-solid [class$='_sidebarCol'] > [class*='_root'] {
-        background: var(--edge-sidebar-solid, #101110) !important;
+        background: color-mix(in srgb, var(--edge-sidebar-solid, #101110) var(--edge-sidebar-alpha, 100%), transparent) !important;
+      }
+      /* 透明模式 + 透明度滑块：alpha 0 时完全透明（原始行为），调大后
+         半透明底色（bg-base），与自定义模式共用同一个滑块值。 */
+      body.theme-endfield-surface-transparent [class$='_sidebarCol'] > [class*='_root'] {
+        background: color-mix(in srgb, var(--dsw-alias-bg-base, #101110) var(--edge-sidebar-alpha, 0%), transparent) !important;
       }
       /* persist 水印锚定：对话列成为定位祖先（absolute inset0 的水印精确
          居中于对话区宽）与独立层叠上下文（zIndex -1 的水印在列背景之上、
@@ -3550,6 +3597,7 @@ function apply(ctx) {
           const [surface, setSurface] = R.useState(readSurface())
           const [surfaceColor, setSurfaceColor] = R.useState(readSurfaceColor())
           const [surfaceConv, setSurfaceConv] = R.useState(isSurfaceConvOn())
+          const [surfaceAlpha, setSurfaceAlpha] = R.useState(readSurfaceAlpha())
           const rowStyle = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '12px 0', borderBottom: '1px solid var(--dsw-alias-border-l1)' }
           const labelStyle = { color: 'var(--dsw-alias-label-primary)', fontSize: '13px', fontWeight: 500, lineHeight: '1.5' }
           // Sub-label explaining what a switch does, so the row is self-describing.
@@ -3657,6 +3705,12 @@ function apply(ctx) {
           const changeSurfaceColor = (next) => {
             if (typeof localStorage !== 'undefined') localStorage.setItem(SURFACE_COLOR_KEY, next)
             setSurfaceColor(next)
+            syncSurface()
+          }
+          const changeSurfaceAlpha = (next) => {
+            const v = Math.max(0, Math.min(100, Math.round(next)))
+            if (typeof localStorage !== 'undefined') localStorage.setItem(SURFACE_ALPHA_KEY, String(v))
+            setSurfaceAlpha(v)
             syncSurface()
           }
           const toggleSurfaceConv = () => {
@@ -3787,6 +3841,28 @@ function apply(ctx) {
                   onClick: toggleSurfaceConv,
                   style: btnStyleFor(surfaceConv),
                 }, surfaceConv ? '已开启' : '已关闭')
+              )
+              : null,
+            /* 表面透明度滑块：自定义纯色与透明模式可调（玻璃模式无）。 */
+            surface !== 'glass'
+              ? R.createElement('div', { key: 'surface-alpha', style: { ...rowStyle, paddingLeft: '16px' } },
+                R.createElement('span', { style: labelStyle },
+                  '表面透明度：' + surfaceAlpha + '%',
+                  R.createElement('span', { style: hintStyle },
+                    surface === 'transparent'
+                      ? '0 完全透明（等高线直接贯穿），调大后叠加半透明底色'
+                      : '100 不透明纯色，调小后半透明（花纹可透）'
+                  )
+                ),
+                R.createElement('input', {
+                  type: 'range',
+                  min: '0',
+                  max: '100',
+                  value: String(surfaceAlpha),
+                  onChange: (event) => { changeSurfaceAlpha(Number(event.target.value)) },
+                  className: 'edge-alpha-slider',
+                  'aria-label': '侧边栏表面透明度',
+                })
               )
               : null,
             R.createElement('div', { key: 'watermark', style: rowStyle },
