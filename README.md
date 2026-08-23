@@ -177,7 +177,9 @@ node scripts/build-client.mjs
 | auto 权限项消失 | 聚合 patch 未迁移原插件的 `permission.presets.auto` 段 | 并入 `cordis.patch.yml` |
 | 三点菜单浮窗导致侧边栏收起 | pointInside 纯几何判断，portal 浮窗不在侧边栏矩形内 | `pointOverSidebarPopup`：elementFromPoint 命中 Radix popper / menu / dialog 时只保活不折叠、不展开 |
 | ENDFIELD 水印在新会话页对齐整窗 | hero 水印跟随 headline 中心，headline 宿主宽度随页面变化 | 改用 centerCol（对话区）中心对齐；headline 匹配放宽（hash 漂移免疫） |
-| 会话日志 seq gap / tool source 校验失败 | 历史版本写入重复/空 callId | `scripts/repair-session-log.mjs`：重编号 seq + 补 source.callId 重打包 |
+| 有历史对话页水印位置不对（fixed 浮视口） | headline 在有消息页也存在，hero 模式误判 | `data-chat-flow` 存在时强制 persist（对话区背景层，随对话区布局） |
+| 会话日志 seq gap / tool source / surface 校验失败 | 历史版本写入重复 seq、空 callId、replace 引用失效 | `scripts/repair-session-log.mjs`：重编号 seq + 重写事件内 seq 引用（surfaceOp/sourceEventSeqs）+ 补 source.callId，scanLog + foldSurface 双验证 |
+| tool-summary 抽屉点击后内容变纯文本 | `dsh-tool-summary-styles` 等无主 `<style>` 启动早期被按插件清理逻辑误删 | 全部运行时 style 注入批量带 `data-plugin=@dsh-external/dsh-webui`（10 处） |
 | ventus-progress skill 未安装 | 整合 vendor 缺 skills 目录 + DSH_HOME 未注入 | vendor 补齐 skills；installSkill 加 `~/.dsh` fallback |
 | 页面被 Edge 标记为英语 | 官方 index.html 声明 `lang="en"` | usage apply 运行时改回 `zh-CN` |
 
