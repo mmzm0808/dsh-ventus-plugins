@@ -284923,6 +284923,46 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 			};
 		}
 		//#endregion
+		//#region src/client/subagent-titles.ts
+		/**
+		* webui — 子代理树条目标题行为修正
+		*
+		* 官方子代理树（对话区顶栏的 HeaderLineage tree）把 `title`（当前任务
+		* 标题/诊断原因）挂在整行 treeitem 上——悬停任意子代理行都会弹出完整
+		* 标题。用户要求：悬停条目不弹标题，只有悬停「标题文本」（summary
+		* span）时才显示完整标题。
+		*
+		* 实现：MutationObserver 监听 tree 出现，把 title 从 treeitem 移到
+		* 其 summary span；`data-subagent-title-fixed` 标记幂等（树条目会被
+		* React 重建，观察器持续生效）。
+		*/
+		const SUBAGENT_TITLE_FIXED = "data-subagent-title-fixed";
+		/** 修正一棵子代理树：title 从行级移到 summary span。 */
+		function fixSubagentRowTitles(root) {
+			const rows = root.querySelectorAll("[role=\"treeitem\"]");
+			for (const row of rows) {
+				if (!(row instanceof HTMLElement)) continue;
+				if (row.hasAttribute(SUBAGENT_TITLE_FIXED)) continue;
+				const title = row.getAttribute("title");
+				if (title === null) continue;
+				row.removeAttribute("title");
+				const summary = row.querySelector("[class*=\"summary\"]");
+				if (summary instanceof HTMLElement) summary.setAttribute("title", title);
+				row.setAttribute(SUBAGENT_TITLE_FIXED, "");
+			}
+		}
+		/** 常驻观察：任何新出现的子代理树都套用修正（React 重建/路由切换）。 */
+		function watchSubagentRowTitles() {
+			if (typeof document === "undefined" || typeof MutationObserver === "undefined") return () => {};
+			fixSubagentRowTitles(document);
+			const observer = new MutationObserver(() => fixSubagentRowTitles(document));
+			observer.observe(document.body, {
+				childList: true,
+				subtree: true
+			});
+			return () => observer.disconnect();
+		}
+		//#endregion
 		//#region src/client/index.ts
 		const CUSTOM_COMPONENT_SCOPE = "dsh-better-markdown";
 		const inject = [
@@ -284986,6 +285026,7 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 			applySidebarFloatSetting(ctx);
 			ctx.effect(() => applySidebarFloat(ctx), "webui: sidebar float");
 			ctx.effect(() => mountTitleHover(), "webui: title hover");
+			ctx.effect(() => watchSubagentRowTitles(), "webui: subagent row titles");
 			ctx.effect(() => injectResponsiveStyles(), "webui: responsive styles");
 		}
 		//#endregion
