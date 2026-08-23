@@ -12250,6 +12250,17 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 					button.disabled = true;
 					button.textContent = "截图生成中…";
 				}
+				// 克隆前临时隐藏大内容（html2canvas 克隆整个文档，任务运行时
+				// 对话区流式内容 + 主题等高线 canvas 让克隆变慢甚至挂起；
+				// 截图只需 usage 面板本身，截完恢复）。
+				const hidden = [];
+				for (const sel of ["[data-endfield-contour]", "[data-endfield-watermark]", '[class$="_centerCol"]', '[class$="_sidebarCol"]', "[data-dsh-panel-host]", '[class$="_detailsCol"]']) {
+					const el = document.querySelector(sel);
+					if (el && el !== panel && el.style.display !== "none") {
+						el.style.setProperty("display", "none", "important");
+						hidden.push(el);
+					}
+				}
 				try {
 					const bodyEl = host.querySelector(".dsu-body");
 					const contentHeight = Math.max(panel.scrollHeight, bodyEl?.scrollHeight ?? 0);
@@ -12261,7 +12272,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 						button.disabled = false;
 						button.textContent = "截图";
 					}
-					const canvas = await html2canvas(panel, {
+					const canvas = await Promise.race([html2canvas(panel, {
 						scale: Math.min(2, window.devicePixelRatio || 1),
 						useCORS: true,
 						backgroundColor: captureBackground(),
@@ -12289,7 +12300,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 							const clonedPage = clonedDocument.querySelector(".dsu-page.active");
 							if (clonedPage) clonedPage.style.height = "auto";
 						}
-					});
+					}), new Promise((_, rej) => setTimeout(() => rej(new Error("截图超时（文档过大）")), 15000))]);
 					const blob = await new Promise((resolve, reject) => {
 						canvas.toBlob((result) => result ? resolve(result) : reject(/* @__PURE__ */ new Error("canvas 导出失败")), "image/png");
 					});
@@ -12309,6 +12320,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 					stateFields.footer.textContent = "截图失败：" + (error instanceof Error ? error.message : String(error));
 				} finally {
 					screenshotting = false;
+					for (const el of hidden) el.style.removeProperty("display");
 					if (button) {
 						button.disabled = false;
 						button.textContent = "截图";
