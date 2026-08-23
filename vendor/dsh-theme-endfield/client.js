@@ -1123,14 +1123,10 @@ function apply(ctx) {
       // blur 透出黑 = 看起来还是黑的）。固定视口左缘使折叠/展开全程位置
       // 恒定不跳（等高线是视口定位装饰，本来就不随对话滚动）。
       const left = 0
-      // 右侧悬浮栏（better-sidebar）展开时会覆盖对话区右缘，花纹右缘让开
-      // 它的左缘，保证花纹在「实际可见的对话区」内居中、不被右侧栏遮挡。
-      let right = Math.max(1, Math.round(window.innerWidth))
-      const bsbPanel = document.querySelector('[data-dsh-panel-host] [class*="panel"]')
-      if (bsbPanel !== null) {
-        const br = bsbPanel.getBoundingClientRect()
-        if (br.width > 50 && br.left > left && br.left < right) right = br.left
-      }
+      // 等高线铺满整个视口宽：右侧 better-sidebar 面板（玻璃质感）需要
+      // 背后有花纹可透——原来避让面板左缘导致面板区域背后纯黑，玻璃
+      // 透出黑。花纹在面板下被玻璃模糊，对话区可见部分不受影响。
+      const right = Math.max(1, Math.round(window.innerWidth))
       const w = Math.max(1, Math.round(right - left))
       const h = Math.max(1, Math.round(r.height))
       // Position follows the conversation column on EVERY call (sidebar
@@ -2242,6 +2238,10 @@ function apply(ctx) {
         -webkit-backdrop-filter: blur(24px) saturate(1.4);
       }
       body.theme-endfield-surface-glass [data-dsh-panel-host] [class*="pane"] {
+        background: transparent !important;
+      }
+      /* 面板标签栏：官方实色（bg-layer-1）盖住玻璃顶部，改透明。 */
+      body.theme-endfield-surface-glass [data-dsh-panel-host] [class*="tabBar"] {
         background: transparent !important;
       }
       /* 对话区玻璃：覆盖「消息列表区（viewArea）+ 会话标题栏（_header）」，
