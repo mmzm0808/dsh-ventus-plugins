@@ -1118,19 +1118,18 @@ function apply(ctx) {
 
     const contourSizeTo = (host) => {
       const r = host.getBoundingClientRect()
-      // 以「对话内容区」（padding 起点）为基准而非整列边框盒：悬浮侧边栏
-      // 折叠/展开时列的边框盒左缘会移动（56px 轨道 ↔ 全宽），但内容区
-      // 起点恒为 56px——跟随内容区使等高线层在折叠/展开全程位置恒定，
-      // 背景零跳动（等高线是视口定位装饰，本来就不随对话滚动）。
-      const padL = parseFloat(getComputedStyle(host).paddingLeft) || 0
-      const left = r.left + padL
+      // 等高线铺满视口宽（固定左缘 0）：玻璃质感的侧边栏需要背后有花纹
+      // 可透（rail/右侧栏区域原在内容区起点 56 之后，背后是纯黑页面背景，
+      // blur 透出黑 = 看起来还是黑的）。固定视口左缘使折叠/展开全程位置
+      // 恒定不跳（等高线是视口定位装饰，本来就不随对话滚动）。
+      const left = 0
       // 右侧悬浮栏（better-sidebar）展开时会覆盖对话区右缘，花纹右缘让开
       // 它的左缘，保证花纹在「实际可见的对话区」内居中、不被右侧栏遮挡。
-      let right = r.right
+      let right = Math.max(1, Math.round(window.innerWidth))
       const bsbPanel = document.querySelector('[data-dsh-panel-host] [class*="panel"]')
       if (bsbPanel !== null) {
         const br = bsbPanel.getBoundingClientRect()
-        if (br.width > 50 && br.left > left && br.left < r.right) right = br.left
+        if (br.width > 50 && br.left > left && br.left < right) right = br.left
       }
       const w = Math.max(1, Math.round(right - left))
       const h = Math.max(1, Math.round(r.height))
@@ -2211,6 +2210,13 @@ function apply(ctx) {
          and win while the sheet is mounted; when the mode is transparent
          neither class exists and the sheet runs straight through. */
       body.theme-endfield-surface-glass [class$='_sidebarCol'] [class*='_root'] {
+        background: color-mix(in srgb, var(--dsw-alias-bg-base, #101110) 45%, transparent) !important;
+        backdrop-filter: blur(20px) saturate(1.3);
+        -webkit-backdrop-filter: blur(20px) saturate(1.3);
+      }
+      /* 右侧栏（详情列）玻璃：等高线已铺满视口宽，展开时磨砂透出花纹，
+         与左侧栏一致的玻璃观感。 */
+      body.theme-endfield-surface-glass [class$='_detailsCol'] {
         background: color-mix(in srgb, var(--dsw-alias-bg-base, #101110) 45%, transparent) !important;
         backdrop-filter: blur(20px) saturate(1.3);
         -webkit-backdrop-filter: blur(20px) saturate(1.3);

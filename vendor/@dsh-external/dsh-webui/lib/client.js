@@ -286491,11 +286491,8 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		const SHEET$1 = `
 /* ===== dsh-webui 会话置顶 / 归档按钮 / 右键菜单 ===== */
 
-/* 1) 会话行的三个点按钮让位给归档按钮：隐藏官方 ellipsis 触发钮。
-   （右键菜单已接管完整操作入口，行内只保留一键归档。） */
-[class*="sessionRow"] [class*="rowActions"] [class*="iconButton"] {
-  display: none !important;
-}
+/* 1) 官方三点菜单按钮保留（用户反馈：隐藏后行内只剩归档按钮，不习惯）。
+   右键菜单 / 一键归档 / 置顶功能不变，三点按钮与归档按钮共存。 */
 
 /* 2) 行内归档按钮：与官方 iconButton 同款几何（16px，tertiary → hover primary）。 */
 .dsp-archive-btn {
