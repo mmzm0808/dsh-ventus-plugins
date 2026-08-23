@@ -222,6 +222,20 @@ export async function navigateAndWait(session, url, timeoutMs = 30000) {
     return { url: current?.url || url, title: current?.title || '' };
 }
 /** 历史前进/后退（delta 正=前进，负=后退） */
+export async function setViewport(session, width, height, deviceScaleFactor = 1) {
+    const { conn, sessionId } = session;
+    await conn.send('Emulation.setDeviceMetricsOverride', {
+        width, height, deviceScaleFactor, mobile: false,
+    }, sessionId);
+}
+/** 清除视口覆写，恢复跟随真实窗口/视图（截图渲染结束后调用）。 */
+export async function clearViewport(session) {
+    const { conn, sessionId } = session;
+    try {
+        await conn.send('Emulation.clearDeviceMetricsOverride', {}, sessionId);
+    }
+    catch { /* 未覆写则忽略 */ }
+}
 export async function navigateHistory(session, delta) {
     const { conn, sessionId } = session;
     const info = await conn.send('Page.getNavigationHistory', {}, sessionId);
@@ -237,9 +251,9 @@ export async function navigateHistory(session, delta) {
     return { url: current?.url || '', title: current?.title || '' };
 }
 /** 页面截图（jpeg base64） */
-export async function captureScreenshot(session, quality = 80) {
+export async function captureScreenshot(session, quality = 80, format = 'jpeg') {
     const { conn, sessionId } = session;
-    const shot = await conn.send('Page.captureScreenshot', { format: 'jpeg', quality, fromSurface: true }, sessionId);
+    const shot = await conn.send('Page.captureScreenshot', { format, quality, fromSurface: true }, sessionId);
     if (!shot?.data)
         throw new Error('截图失败：CDP 未返回图像数据');
     return shot.data;

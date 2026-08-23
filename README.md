@@ -17,6 +17,8 @@
   <img alt="version" src="https://img.shields.io/badge/version-v0.2.0-blueviolet">
   <img alt="plugins" src="https://img.shields.io/badge/plugins-11%20in%201-4d6bfe">
   <img alt="runtime" src="https://img.shields.io/badge/runtime-dsh%20web-4d6bfe">
+  <img alt="stars" src="https://img.shields.io/github/stars/mmzm0808/dsh-ventus-plugins">
+  <img alt="last-commit" src="https://img.shields.io/github/last-commit/mmzm0808/dsh-ventus-plugins">
 </p>
 
 ## ✨ 功能总览
@@ -39,6 +41,70 @@
 > `@nanmicoder/dsh-agent-teams`（多代理团队协作）已按用户要求保持**禁用**：
 > 其 activity scanner 在历史日志异常后会反复全局扫描导致 UI 假死；
 > host 不挂载、client 不内嵌，行为与多插件时代完全一致。
+
+## 🧩 功能模块 key 一览
+
+> 参考 [statem-li/dsh-webui](https://github.com/statem-li/dsh-webui) 的模块开关体系——**代码中真实存在**：
+> `src/modules.ts` 的 `WEBUI_MODULE_KEYS` 定义全部 key，host/client 两端按同一份语义裁剪
+> （`isModuleEnabled`：缺省 = 启用，只有显式 `false` 才关闭）。本整合包沿用同一约定。
+
+| 分组 | key | 控制的功能 |
+|---|---|---|
+| 对话体验 | `messageWidth` | 消息气泡宽度设置 |
+| | `doneSound` | 回合结束提示音 + 完成卡片 |
+| | `donePill` | 对话完成胶囊 + 记录面板 |
+| | `approvalNotify` | 审批等待 toast 提醒 |
+| | `ctrlEnter` | 输入框 Ctrl+Enter 换行 |
+| | `sessionMotion` | 会话切换柔和过渡 |
+| | `sessionPin` | 会话置顶 / 归档 / 右键菜单 |
+| | `rewind` | 对话退回（文件回退 + 上下文分支） |
+| | `screenshot` | 单条消息截图 / 会话长图 |
+| | `promptOptimize` | 提示词优化图标 |
+| | `zhThinking` | 中文思考开关 |
+| | `peakValley` | DeepSeek 峰谷时刻卡片 |
+| | `chatStats` | 会话统计条 |
+| | `toolSummary` | 工具调用聚合 + 活动抽屉 |
+| 模型与供应商 | `reasoningSync` | `webui_sync_reasoning` 推理等级补全工具 |
+| | `modelSeats` | 模型座位接管 + 推理等级弹出 |
+| | `providerHub` | 供应商管理设置页 |
+| | `vision` | 辅助视觉 + 生图 + 生视频 + 生图画廊 |
+| | `webSearch` | AnySearch 网页搜索 |
+| | `mail` | 邮箱验证码 |
+| 技能 | `skills` | 技能 slash 两级导航源 + 技能开关路由 |
+| AI 浏览器 | `browser` | 浏览器工具 + dock UI + 设置开关 |
+| 自动化与计划 | `automation` | 自动化任务 + 真实执行引擎 |
+| | `planweave` | PlanWeave 计划项目 |
+| 记忆 | `memory` | 记忆引擎 + Memory Dream |
+| 用量与统计 | `usage` | 用量工作台 |
+| 文件与工作区 | `fileExplorer` | 文件浏览器 |
+| | `dirPicker` | 工作区目录选择器 |
+| 外观与壳 | `appearance` | 玻璃质感主题 |
+| | `sidebarFloat` | 悬浮侧边栏 |
+| | `updater` | 壳管理更新 |
+| | `proxy` | 网络代理 |
+
+### 各功能能力明细
+
+| 功能 | 能力 |
+|---|---|
+| **usage 用量工作台** | 余额/消费/请求数/Tokens 总览、分模型用量与 R0 倍率、命中率徽标、趋势图、登录/退出、截图 |
+| **screenshot 消息截图** | 单条消息渲染截图（Markdown → 卡片图）、会话长图导出（`/api/webui-screenshot`） |
+| **rewind 对话退回** | 消息文件快照、上下文分支回退（`/api/webui-rewind` 路由） |
+| **sessionMotion** | 会话切换时的柔和过渡动画（opacity/transform 过渡，reduced-motion 降级） |
+| **sessionPin** | 会话置顶 / 归档 / 右键上下文菜单（持久化存储） |
+| **donePill 完成胶囊** | 回合结束「对话完成」胶囊 + 记录面板（`/api/webui-done-pill`） |
+| **memory 记忆引擎** | 侧边栏记忆面板、注入开关、Memory Dream（模型整理：合并/精炼/剪枝/提升长期） |
+| **tool-summary** | 工具调用聚合 chip + 活动抽屉（点击展开完整调用列表） |
+| **ventus-progress** | 子代理任务分段进度条（`progress-json` 协议 + skill 引导） |
+| **theme-endfield** | 终末地主题：等高线背景、ENDFIELD 水印、玻璃/纯色表面、hero 贴底、雷霆大字（任务开始/完成大字 + 入场动画） |
+| **deepseek-usage** | 悬浮球余额 / R0 / 命中率、开放平台数据轮询 |
+| **better-sidebar** | 右侧 VSCode 式重栏：文件树/编辑器/终端/Git/浏览器 |
+| **ventus-search** | 多引擎搜索 + Readability 抓取 |
+| **ventus-whale** | 3D 虎鲸桌宠 |
+| **super-injector** | 运行时插件注入 + 热重载 |
+| **visualize** | HTML 片段沙箱渲染 |
+| **auto-mode** | Auto 权限策略（沙箱优先自动审查） |
+| **ua-relay** | B.AI UA 重写反代 |
 
 ## 🚀 安装
 
