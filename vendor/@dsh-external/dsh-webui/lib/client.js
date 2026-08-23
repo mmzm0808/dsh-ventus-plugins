@@ -274562,10 +274562,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const r = Math.min(1, v / max);
 			return `hsl(${190 + 80 * r}, 68%, ${86 - 48 * r}%)`;
 		}
-		/** 格子文字颜色随底色亮度切换（浅底深字 / 深底白字）。 */
-		function textColor(v, max) {
-			if (v <= 0 || max <= 0) return "var(--dsw-alias-label-tertiary)";
-			return 86 - 48 * Math.min(1, v / max) < 56 ? "rgba(255,255,255,.95)" : "rgba(6,30,42,.92)";
+		/** 格子文字颜色：统一白色（用户要求，深浅底色都白）。 */
+		function textColor() {
+			return "rgba(255, 255, 255, .95)";
 		}
 		function Heatmap({ cells, onSelect, rows = 5, max }) {
 			const [hover, setHover] = (0, react.useState)(null);
@@ -274581,7 +274580,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				},
 				children: cells.map((c) => {
 					const bg = cellColor(c.value, peak);
-					const fg = textColor(c.value, peak);
+					const fg = textColor();
 					return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						onMouseEnter: (e) => {
 							const r = e.currentTarget.getBoundingClientRect();
