@@ -81,6 +81,37 @@ for (let i = 1; i < lines.length; i++) {
 }
 console.log(`[repair] decoded events: ${events.length}, bad lines: ${badLine}`)
 
+// token meter step 匹配修复：assistant/message 必须匹配当前 step/start
+// （多实例交替写入——end-seed 后另一实例继续写入——会缺失 step/start，
+// 官方 token-meter 折叠抛 "assistant/message has no matching step/start"）。
+// 在缺失处补合成 step/start（turn/step 复制自 message；time 取前一事件）。
+let stepFixes = 0
+{
+  let stepStart = undefined
+  const out = []
+  for (const ev of events) {
+    if (ev.type === 'step/start') stepStart = ev.data
+    else if (ev.type === 'step/end') stepStart = undefined
+    else if (ev.type === 'assistant/message') {
+      if (stepStart === undefined || stepStart.turn !== ev.data?.turn || stepStart.step !== ev.data?.step) {
+        const prev = out.length > 0 ? out[out.length - 1] : undefined
+        out.push({
+          type: 'step/start',
+          seq: ev.seq,
+          time: prev !== undefined && typeof prev.time === 'number' ? prev.time : ev.time,
+          data: { turn: ev.data.turn, step: ev.data.step },
+        })
+        stepStart = ev.data
+        stepFixes++
+      }
+    }
+    out.push(ev)
+  }
+  events.length = 0
+  events.push(...out)
+}
+if (stepFixes > 0) console.log(`[repair] token-meter step/start fixes: ${stepFixes}`)
+
 // 重编号 seq + 建立旧→新映射 + 重写事件内 seq 引用
 let gaps = 0
 const oldSeqToNew = new Map()
@@ -121,6 +152,26 @@ for (const ev of events) {
 }
 if (fixedSource > 0) console.log(`[repair] tool/result source.callId patched: ${fixedSource}`)
 
+// token 表面 shadow-price 协议修复：compaction/summary|prune 的
+// shadowedRange（武装 claim）必须与紧随其后的 surface replace 的
+// op.start/end 完全一致（官方 foldSurfaceProjection 校验）。历史损坏
+// 日志（seq gap 写入错乱）里这对引用可能差 1——以 replace 为准修正。
+let tokenFixes = 0
+for (let i = 0; i < events.length; i++) {
+  const ev = events[i]
+  if (ev.type !== 'compaction/summary' && ev.type !== 'compaction/prune') continue
+  const next = events[i + 1]
+  if (!next || !next.surfaceOp || typeof next.surfaceOp !== 'object' || next.surfaceOp.op !== 'replace') continue
+  const range = ev.data?.shadowedRange
+  if (!range || typeof range.start !== 'number' || typeof range.end !== 'number') continue
+  if (range.start !== next.surfaceOp.start || range.end !== next.surfaceOp.end) {
+    range.start = next.surfaceOp.start
+    range.end = next.surfaceOp.end
+    tokenFixes++
+  }
+}
+if (tokenFixes > 0) console.log(`[repair] token-surface claim fixes: ${tokenFixes}`)
+
 // 重新编码事件行（保留 chunk 打包，与官方写入一致）+ 写回
 const body = eventLines(events, true)
 const headerFrame = await compressZstdFrame(header + '\n')
@@ -141,6 +192,36 @@ try {
   console.log(`[repair] VERIFY scanLog OK: header id=${result.meta?.id}, events=${result.events.length}, committedBytes=${result.committedBytes}`)
   const fold = foldSurface(result.events)
   console.log(`[repair] VERIFY foldSurface OK: surface nodes=${fold.nodes.length}, replacements=${fold.replacements.length}`)
+  // token 表面折叠验证（shadow-price 协议）：与官方读取路径一致
+  let claim = undefined
+  let tokenEvents = 0
+  for (const ev of result.events) {
+    if (ev.type === 'compaction/summary' || ev.type === 'compaction/prune') {
+      const { shadowedRange, shadowedTokenCount } = ev.data
+      claim = { start: shadowedRange.start, end: shadowedRange.end, tokens: shadowedTokenCount }
+      continue
+    }
+    if (!ev.surfaceOp) { claim = undefined; continue }
+    if (ev.surfaceOp === 'append') { claim = undefined; continue }
+    if (claim !== undefined && (claim.start !== ev.surfaceOp.start || claim.end !== ev.surfaceOp.end)) {
+      throw new Error(`token surface mismatch at seq ${ev.seq}: claim ${claim.start}-${claim.end} vs replace ${ev.surfaceOp.start}-${ev.surfaceOp.end}`)
+    }
+    claim = undefined
+    tokenEvents++
+  }
+  console.log(`[repair] VERIFY token surface OK: ${tokenEvents} replacements replayed`)
+  // token meter step 匹配验证（与官方读取路径一致）
+  let stepStart = undefined
+  for (const ev of result.events) {
+    if (ev.type === 'step/start') stepStart = ev.data
+    else if (ev.type === 'step/end') stepStart = undefined
+    else if (ev.type === 'assistant/message') {
+      if (stepStart === undefined || stepStart.turn !== ev.data?.turn || stepStart.step !== ev.data?.step) {
+        throw new Error(`token meter step mismatch at seq ${ev.seq}: turn ${ev.data?.turn}/step ${ev.data?.step} without matching step/start`)
+      }
+    }
+  }
+  console.log(`[repair] VERIFY token meter steps OK`)
 } catch (e) {
   console.error(`[repair] VERIFY FAILED: ${e.message}`)
   process.exit(1)

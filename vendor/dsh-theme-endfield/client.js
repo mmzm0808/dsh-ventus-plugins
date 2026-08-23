@@ -2359,6 +2359,10 @@ function apply(ctx) {
       body:not(.theme-endfield-round) [class*='Scrollbar'] {
         border-radius: 0 !important;
       }
+      /* done-pill 对话完成胶囊：保持胶囊圆角（直角规则只压控件，不压胶囊） */
+      body:not(.theme-endfield-round) [class*='dsh-done-pill'] {
+        border-radius: calc(15px * var(--dps)) !important;
+      }
       * {
         scrollbar-width: thin;
             [data-endfield-thunder] {
