@@ -2130,10 +2130,11 @@ function apply(ctx) {
       [data-dsu] {
         z-index: 60 !important;
       }
-      /* 对话区滚动容器禁止横向滚动：内容横向溢出时 PgUp/PgDn 的
-         滚动会带动 scrollLeft，整体往左偏移（每次约一个细栏宽，
-         数次后到边界）。代码块内部有自己的横向滚动，不受影响。 */
-      [class$='_scrollBody'] {
+      /* 对话区滚动容器（含内层）禁止横向滚动：内容横向溢出时
+         PgUp/PgDn 的滚动会带动 scrollLeft，整体往左偏移。代码块
+         内部保留自己的横向滚动。 */
+      [class$='_scrollBody'],
+      [class$='_scrollBody'] *:not(pre):not(code):not([class*='code']):not([class*='Code']) {
         overflow-x: hidden !important;
       }
       /* 输入框（composer textarea）禁止水平滚动：输入框有文字时
