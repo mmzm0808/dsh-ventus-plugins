@@ -286893,7 +286893,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		* @param consumed - 本次扫描已消费的 sessionId（标题重名时按 DOM 顺序消歧）。
 		* @returns sessionId，或无法解析时为 null。
 		*/
-		function resolveSessionId(row, sessions, consumed) {
+		function resolveSessionId$1(row, sessions, consumed) {
 			const viaFiber = resolveViaFiber(row);
 			if (viaFiber !== null) return viaFiber;
 			const title = rowTitle(row);
@@ -286928,11 +286928,11 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		/** 打开重命名弹窗的自定义事件名。 */
 		const RENAME_EVENT = "dsh:session-pin-rename";
 		/** 运行时会话 / 工作区服务（apply 时注入；未提供时相关动作降级为无操作）。 */
-		let sessions;
+		let sessions$1;
 		let workspaces;
 		/** 由 apply 注入运行时服务。 */
 		function setSessionPinServices(s, w) {
-			sessions = s;
+			sessions$1 = s;
 			workspaces = w;
 		}
 		/** 触发右键菜单（供 maintainer 调用）。 */
@@ -286941,11 +286941,11 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		}
 		/** 分叉会话：在最后完成的回合切分并打开子会话（与 ui-workspace 同款）。 */
 		function doFork(sessionId) {
-			sessions?.fork({
+			sessions$1?.fork({
 				sessionId,
 				increaseTitle: true
 			}).then((childId) => {
-				sessions?.open(childId);
+				sessions$1?.open(childId);
 			}).catch(() => {});
 		}
 		/** 归档会话（log 与记账槽保留，行随归档集回显消失）。 */
@@ -286954,7 +286954,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		}
 		/** 重命名会话（durable title 覆盖；host 归一化）。 */
 		async function doRename(sessionId, title) {
-			const session = sessions?.binding(sessionId)?.session;
+			const session = sessions$1?.binding(sessionId)?.session;
 			if (session === void 0) return "未知会话";
 			try {
 				const result = await session.rename(title);
@@ -287207,7 +287207,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				btn.innerHTML = ARCHIVE_SVG;
 				btn.addEventListener("click", (event) => {
 					event.stopPropagation();
-					const id = resolveSessionId(row, sessions, /* @__PURE__ */ new Set());
+					const id = resolveSessionId$1(row, sessions, /* @__PURE__ */ new Set());
 					if (id === null) return;
 					workspaces?.archiveSession(id).catch(() => {});
 				});
@@ -287227,7 +287227,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			return Array.from(container.querySelectorAll(SESSION_ROW_SEL)).map((row) => ({
 				row,
 				unit: topLevelUnit(row, container),
-				id: resolveSessionId(row, sessions, consumed)
+				id: resolveSessionId$1(row, sessions, consumed)
 			}));
 		}
 		/** 同步置顶标记：置顶行标题前加图钉，非置顶行移除。 */
@@ -287352,7 +287352,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			const visible = /* @__PURE__ */ new Set();
 			const consumed = /* @__PURE__ */ new Set();
 			for (const row of group.querySelectorAll(SESSION_ROW_SEL)) {
-				const id = resolveSessionId(row, sessions, consumed);
+				const id = resolveSessionId$1(row, sessions, consumed);
 				if (id !== null) visible.add(id);
 			}
 			const hidden = groupSessionIds(key, sessions, workspaces).filter((id) => pinnedSet.has(id) && !visible.has(id));
@@ -287449,7 +287449,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			const row = target.closest(SESSION_ROW_SEL);
 			if (row === null || isBlankRow(row)) return;
 			event.preventDefault();
-			const id = resolveSessionId(row, sessions, /* @__PURE__ */ new Set());
+			const id = resolveSessionId$1(row, sessions, /* @__PURE__ */ new Set());
 			if (id === null) return;
 			openSessionPinMenu({
 				sessionId: id,
@@ -287552,6 +287552,137 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				};
 			}, "webui: session pin overlay");
 			ctx.effect(() => startSessionPin(ctx), "webui: session pin maintainer");
+		}
+		//#endregion
+		//#region src/client/title-rename.ts
+		/** 标记已装处理器的属性（幂等）。 */
+		const BOUND_ATTR = "data-webui-title-rename";
+		/** 输入框标记（用于识别与清理）。 */
+		const INPUT_ATTR = "data-webui-title-input";
+		let sessions;
+		/** 从 header 区域推断当前会话 id：官方在 pane 上带 data-session-id 时优先用它。 */
+		function resolveSessionId(header) {
+			let node = header;
+			while (node !== null) {
+				const raw = node.getAttribute("data-session-id");
+				if (raw !== null && raw !== "") return raw;
+				node = node.parentElement;
+			}
+			const current = sessions?.current?.id;
+			return typeof current === "string" && current !== "" ? current : null;
+		}
+		/** 标题元素：header 内第一个有非空文本且无子元素的节点（官方标题文本容器）。 */
+		function findTitleEl(header) {
+			const walker = document.createTreeWalker(header, NodeFilter.SHOW_ELEMENT);
+			while (walker.nextNode()) {
+				const el = walker.currentNode;
+				if (el.children.length > 0) continue;
+				if ((el.textContent ?? "").trim() === "") continue;
+				if (el.closest("button") !== null) continue;
+				return el;
+			}
+			return null;
+		}
+		/** 就地把标题换成输入框；提交后还原（官方会在 rename 成功后重渲染标题）。 */
+		function beginEdit(titleEl, sessionId) {
+			if (titleEl.getAttribute(INPUT_ATTR) === "editing") return;
+			const original = (titleEl.textContent ?? "").trim();
+			titleEl.setAttribute(INPUT_ATTR, "editing");
+			const input = document.createElement("input");
+			input.type = "text";
+			input.value = original;
+			input.setAttribute(INPUT_ATTR, "1");
+			const cs = getComputedStyle(titleEl);
+			input.style.cssText = [
+				"box-sizing:border-box",
+				"min-width:120px",
+				`width:${Math.max(160, Math.ceil(titleEl.getBoundingClientRect().width) + 24)}px`,
+				`font:${cs.font}`,
+				`color:${cs.color}`,
+				"background:var(--dsw-alias-bg-layer-2, rgba(0,0,0,.25))",
+				"border:1px solid var(--edge-accent, var(--dsw-alias-state-business-primary))",
+				"border-radius:6px",
+				"padding:1px 6px",
+				"outline:none"
+			].join(";");
+			const restore = () => {
+				titleEl.removeAttribute(INPUT_ATTR);
+				titleEl.style.removeProperty("display");
+				if (input.parentNode !== null) input.parentNode.removeChild(input);
+			};
+			const submit = () => {
+				const next = input.value.trim();
+				restore();
+				if (next === "" || next === original) return;
+				const session = sessions?.binding(sessionId)?.session;
+				if (session === void 0) return;
+				session.rename(next).catch(() => {});
+			};
+			input.addEventListener("keydown", (event) => {
+				if (event.key === "Enter") {
+					event.preventDefault();
+					submit();
+				} else if (event.key === "Escape") {
+					event.preventDefault();
+					restore();
+				}
+				event.stopPropagation();
+			});
+			input.addEventListener("blur", () => {
+				submit();
+			});
+			input.addEventListener("click", (event) => {
+				event.stopPropagation();
+			});
+			titleEl.style.display = "none";
+			titleEl.parentNode?.insertBefore(input, titleEl.nextSibling);
+			input.focus();
+			input.select();
+		}
+		/** 给当前所有 header 装点击处理（幂等）。 */
+		function bindHeaders() {
+			const headers = document.querySelectorAll("[data-slot=\"conversation.session.header\"]");
+			for (const header of headers) {
+				if (header.getAttribute(BOUND_ATTR) === "1") continue;
+				header.setAttribute(BOUND_ATTR, "1");
+				header.addEventListener("click", (event) => {
+					const target = event.target;
+					if (!(target instanceof HTMLElement)) return;
+					if (target.getAttribute(INPUT_ATTR) === "1") return;
+					if (target.closest("button") !== null) return;
+					const titleEl = findTitleEl(header);
+					if (titleEl === null || !titleEl.contains(target) && titleEl !== target) return;
+					const sessionId = resolveSessionId(header);
+					if (sessionId === null) return;
+					event.preventDefault();
+					event.stopPropagation();
+					beginEdit(titleEl, sessionId);
+				});
+				const titleEl = findTitleEl(header);
+				if (titleEl !== null) {
+					titleEl.style.cursor = "text";
+					titleEl.title = "点击重命名";
+				}
+			}
+		}
+		/** 注册：监听 DOM 变化持续给新 header 装处理器。 */
+		function applyTitleRename(ctx) {
+			try {
+				sessions = ctx.get("sessions");
+			} catch {
+				sessions = void 0;
+			}
+			bindHeaders();
+			const observer = new MutationObserver(() => {
+				bindHeaders();
+			});
+			observer.observe(document.body, {
+				childList: true,
+				subtree: true
+			});
+			ctx.effect(() => () => {
+				observer.disconnect();
+			});
 		}
 		//#endregion
 		//#region src/client/done-pill.tsx
@@ -326336,6 +326467,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			if (on("rewind")) applyRewindClient(ctx);
 			if (on("sessionMotion")) ctx.effect(() => applySessionSwitchMotion(), "webui: session switch motion");
 			if (on("sessionPin")) applySessionPin(ctx);
+			if (on("sessionPin")) applyTitleRename(ctx);
 			if (on("donePill")) applyDonePill(ctx);
 			if (on("fileExplorer")) applyFileExplorerClient(ctx);
 		}

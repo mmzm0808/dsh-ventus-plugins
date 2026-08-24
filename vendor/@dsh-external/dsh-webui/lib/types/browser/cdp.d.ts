@@ -59,12 +59,15 @@ export declare function navigateAndWait(session: CdpSession, url: string, timeou
     title: string;
 }>;
 /** 历史前进/后退（delta 正=前进，负=后退） */
+export declare function setViewport(session: CdpSession, width: number, height: number, deviceScaleFactor?: number): Promise<void>;
+/** 清除视口覆写，恢复跟随真实窗口/视图（截图渲染结束后调用）。 */
+export declare function clearViewport(session: CdpSession): Promise<void>;
 export declare function navigateHistory(session: CdpSession, delta: number): Promise<{
     url: string;
     title: string;
 }>;
 /** 页面截图（jpeg base64） */
-export declare function captureScreenshot(session: CdpSession, quality?: number): Promise<string>;
+export declare function captureScreenshot(session: CdpSession, quality?: number, format?: 'jpeg' | 'png'): Promise<string>;
 /** 页面执行 JS，返回 JSON 值 */
 export declare function evaluateJson(session: CdpSession, expression: string, awaitPromise?: boolean): Promise<any>;
 /** 读取视口尺寸（用于校验点击坐标是否落在可视区内） */
