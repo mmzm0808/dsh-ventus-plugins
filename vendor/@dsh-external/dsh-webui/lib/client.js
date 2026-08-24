@@ -289685,6 +289685,9 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 										type: "button",
 										style: clearAllStyle,
 										"aria-label": "清空全部记录",
+										onPointerDown: (event) => {
+											event.stopPropagation();
+										},
 										onClick: (event) => {
 											event.stopPropagation();
 											keepOpenUntil.current = Date.now() + 400;
@@ -289708,6 +289711,9 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 											type: "button",
 											style: groupCloseStyle,
 											"aria-label": "关闭整组通知",
+											onPointerDown: (event) => {
+												event.stopPropagation();
+											},
 											onClick: (event) => {
 												event.stopPropagation();
 												dismissGroup(top.sessionId);
@@ -289781,6 +289787,9 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 											type: "button",
 											style: toggleGroupStyle,
 											"aria-label": "收起该会话的通知",
+											onPointerDown: (event) => {
+												event.stopPropagation();
+											},
 											onClick: (event) => {
 												event.stopPropagation();
 												keepOpenUntil.current = Date.now() + 400;
