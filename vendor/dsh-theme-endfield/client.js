@@ -2785,6 +2785,16 @@ function apply(ctx) {
       [class*="searchResultRow"] {
         background: transparent !important;
       }
+      /* 工作区文件夹行：鲜明的主题色弱底卡片 + 圆角 + 加粗，与下方透明
+         的会话条一眼区分；hover 仍走半透明信号黄高亮。 */
+      [class$='_projectRow'] {
+        margin: 2px 0;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--edge-accent, #f5f500) 12%, transparent) !important;
+      }
+      [class$='_projectRow'] > * {
+        font-weight: 600;
+      }
       [class$='_projectRow']:hover,
       [class$='_sessionRow']:hover,
       [class$='_sessionRow'][class*='selected'],
