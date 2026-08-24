@@ -288585,7 +288585,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			position: "absolute",
 			...above ? {
 				top: "auto",
-				bottom: "100%"
+				bottom: "calc(100% + 8px)"
 			} : { top: "100%" },
 			left: shiftX,
 			width: `min(${DONE_PANEL_W}px, calc(100vw - 24px))`,
@@ -288611,7 +288611,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			position: "absolute",
 			...above ? {
 				top: "auto",
-				bottom: "100%"
+				bottom: "calc(100% + 8px)"
 			} : { top: "100%" },
 			left: shiftX,
 			width: `min(${RUN_PANEL_W}px, calc(100vw - 24px))`,
@@ -289620,7 +289620,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 						]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: runPanelStyle(hoveredRunning, runShift, pos !== null && window.innerHeight - pos.y - 30 * scale < Math.min(window.innerHeight * .6, 480)),
+						style: runPanelStyle(hoveredRunning, runShift, pos !== null && window.innerHeight - pos.y - 30 * scale < 240),
 						role: "dialog",
 						"aria-label": "正在执行中的任务",
 						"aria-hidden": !hoveredRunning,
@@ -289671,7 +289671,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 						]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: panelStyle(hovered, doneShift, pos !== null && window.innerHeight - pos.y - 30 * scale < Math.min(window.innerHeight * .66, 600)),
+						style: panelStyle(hovered, doneShift, pos !== null && window.innerHeight - pos.y - 30 * scale < 240),
 						role: "dialog",
 						"aria-label": "对话完成记录",
 						"aria-hidden": !hovered,
