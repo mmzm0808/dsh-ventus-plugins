@@ -3696,12 +3696,13 @@ function apply(ctx) {
           // Sub-label explaining what a switch does, so the row is self-describing.
           const hintStyle = { display: 'block', color: 'var(--dsw-alias-label-tertiary)', fontSize: '12px', fontWeight: 400, lineHeight: '1.5', marginTop: '2px' }
           const btnStyleFor = (on, disabled) => ({
-            color: on ? '#000' : 'var(--dsw-alias-label-primary)',
+            color: on ? 'var(--edge-accent-ink, #000)' : 'var(--dsw-alias-label-primary)',
             /* The switches are themed BY the theme they configure, so the "on"
                fill reads from the palette variable rather than a literal — an
                inline #fff500 here would keep every enabled button yellow while
                the rest of the UI turned cyan. */
-            background: on ? 'var(--edge-accent)' : 'var(--edge-btn-muted)',
+            /* 回退官方 token：主题关闭后主题变量随样式表移除，按钮回官方配色。 */
+            background: on ? 'var(--edge-accent, var(--dsw-alias-state-business-primary))' : 'var(--edge-btn-muted, var(--dsw-alias-interactive-bg-hover))',
             border: '1px solid var(--dsw-alias-border-l2)',
             borderRadius: mode === 'round' ? '999px' : '0',
             padding: '4px 14px',
