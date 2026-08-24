@@ -285372,8 +285372,21 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				return earliest !== void 0 ? Math.max(0, now - earliest) : void 0;
 			}, [toolNodes, now]);
 			const scrollRef = (0, react.useRef)(null);
+			/** 是否跟随底部：用户上翻后停止自动置底，回到底部附近再恢复跟随。 */
+			const followRef = (0, react.useRef)(true);
 			(0, react.useEffect)(() => {
-				if (!anyRunning) return;
+				const el = scrollRef.current;
+				if (el === null) return;
+				const onScroll = () => {
+					followRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+				};
+				el.addEventListener("scroll", onScroll, { passive: true });
+				return () => {
+					el.removeEventListener("scroll", onScroll);
+				};
+			}, []);
+			(0, react.useEffect)(() => {
+				if (!anyRunning || !followRef.current) return;
 				const el = scrollRef.current;
 				if (el !== null) el.scrollTop = el.scrollHeight;
 			}, [
