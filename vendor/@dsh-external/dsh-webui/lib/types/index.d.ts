@@ -19,6 +19,8 @@ export interface WebuiConfig {
     memory?: Partial<import('./memory/types.js').MemoryConfig>;
     /** 用量统计 + 技能管理配置（透传给 dsh-usage-skill 的 host）。 */
     usage?: any;
+    /** 辅助视觉 + 生图配置（自 dsh-vision-helper 合并）。 */
+    visionHelper?: Partial<import('./vision-helper.js').Config>;
 }
 /**
  * 注册 `webui_sync_reasoning` 工具 + 中文思考开关 + 网络代理 + AI 浏览器

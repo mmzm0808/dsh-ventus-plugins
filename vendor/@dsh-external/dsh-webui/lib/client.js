@@ -263244,7 +263244,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			}
 		}
 		let Qe = null;
-		let en$2 = !1;
+		let en$3 = !1;
 		let nn = null;
 		let tn = null;
 		let rn = null;
@@ -263269,7 +263269,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				}
 				return String(e);
 			}(e);
-			return t ? (Qe !== n && (Qe = n), en$2 || ln !== t ? !nn || on !== t && tn !== t ? (rn = e, on = t, nn || (en$2 = !0, nn = (async () => {
+			return t ? (Qe !== n && (Qe = n), en$3 || ln !== t ? !nn || on !== t && tn !== t ? (rn = e, on = t, nn || (en$3 = !0, nn = (async () => {
 				for (; null != rn && null != on;) {
 					const e = rn, n = on;
 					if (rn = null, on = null, ln === n) continue;
@@ -263280,7 +263280,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					} catch {}
 				}
 			})().finally(() => {
-				en$2 = !1, nn = null, tn = null;
+				en$3 = !1, nn = null, tn = null;
 			}), nn)) : nn : Promise.resolve()) : Promise.resolve();
 		}
 		let dn = null;
@@ -269507,7 +269507,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		* webui — 会话 Web UI 插件样式（运行时注入 <style>，卸载时移除）。
 		* 类名前缀 webui-；颜色走 DSH 主题令牌（--dsw-alias-*），缺省兜底深色值。
 		*/
-		const css$7 = {
+		const css$8 = {
 			host: "webui-host",
 			viewTile: "webui-view-tile",
 			viewTileActive: "webui-view-tile-active",
@@ -269544,8 +269544,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			shotPrimary: "webui-shot-primary",
 			shotError: "webui-shot-error"
 		};
-		const STYLE_ID$13 = "dsh-webui-styles";
-		const SHEET$10 = `
+		const STYLE_ID$14 = "dsh-webui-styles";
+		const SHEET$11 = `
 /* 视图图块 + 消息按钮一行（右上角 utilities 区，与 Session log 同行） */
 .webui-host{display:flex;align-items:center;gap:8px;position:relative;flex:none}
 /* 图块按钮（对话/轨迹） */
@@ -269614,22 +269614,22 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 .webui-shot-primary:hover{opacity:.86}
 .webui-shot-error{font-size:12px;color:var(--dsw-alias-state-danger-primary,#f56c6c);line-height:1.5}
 `;
-		let injected$4 = false;
+		let injected$5 = false;
 		/** 注入全局样式（幂等）；返回移除函数。 */
-		function injectStyles$4() {
-			if (!injected$4) {
+		function injectStyles$5() {
+			if (!injected$5) {
 				const tag = document.createElement("style");
-				tag.id = STYLE_ID$13;
+				tag.id = STYLE_ID$14;
 				tag.dataset.plugin = "@dsh-external/dsh-webui";
 				tag.dataset.pluginCss = "webui/styles";
-				tag.textContent = SHEET$10;
+				tag.textContent = SHEET$11;
 				document.head.appendChild(tag);
-				injected$4 = true;
+				injected$5 = true;
 			}
 			return () => {
-				if (!injected$4) return;
-				document.getElementById(STYLE_ID$13)?.remove();
-				injected$4 = false;
+				if (!injected$5) return;
+				document.getElementById(STYLE_ID$14)?.remove();
+				injected$5 = false;
 			};
 		}
 		//#endregion
@@ -269787,9 +269787,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					top: target,
 					behavior: "smooth"
 				});
-				row.classList.add(css$7.flash);
+				row.classList.add(css$8.flash);
 				window.setTimeout(() => {
-					row.classList.remove(css$7.flash);
+					row.classList.remove(css$8.flash);
 				}, 2400);
 			}, [scrollportOf, findRow]);
 			/** 读取原生 tablist（对话/轨迹）投影为图块信息。 */
@@ -269864,7 +269864,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				bars.length
 			]);
 			(0, react.useLayoutEffect)(() => {
-				const removeStyles = injectStyles$4();
+				const removeStyles = injectStyles$5();
 				measureRef.current();
 				const scrollport = scrollportOf();
 				if (scrollport === null) return removeStyles;
@@ -270104,11 +270104,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const hoverBar = hover === null ? null : bars.find((bar) => bar.key === hover.key) ?? null;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				ref: hostRef,
-				className: css$7.host,
+				className: css$8.host,
 				children: [
 					tabs.map((tab, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
-						className: [css$7.viewTile, tab.selected ? css$7.viewTileActive : ""].filter(Boolean).join(" "),
+						className: [css$8.viewTile, tab.selected ? css$8.viewTileActive : ""].filter(Boolean).join(" "),
 						"aria-pressed": tab.selected,
 						onClick: () => {
 							selectView(index);
@@ -270118,7 +270118,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					showButton && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 						ref: triggerRef,
 						type: "button",
-						className: css$7.trigger,
+						className: css$8.trigger,
 						"aria-haspopup": "listbox",
 						"aria-expanded": open,
 						"aria-label": `查看本会话已发送消息，共 ${totalCount} 条`,
@@ -270127,13 +270127,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							setOpen((prev) => !prev);
 						},
 						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							className: css$7.triggerBadge,
+							className: css$8.triggerBadge,
 							children: totalCount
 						})
 					}),
 					open && popupPos !== null && (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						ref: wrapRef,
-						className: css$7.popup,
+						className: css$8.popup,
 						role: "listbox",
 						"aria-label": "会话消息列表",
 						style: {
@@ -270141,7 +270141,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							top: popupPos.y
 						},
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$7.popupHead,
+							className: css$8.popupHead,
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "消息列表" }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("small", { children: [
 								"共 ",
 								totalCount,
@@ -270150,7 +270150,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							] })]
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							ref: popupListRef,
-							className: css$7.popupList,
+							className: css$8.popupList,
 							onWheel: (event) => {
 								if (event.deltaY < 0 && event.currentTarget.scrollTop <= 2) revealOlder();
 							},
@@ -270160,29 +270160,29 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 									type: "button",
 									role: "option",
-									className: css$7.item,
+									className: css$8.item,
 									onClick: () => {
 										jumpTo(entry.key);
 										setOpen(false);
 									},
 									children: [
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-											className: css$7.itemIndex,
+											className: css$8.itemIndex,
 											children: String(absIndex + 1).padStart(2, "0")
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-											className: css$7.itemMeta,
+											className: css$8.itemMeta,
 											children: formatTime$2(messageTime(node))
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-											className: css$7.itemText,
+											className: css$8.itemText,
 											children: truncate$1(messageText(node), 160) || "(空消息)"
 										})
 									]
 								}, entry.key);
 							}), snapshot?.hasMore === true && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
-								className: css$7.loadOlder,
+								className: css$8.loadOlder,
 								disabled: snapshot.loadingOlder === true,
 								onClick: loadOlder,
 								children: snapshot.loadingOlder === true ? "加载中…" : "更早的消息尚未加载 — 点击加载"
@@ -270191,7 +270191,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					}), document.body),
 					showPanel && panelPos !== null && (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 						ref: panelRef,
-						className: css$7.panel,
+						className: css$8.panel,
 						style: {
 							left: panelPos.x,
 							top: panelPos.y,
@@ -270206,13 +270206,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						},
 						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 							ref: scrollerRef,
-							className: css$7.scroller,
+							className: css$8.scroller,
 							children: shownBars.map((bar) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								"data-bar-key": bar.key,
-								className: css$7.row,
+								className: css$8.row,
 								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 									type: "button",
-									className: [css$7.bar, bar.key === activeKey ? css$7.barActive : ""].filter(Boolean).join(" "),
+									className: [css$8.bar, bar.key === activeKey ? css$8.barActive : ""].filter(Boolean).join(" "),
 									"aria-label": `跳转到我的第 ${bar.index + 1} 条消息`,
 									onMouseEnter: (event) => {
 										const rect = event.currentTarget.getBoundingClientRect();
@@ -270229,19 +270229,19 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						})
 					}), document.body),
 					hoverBar !== null && panelPos !== null && hover !== null && (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: css$7.tip,
+						className: css$8.tip,
 						style: {
 							left: panelPos.x + PANEL_WIDTH - 8 - 26 - 24 - 300 < 8 ? panelPos.x + PANEL_WIDTH + 12 : panelPos.x + PANEL_WIDTH - 8 - 26 - 24 - 300,
 							top: clamp$1(hover.y - 20, 8, window.innerHeight - 196)
 						},
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$7.tipHead,
+							className: css$8.tipHead,
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "我" }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-								className: css$7.tipMeta,
+								className: css$8.tipMeta,
 								children: [hoverBar.seq > 0 ? `#${hoverBar.seq} · ` : "", formatTime$2(hoverBar.time)]
 							})]
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$7.tipBody,
+							className: css$8.tipBody,
 							children: hoverBar.full !== "" ? truncate$1(hoverBar.full, 400) : "(空消息)"
 						})]
 					}), document.body)
@@ -270268,7 +270268,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			if (providerId === null) return null;
 			const name = state.groups.find((group) => group.id === providerId)?.name ?? providerId;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-				className: css$7.providerBadge,
+				className: css$8.providerBadge,
 				title: `供应商：${name}`,
 				children: name
 			});
@@ -270284,7 +270284,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			} else for (f in e) e[f] && (n && (n += " "), n += f);
 			return n;
 		}
-		function clsx() {
+		function clsx$1() {
 			for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
 			return n;
 		}
@@ -270298,7 +270298,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		*  - `.webui-eff-*`：推理等级滑动式弹出（含渐变轨道 + 粒子 canvas）。
 		* 颜色走 DSH 主题令牌，渐变/粒子用固定 HSL 保证高饱和观感。
 		*/
-		const css$6 = {
+		const css$7 = {
 			msRoot: "webui-ms-root",
 			msTrigger: "webui-ms-trigger",
 			msTriggerLabel: "webui-ms-trigger-label",
@@ -270343,8 +270343,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			effEmpty: "webui-eff-empty",
 			effBusy: "webui-eff-busy"
 		};
-		const STYLE_ID$12 = "dsh-webui-model-selection-styles";
-		const SHEET$9 = `
+		const STYLE_ID$13 = "dsh-webui-model-selection-styles";
+		const SHEET$10 = `
 /* ---- 纯模型选择器（接管 model 座位，不含推理等级） ---- */
 .webui-ms-root{position:relative;min-width:0}
 .webui-ms-trigger{display:flex;align-items:center;gap:4px;min-width:0;max-width:220px;height:28px;padding:0 4px 0 8px;border:none;border-radius:24px;outline:none;background:transparent;color:var(--dsw-alias-label-secondary);font-size:13px;line-height:20px;font-weight:500;cursor:pointer}
@@ -270382,6 +270382,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 .webui-eff-trigger:disabled{opacity:.5;cursor:default}
 .webui-eff-label{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .webui-eff-panel{position:absolute;right:0;bottom:calc(100% + 10px);z-index:20;width:min(320px,calc(100vw - 32px));padding:14px 16px 12px;border:1px solid var(--dsw-alias-border-inverted);border-radius:16px;background:var(--dsw-specific-menu,var(--dsw-alias-bg-layer-2,#16181d));box-shadow:var(--dsw-shadow-lv3);color:var(--dsw-alias-label-primary);animation:webui-eff-slide-in 180ms cubic-bezier(.2,.8,.2,1)}
+/* 透明桥接：覆盖面板与按钮之间的间隙，鼠标从按钮移入面板时不中断 hover。 */
+.webui-eff-panel::before{content:'';position:absolute;left:0;right:0;bottom:-10px;height:10px}
 @keyframes webui-eff-slide-in{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 .webui-eff-panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px}
 .webui-eff-panel-title{font-size:13px;font-weight:600;color:var(--dsw-alias-label-primary,#ddd)}
@@ -270401,13 +270403,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		/** 注入样式表（幂等；loader 卸载插件时会移除其 style 标签）。 */
 		function ensureStyles$4() {
 			if (typeof document === "undefined") return;
-			if (document.getElementById(STYLE_ID$12) !== null) return;
+			if (document.getElementById(STYLE_ID$13) !== null) return;
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "@dsh-external/dsh-webui";
-			tag.id = STYLE_ID$12;
+			tag.id = STYLE_ID$13;
 			tag.dataset.plugin = "@dsh-external/dsh-webui";
 			tag.dataset.pluginCss = "webui/model-selection";
-			tag.textContent = SHEET$9;
+			tag.textContent = SHEET$10;
 			document.head.appendChild(tag);
 		}
 		/** 计算第 i 档（共 n 档）的色相：低等级冷色 → 高等级暖色。 */
@@ -270429,6 +270430,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		* 两级 root 菜单，改为：触发按钮直接弹出模型分组列表。推理等级由独立的
 		* EffortSeat 单独弹出。数据与提交仍走同一个 per-session ModelDirectory，
 		* 因此两个入口与 `/model` 弹窗状态互通。
+		*
+		* 选中模型时默认带上该模型支持的最高推理档位（pi-ai 的 `efforts` 按
+		* off→max 升序返回，末项即最高档），避免无 defaultEffort 的模型切换后
+		* 推理等级回落为「默认/关」；无推理元数据的模型保持不带 effort。
 		*/
 		/**
 		* 渲染 composer 模型选择器（仅模型列表，无推理等级）。
@@ -270441,6 +270446,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [providerId, setProviderId] = (0, react.useState)(null);
 			const [toast, setToast] = (0, react.useState)(null);
 			const toastSeq = (0, react.useRef)(0);
+			const hoverLeaveTimer = (0, react.useRef)(null);
 			const rootRef = (0, react.useRef)(null);
 			const triggerRef = (0, react.useRef)(null);
 			const id = (0, react.useId)();
@@ -270448,23 +270454,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				group,
 				model
 			}))), [state.groups]);
-			const uniqueGroups = (0, react.useMemo)(() => {
-				const seen = /* @__PURE__ */ new Set();
-				return state.groups.filter((group) => {
-					const key = group.name || group.id;
-					if (seen.has(key)) return false;
-					seen.add(key);
-					return true;
-				});
-			}, [state.groups]);
 			const currentChoice = choices[state.current === null ? -1 : choices.findIndex((c) => c.group.id === state.current?.provider && c.model.id === state.current.model)];
 			const busy = state.status === "selecting";
 			const activeGroup = (0, react.useMemo)(() => {
-				if (uniqueGroups.length === 0) return void 0;
+				if (state.groups.length === 0) return void 0;
 				const pid = providerId ?? state.current?.provider;
-				return uniqueGroups.find((group) => group.id === pid) ?? uniqueGroups[0];
+				return state.groups.find((group) => group.id === pid) ?? state.groups[0];
 			}, [
-				uniqueGroups,
+				state.groups,
 				providerId,
 				state.current
 			]);
@@ -270474,26 +270471,30 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			(0, react.useEffect)(() => {
 				if (available) load();
 			}, [available, load]);
-			(0, react.useEffect)(() => {
-				if (!open) return;
-				const closeOutside = (event) => {
-					if (!rootRef.current?.contains(event.target)) setOpen(false);
-				};
-				const onKey = (event) => {
-					if (event.key === "Escape") setOpen(false);
-				};
-				document.addEventListener("mousedown", closeOutside);
-				document.addEventListener("keydown", onKey);
-				return () => {
-					document.removeEventListener("mousedown", closeOutside);
-					document.removeEventListener("keydown", onKey);
-				};
-			}, [open]);
+			(0, react.useEffect)(() => () => {
+				if (hoverLeaveTimer.current !== null) window.clearTimeout(hoverLeaveTimer.current);
+			}, []);
 			if (!available) return null;
-			const show = () => {
+			/** 取消「移出后延迟关闭」的定时器。 */
+			const cancelHoverHide = () => {
+				if (hoverLeaveTimer.current !== null) {
+					window.clearTimeout(hoverLeaveTimer.current);
+					hoverLeaveTimer.current = null;
+				}
+			};
+			/** hover 进入按钮/菜单：立即显示并取消延迟关闭。 */
+			const showPanel = () => {
+				cancelHoverHide();
 				setProviderId(null);
 				setOpen(true);
-				reload();
+			};
+			/** hover 移出：延迟 0.08 秒再关闭，给用户时间从按钮移入菜单点选。 */
+			const scheduleHide = () => {
+				cancelHoverHide();
+				hoverLeaveTimer.current = window.setTimeout(() => {
+					hoverLeaveTimer.current = null;
+					setOpen(false);
+				}, 80);
 			};
 			const choose = (selection) => {
 				if (state.current?.provider === selection.provider && state.current.model === selection.model) {
@@ -270518,69 +270519,70 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const modelLabel = currentChoice?.model.name ?? "选择模型";
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				ref: rootRef,
-				className: css$6.msRoot,
+				className: css$7.msRoot,
 				children: [
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 						ref: triggerRef,
 						type: "button",
-						className: css$6.msTrigger,
+						className: css$7.msTrigger,
 						"aria-label": `选择模型，当前 ${modelLabel}`,
 						"aria-haspopup": "menu",
 						"aria-expanded": open,
 						"aria-controls": open ? `${id}-menu` : void 0,
 						title: modelLabel,
-						onClick: () => {
-							open ? setOpen(false) : show();
-						},
+						onMouseEnter: showPanel,
+						onMouseLeave: scheduleHide,
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							className: css$6.msTriggerLabel,
+							className: css$7.msTriggerLabel,
 							children: modelLabel
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, { className: clsx(css$6.msChevron, open && css$6.msChevronOpen) })]
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, { className: clsx$1(css$7.msChevron, open && css$7.msChevronOpen) })]
 					}),
 					open && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						id: `${id}-menu`,
-						className: css$6.msMenu,
+						className: css$7.msMenu,
 						role: "menu",
 						"aria-label": "选择模型",
 						"aria-busy": state.status === "loading" || busy,
+						onMouseEnter: showPanel,
+						onMouseLeave: scheduleHide,
 						children: [
 							state.status === "loading" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: css$6.msStatus,
+								className: css$7.msStatus,
 								children: "正在刷新模型列表…"
 							}),
 							state.error !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$6.msError,
+								className: css$7.msError,
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: state.error }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 									type: "button",
-									className: css$6.msRetry,
+									className: css$7.msRetry,
 									onClick: reload,
 									children: "重试"
 								})]
 							}),
 							state.failures.map((failure) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$6.msWarning,
+								className: css$7.msWarning,
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
 									failure.name,
 									" 加载失败：",
 									failure.message
 								] }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 									type: "button",
-									className: css$6.msRetry,
+									className: css$7.msRetry,
 									onClick: reload,
 									children: "重试"
 								})]
 							}, failure.id)),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$6.msBody,
+								className: css$7.msBody,
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-									className: css$6.msProviders,
+									className: css$7.msProviders,
 									role: "tablist",
 									"aria-label": "供应商",
-									children: uniqueGroups.map((group) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									children: state.groups.map((group) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
 										role: "tab",
 										"aria-selected": activeGroup?.id === group.id,
-										className: clsx(css$6.msProvider, activeGroup?.id === group.id && css$6.msProviderActive),
+										className: clsx$1(css$7.msProvider, activeGroup?.id === group.id && css$7.msProviderActive),
 										title: group.name,
 										onClick: () => {
 											setProviderId(group.id);
@@ -270588,7 +270590,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										children: group.name
 									}, group.id))
 								}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-									className: clsx(css$6.msModels, "scrollable"),
+									className: clsx$1(css$7.msModels, "scrollable"),
 									role: "tabpanel",
 									"aria-label": `${activeGroup?.name ?? ""} 的模型`,
 									children: [activeGroup?.models.map((model) => {
@@ -270597,37 +270599,40 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 											type: "button",
 											role: "menuitemradio",
 											"aria-checked": selected,
-											className: clsx(css$6.msOption, selected && css$6.msSelected),
+											className: clsx$1(css$7.msOption, selected && css$7.msSelected),
 											title: model.name,
 											disabled: busy,
 											onClick: () => {
+												const efforts = model.reasoning?.efforts;
+												const highestEffort = efforts !== void 0 && efforts.length > 0 ? efforts[efforts.length - 1].id : void 0;
 												choose({
 													provider: activeGroup.id,
-													model: model.id
+													model: model.id,
+													...highestEffort === void 0 ? {} : { reasoningEffort: highestEffort }
 												});
 											},
 											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-												className: css$6.msOptionCopy,
+												className: css$7.msOptionCopy,
 												children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-													className: css$6.msModelName,
+													className: css$7.msModelName,
 													children: model.name
 												}), model.description !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-													className: css$6.msDescription,
+													className: css$7.msDescription,
 													children: model.description
 												})]
 											}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-												className: css$6.msCheck,
+												className: css$7.msCheck,
 												children: selected ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCheckOutline16, {}) : null
 											})]
 										}, model.id);
 									}), activeGroup !== void 0 && activeGroup.models.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-										className: css$6.msEmpty,
+										className: css$7.msEmpty,
 										children: "该供应商暂无模型。"
 									})]
 								})]
 							}),
 							state.status === "ready" && choices.length === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: css$6.msEmpty,
+								className: css$7.msEmpty,
 								children: "没有可用的模型。"
 							})
 						]
@@ -270797,10 +270802,52 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			ensureStyles$4();
 			const state = (0, react.useSyncExternalStore)((fn) => directory.subscribe(fn), () => directory.getSnapshot());
 			const [open, setOpen] = (0, react.useState)(false);
+			const [closing, setClosing] = (0, react.useState)(false);
+			const closeTimer = (0, react.useRef)(null);
+			const hoverLeaveTimer = (0, react.useRef)(null);
 			const [dragIndex, setDragIndex] = (0, react.useState)(null);
 			const rootRef = (0, react.useRef)(null);
 			const sliderRef = (0, react.useRef)(null);
 			const particleRef = (0, react.useRef)(null);
+			/** 带滑出动画的关闭：closing 期间重复调用被守卫忽略。 */
+			const closePanel = () => {
+				if (closing) return;
+				setClosing(true);
+				closeTimer.current = window.setTimeout(() => {
+					closeTimer.current = null;
+					setClosing(false);
+					setOpen(false);
+				}, 130);
+			};
+			/** 取消「移出后延迟关闭」的定时器。 */
+			const cancelHoverHide = () => {
+				if (hoverLeaveTimer.current !== null) {
+					window.clearTimeout(hoverLeaveTimer.current);
+					hoverLeaveTimer.current = null;
+				}
+			};
+			/** hover 进入按钮/面板：立即显示并取消延迟关闭；关闭动画中则中断恢复。 */
+			const showPanel = () => {
+				cancelHoverHide();
+				if (closing) {
+					if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
+					closeTimer.current = null;
+					setClosing(false);
+				}
+				setOpen(true);
+			};
+			/** hover 移出：延迟 0.08 秒再关闭，给用户时间从按钮移入面板拖动滑杆。 */
+			const scheduleHide = () => {
+				cancelHoverHide();
+				hoverLeaveTimer.current = window.setTimeout(() => {
+					hoverLeaveTimer.current = null;
+					closePanel();
+				}, 80);
+			};
+			(0, react.useEffect)(() => () => {
+				if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
+				if (hoverLeaveTimer.current !== null) window.clearTimeout(hoverLeaveTimer.current);
+			}, []);
 			const reasoning = (0, react.useMemo)(() => {
 				const current = state.current;
 				if (current === null) return void 0;
@@ -270836,21 +270883,6 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			(0, react.useEffect)(() => {
 				if (available) load();
 			}, [available, load]);
-			(0, react.useEffect)(() => {
-				if (!open) return;
-				const closeOutside = (event) => {
-					if (!rootRef.current?.contains(event.target)) setOpen(false);
-				};
-				const onKey = (event) => {
-					if (event.key === "Escape") setOpen(false);
-				};
-				document.addEventListener("mousedown", closeOutside);
-				document.addEventListener("keydown", onKey);
-				return () => {
-					document.removeEventListener("mousedown", closeOutside);
-					document.removeEventListener("keydown", onKey);
-				};
-			}, [open]);
 			(0, react.useEffect)(() => {
 				if (!open) {
 					particleRef.current?.stop();
@@ -270921,39 +270953,40 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const activeDescription = activeChoice?.description;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				ref: rootRef,
-				className: css$6.effRoot,
+				className: css$7.effRoot,
 				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 					type: "button",
-					className: css$6.effTrigger,
+					className: css$7.effTrigger,
 					"aria-haspopup": "dialog",
 					"aria-expanded": open,
 					title: `推理等级：${activeChoice?.label ?? "默认"}`,
 					disabled: locked || state.status === "selecting",
-					onClick: () => {
-						open ? setOpen(false) : setOpen(true);
-					},
+					onMouseEnter: showPanel,
+					onMouseLeave: scheduleHide,
 					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-						className: css$6.effLabel,
+						className: css$7.effLabel,
 						children: activeChoice?.label ?? "默认"
 					})
 				}), open && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					className: css$6.effPanel,
+					className: `${css$7.effPanel} ${closing ? "dsh-glass-anim-out" : "dsh-glass-anim-in"}`,
 					role: "dialog",
 					"aria-label": "修改推理等级",
+					onMouseEnter: showPanel,
+					onMouseLeave: scheduleHide,
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$6.effPanelHead,
+							className: css$7.effPanelHead,
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: css$6.effPanelTitle,
+								className: css$7.effPanelTitle,
 								children: "推理等级"
 							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: css$6.effPanelValue,
+								className: css$7.effPanelValue,
 								children: activeChoice?.label ?? "默认"
 							})]
 						}),
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							ref: sliderRef,
-							className: css$6.effSlider,
+							className: css$7.effSlider,
 							role: "slider",
 							tabIndex: 0,
 							"aria-valuemin": 0,
@@ -270968,9 +271001,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							},
 							onKeyDown,
 							children: [
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { className: css$6.effTrack }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { className: css$7.effTrack }),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-									className: css$6.effFill,
+									className: css$7.effFill,
 									style: {
 										width: `calc((100% - 20px) * ${activeT})`,
 										"--eff-dot-color": activeColor
@@ -270978,28 +271011,28 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ParticleField, {
 									ref: particleRef,
-									className: css$6.effCanvas
+									className: css$7.effCanvas
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-									className: css$6.effThumb,
+									className: css$7.effThumb,
 									style: {
 										left: posPct(activeIndex >= 0 ? activeIndex : 0),
 										...dotStyle
 									},
-									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: css$6.effThumbGlow })
+									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: css$7.effThumbGlow })
 								})
 							]
 						}),
 						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$6.effLabels,
+							className: css$7.effLabels,
 							children: effortChoices.map((choice, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: index <= activeIndex ? `${css$6.effLabelsItem} ${css$6.effLabelsItemOn}` : css$6.effLabelsItem,
+								className: index <= activeIndex ? `${css$7.effLabelsItem} ${css$7.effLabelsItemOn}` : css$7.effLabelsItem,
 								title: choice.description,
 								children: choice.label
 							}, choice.key))
 						}),
 						activeDescription !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$6.effEmpty,
+							className: css$7.effEmpty,
 							children: activeDescription
 						})
 					]
@@ -271641,7 +271674,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		* dsh-memory — 样式（运行时注入 <style>，卸载时由 loader 清理）。
 		* 类名前缀 dsh-memory-；颜色走 DSH 主题令牌（--dsw-alias-*）。
 		*/
-		const css$5 = {
+		const css$6 = {
 			entry: "dsh-memory-entry",
 			entryBadge: "dsh-memory-entry-badge",
 			label: "dsh-memory-label",
@@ -271699,8 +271732,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			error: "dsh-memory-error",
 			visuallyHidden: "dsh-memory-visually-hidden"
 		};
-		const STYLE_ID$11 = "dsh-memory-styles";
-		const SHEET$8 = `
+		const STYLE_ID$12 = "dsh-memory-styles";
+		const SHEET$9 = `
 /* usage-skill 的合并按钮（用量+技能，order 10）默认 flex:none;width:100% 占满整行，
    会把同行的记忆按钮挤成图标；实测固定 150px（用量/技能各 75px 完整显示），
    记忆按钮占剩余空间（约 102px），三者均无文字挤压。rail 收起态恢复 usage 原宽。 */
@@ -271780,11 +271813,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		/** 注入样式表（幂等；loader 卸载插件时会移除其 style 标签）。 */
 		function ensureStyles$3() {
 			if (typeof document === "undefined") return;
-			if (document.getElementById(STYLE_ID$11) !== null) return;
+			if (document.getElementById(STYLE_ID$12) !== null) return;
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@dsh-external/dsh-webui";
-			tag.id = STYLE_ID$11;
-			tag.textContent = SHEET$8;
+			tag.id = STYLE_ID$12;
+			tag.textContent = SHEET$9;
 			document.head.appendChild(tag);
 		}
 		//#endregion
@@ -271864,8 +271897,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				case "delete": return "删除";
 			}
 		}
-		const STYLE_ID$10 = "dsh-modal-animation-styles";
-		const SHEET$7 = `
+		const STYLE_ID$11 = "dsh-modal-animation-styles";
+		const SHEET$8 = `
 @keyframes dsh-modal-pop-in {
   from { opacity: 0; transform: translateY(14px) scale(0.96); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -271893,11 +271926,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		/** 注入弹窗动画样式（幂等）。 */
 		function ensureModalAnimStyles() {
 			if (typeof document === "undefined") return;
-			if (document.getElementById(STYLE_ID$10) !== null) return;
+			if (document.getElementById(STYLE_ID$11) !== null) return;
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@dsh-external/dsh-webui";
-			tag.id = STYLE_ID$10;
-			tag.textContent = SHEET$7;
+			tag.id = STYLE_ID$11;
+			tag.textContent = SHEET$8;
 			document.head.appendChild(tag);
 		}
 		/** 卡片动画 class（open 阶段 pop-in，closing 阶段 pop-out）。 */
@@ -272311,20 +272344,20 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				longterm: t("groupLongterm")
 			};
 			const renderCard = (entry) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", {
-				className: entry.pinned ? `${css$5.card} ${css$5.cardPinned}` : css$5.card,
+				className: entry.pinned ? `${css$6.card} ${css$6.cardPinned}` : css$6.card,
 				children: [entry.pinned && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-					className: css$5.pinMark,
+					className: css$6.pinMark,
 					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(PinIcon$1, {
 						size: 14,
 						filled: true
 					})
 				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					className: css$5.cardMain,
+					className: css$6.cardMain,
 					children: editing?.entryId === entry.id ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: css$5.inlineForm,
+						className: css$6.inlineForm,
 						children: [
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("textarea", {
-								className: css$5.inlineTextarea,
+								className: css$6.inlineTextarea,
 								value: editing.content,
 								"aria-label": t("edit"),
 								onChange: (event) => {
@@ -272335,7 +272368,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								}
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-								className: css$5.inlineInput,
+								className: css$6.inlineInput,
 								value: editing.tags,
 								placeholder: t("tagEditPlaceholder"),
 								"aria-label": t("tagEditPlaceholder"),
@@ -272347,10 +272380,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								}
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$5.addMeta,
+								className: css$6.addMeta,
 								children: [
 									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-										className: css$5.check,
+										className: css$6.check,
 										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 											type: "radio",
 											name: `dsh-memory-edit-scope-${entry.id}`,
@@ -272365,7 +272398,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										}), t("moveToGlobal")]
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-										className: css$5.check,
+										className: css$6.check,
 										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 											type: "radio",
 											name: `dsh-memory-edit-scope-${entry.id}`,
@@ -272380,7 +272413,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										}), t("moveToProject")]
 									}),
 									editing.scope === "project" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("select", {
-										className: css$5.tagSelect,
+										className: css$6.tagSelect,
 										value: editing.projectHash ?? "",
 										"aria-label": t("projectPlaceholder"),
 										onChange: (event) => {
@@ -272397,7 +272430,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								]
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$5.editButtons,
+								className: css$6.editButtons,
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "primary",
 									size: "sm",
@@ -272416,10 +272449,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							})
 						]
 					}) : moving?.entryId === entry.id ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: css$5.inlineForm,
+						className: css$6.inlineForm,
 						children: [
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$5.editButtons,
+								className: css$6.editButtons,
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: moving.target === "global" ? "primary" : "outline",
 									size: "sm",
@@ -272445,7 +272478,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								})]
 							}),
 							moving.target === "project" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-								className: css$5.inlineInput,
+								className: css$6.inlineInput,
 								value: moving.project,
 								placeholder: t("projectPlaceholder"),
 								"aria-label": t("projectPlaceholder"),
@@ -272457,7 +272490,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								}
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$5.editButtons,
+								className: css$6.editButtons,
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "primary",
 									size: "sm",
@@ -272476,18 +272509,18 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							})
 						]
 					}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: css$5.cardHead,
+						className: css$6.cardHead,
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.cardContent,
+							className: css$6.cardContent,
 							children: [entry.pinned && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: css$5.pinMark,
+								className: css$6.pinMark,
 								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(PinIcon$1, {
 									size: 12,
 									filled: true
 								})
 							}), entry.content]
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.cardActions,
+							className: css$6.cardActions,
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
 									label: entry.pinned ? t("unpin") : t("pin"),
@@ -272495,7 +272528,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									delayMs: 500,
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: css$5.iconAction,
+										className: css$6.iconAction,
 										"aria-label": entry.pinned ? t("unpin") : t("pin"),
 										disabled: busy,
 										onClick: () => {
@@ -272513,7 +272546,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									delayMs: 500,
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: css$5.iconAction,
+										className: css$6.iconAction,
 										"aria-label": t("edit"),
 										disabled: busy,
 										onClick: () => {
@@ -272528,7 +272561,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									delayMs: 500,
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: css$5.iconAction,
+										className: css$6.iconAction,
 										"aria-label": t("move"),
 										disabled: busy,
 										onClick: () => {
@@ -272543,7 +272576,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									delayMs: 500,
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: css$5.iconAction,
+										className: css$6.iconAction,
 										"aria-label": t("delete"),
 										disabled: busy,
 										onClick: () => {
@@ -272555,19 +272588,19 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							]
 						})]
 					}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: css$5.cardFoot,
+						className: css$6.cardFoot,
 						children: [entry.tags.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$5.chips,
+							className: css$6.chips,
 							children: entry.tags.map((tagName) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
-								className: tag === tagName ? `${css$5.chip} ${css$5.chipActive}` : css$5.chip,
+								className: tag === tagName ? `${css$6.chip} ${css$6.chipActive}` : css$6.chip,
 								onClick: () => {
 									setTag(tag === tagName ? "" : tagName);
 								},
 								children: tagName
 							}, tagName))
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.cardMeta,
+							className: css$6.cardMeta,
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: entry.scope === "global" ? t("scopeGlobal") : projectName(entry.projectHash, projects) }),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: entry.importance }),
@@ -272583,52 +272616,52 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const renderChange = (change) => {
 				const hasDiff = change.before !== void 0 && change.after !== void 0 && change.before !== change.after;
 				return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", {
-					className: css$5.changeRow,
+					className: css$6.changeRow,
 					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-						className: change.action === "delete" ? `${css$5.changeBadge} ${css$5.changeBadgeDelete}` : css$5.changeBadge,
+						className: change.action === "delete" ? `${css$6.changeBadge} ${css$6.changeBadgeDelete}` : css$6.changeBadge,
 						children: changeActionLabel(change.action)
 					}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: css$5.cardMain,
+						className: css$6.cardMain,
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.cardMeta,
+							className: css$6.cardMeta,
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: change.scope === "global" ? t("scopeGlobal") : change.projectHash ?? "" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: relativeTime$1(change.at) })]
 						}), change.action === "delete" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$5.cardContent,
+							className: css$6.cardContent,
 							children: change.summary
 						}) : hasDiff ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.changeDiff,
+							className: css$6.changeDiff,
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-									className: css$5.changeDiffCol,
+									className: css$6.changeDiffCol,
 									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-										className: css$5.cardMeta,
+										className: css$6.cardMeta,
 										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("diffOld") })
 									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-										className: `${css$5.cardContent} ${css$5.changeOld}`,
+										className: `${css$6.cardContent} ${css$6.changeOld}`,
 										children: change.before
 									})]
 								}),
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { className: css$5.changeDiffDivider }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { className: css$6.changeDiffDivider }),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-									className: css$5.changeDiffCol,
+									className: css$6.changeDiffCol,
 									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-										className: css$5.cardMeta,
+										className: css$6.cardMeta,
 										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("diffNew") })
 									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-										className: `${css$5.cardContent} ${css$5.changeNew}`,
+										className: `${css$6.cardContent} ${css$6.changeNew}`,
 										children: change.after
 									})]
 								})
 							]
 						}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$5.cardContent,
+							className: css$6.cardContent,
 							children: change.after ?? change.summary
 						})]
 					})]
 				}, change.id);
 			};
 			const renderEmpty = (text) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-				className: css$5.empty,
+				className: css$6.empty,
 				children: text
 			});
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Modal, {
@@ -272636,20 +272669,20 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				onClose,
 				closeLabel: t("close"),
 				title: t("panelTitle"),
-				className: `${css$5.modal ?? ""} ${modalAnimClass(closing)}`,
-				contentClassName: css$5.modalBody ?? "",
+				className: `${css$6.modal ?? ""} ${modalAnimClass(closing)}`,
+				contentClassName: css$6.modalBody ?? "",
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					className: css$5.panel,
+					className: css$6.panel,
 					"aria-busy": state.status === "loading",
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$5.tabs,
+							className: css$6.tabs,
 							role: "tablist",
 							children: ["all", "changes"].map((key) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
 								role: "tab",
 								"aria-selected": tab === key,
-								className: tab === key ? `${css$5.tab} ${css$5.tabActive}` : css$5.tab,
+								className: tab === key ? `${css$6.tab} ${css$6.tabActive}` : css$6.tab,
 								onClick: () => {
 									setTab(key);
 								},
@@ -272657,14 +272690,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							}, key))
 						}),
 						state.status === "ready" && pinned.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$5.sectionTitle,
+							className: css$6.sectionTitle,
 							children: t("tabPinned")
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", {
-							className: css$5.cardList,
+							className: css$6.cardList,
 							children: pinned.map(renderCard)
 						})] }),
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.addRow,
+							className: css$6.addRow,
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "ghost",
@@ -272676,11 +272709,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									children: t("add")
 								}),
 								modelOptions.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-									className: css$5.check,
+									className: css$6.check,
 									style: { marginLeft: "auto" },
 									title: "选择整合记忆使用的模型（默认跟随当前模型）",
 									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "整合模型" }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-										className: css$5.tagSelect,
+										className: css$6.tagSelect,
 										style: { maxWidth: 280 },
 										value: consolidateModel,
 										onChange: (event) => {
@@ -272722,10 +272755,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							]
 						}),
 						adding && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.addForm,
+							className: css$6.addForm,
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("textarea", {
-									className: css$5.inlineTextarea,
+									className: css$6.inlineTextarea,
 									value: addContent,
 									placeholder: t("addContentPlaceholder"),
 									"aria-label": t("addContentPlaceholder"),
@@ -272735,10 +272768,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									}
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-									className: css$5.addMeta,
+									className: css$6.addMeta,
 									children: [
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-											className: css$5.inlineInput,
+											className: css$6.inlineInput,
 											style: {
 												flex: 1,
 												minWidth: 120
@@ -272751,7 +272784,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 											}
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-											className: css$5.check,
+											className: css$6.check,
 											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 												type: "checkbox",
 												checked: addPinned,
@@ -272761,7 +272794,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 											}), t("addPinned")]
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-											className: css$5.check,
+											className: css$6.check,
 											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 												type: "radio",
 												name: "dsh-memory-add-scope",
@@ -272772,7 +272805,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 											}), t("addScopeGlobal")]
 										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-											className: css$5.check,
+											className: css$6.check,
 											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 												type: "radio",
 												name: "dsh-memory-add-scope",
@@ -272787,7 +272820,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 											}), t("addScopeProject")]
 										}),
 										addScope === "project" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-											className: css$5.tagSelect,
+											className: css$6.tagSelect,
 											value: addProject,
 											"aria-label": t("projectPlaceholder"),
 											onChange: (event) => {
@@ -272804,7 +272837,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									]
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-									className: css$5.editButtons,
+									className: css$6.editButtons,
 									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 										variant: "primary",
 										size: "sm",
@@ -272824,15 +272857,15 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							]
 						}),
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.topRow,
+							className: css$6.topRow,
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$5.projectChips,
+								className: css$6.projectChips,
 								role: "group",
 								"aria-label": t("scopeGlobal"),
 								children: [
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: scope === "all" ? `${css$5.projectChip} ${css$5.projectChipActive}` : css$5.projectChip,
+										className: scope === "all" ? `${css$6.projectChip} ${css$6.projectChipActive}` : css$6.projectChip,
 										onClick: () => {
 											setScope("all");
 										},
@@ -272840,7 +272873,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: scope === "global" ? `${css$5.projectChip} ${css$5.projectChipActive}` : css$5.projectChip,
+										className: scope === "global" ? `${css$6.projectChip} ${css$6.projectChipActive}` : css$6.projectChip,
 										onClick: () => {
 											setScope("global");
 										},
@@ -272849,7 +272882,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									projects.map((project) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
 										title: project.path,
-										className: scope === `project:${project.hash}` ? `${css$5.projectChip} ${css$5.projectChipActive}` : css$5.projectChip,
+										className: scope === `project:${project.hash}` ? `${css$6.projectChip} ${css$6.projectChipActive}` : css$6.projectChip,
 										onClick: () => {
 											setScope(scope === `project:${project.hash}` ? "all" : `project:${project.hash}`);
 										},
@@ -272860,7 +272893,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								const hash = scope.slice(8);
 								const project = projects.find((candidate) => candidate.hash === hash);
 								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-									className: css$5.check,
+									className: css$6.check,
 									title: t("autoMemory"),
 									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 										type: "checkbox",
@@ -272876,7 +272909,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									delayMs: 500,
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: css$5.iconAction,
+										className: css$6.iconAction,
 										"aria-label": t("clearProject"),
 										disabled: busy,
 										onClick: handleClearProject,
@@ -272886,10 +272919,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							})()]
 						}),
 						tab === "all" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.searchRow,
+							className: css$6.searchRow,
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-									className: css$5.searchInput,
+									className: css$6.searchInput,
 									value: q,
 									placeholder: t("searchPlaceholder"),
 									"aria-label": t("searchPlaceholder"),
@@ -272898,7 +272931,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									}
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-									className: css$5.tagSelect,
+									className: css$6.tagSelect,
 									value: tag,
 									"aria-label": t("tagFilterPlaceholder"),
 									onChange: (event) => {
@@ -272923,7 +272956,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									delayMs: 500,
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: css$5.iconAction,
+										className: css$6.iconAction,
 										"aria-label": t("retry"),
 										onClick: () => {
 											load();
@@ -272934,15 +272967,15 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							]
 						}),
 						error !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-							className: css$5.error,
+							className: css$6.error,
 							children: error
 						}),
 						state.status === "loading" && renderEmpty(t("loading")),
 						state.status === "error" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$5.empty,
+							className: css$6.empty,
 							children: [t("error"), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
-								className: css$5.chip,
+								className: css$6.chip,
 								onClick: () => {
 									load();
 								},
@@ -272950,17 +272983,17 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							})]
 						}),
 						state.status === "ready" && tab === "all" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [Object.keys(grouped).map((groupKey) => grouped[groupKey].length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$5.sectionTitle,
+							className: css$6.sectionTitle,
 							children: groupTitles[groupKey]
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", {
-							className: css$5.cardList,
+							className: css$6.cardList,
 							children: grouped[groupKey].map(renderCard)
 						})] }, groupKey)), filtered.length === 0 && renderEmpty(t("empty"))] }),
 						state.status === "ready" && tab === "changes" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$5.sectionTitle,
+							className: css$6.sectionTitle,
 							children: t("todayChanges")
 						}), visibleChanges.length === 0 ? renderEmpty(t("changesEmpty")) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", {
-							className: css$5.cardList,
+							className: css$6.cardList,
 							children: visibleChanges.map(renderChange)
 						})] })
 					]
@@ -273001,7 +273034,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				delayMs: 500,
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 					type: "button",
-					className: isOn ? `${css$5.toggle} ${css$5.toggleOn}` : `${css$5.toggle} ${css$5.toggleOff}`,
+					className: isOn ? `${css$6.toggle} ${css$6.toggleOn}` : `${css$6.toggle} ${css$6.toggleOff}`,
 					"aria-label": isOn ? t("injectOn") : t("injectOff"),
 					"aria-pressed": isOn,
 					onClick: toggle,
@@ -273083,7 +273116,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		//#region src/client/memory/locales.ts
 		/** dsh-memory 面板文案（zh/en 双语，zh 为 key 源）。 */
 		/** Simplified Chinese dictionary and key source of truth. */
-		const zh$1 = {
+		const zh$2 = {
 			entry: "记忆",
 			panelTitle: "记忆",
 			tabAll: "全部",
@@ -273144,9 +273177,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			autoMemory: "自动记忆"
 		};
 		/** Locale namespace owned by this plugin. */
-		const NS$2 = "dshMemory";
+		const NS$4 = "dshMemory";
 		/** English dictionary checked against the Chinese key set. */
-		const en$1 = {
+		const en$2 = {
 			entry: "Memory",
 			panelTitle: "Memory",
 			tabAll: "All",
@@ -273234,7 +273267,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				disabled: wide,
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 					type: "button",
-					className: css$5.entry,
+					className: css$6.entry,
 					"aria-label": t("entry"),
 					"aria-expanded": open,
 					onClick: () => {
@@ -273243,11 +273276,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsx)(BrainIcon, { size: 16 }),
 						wide && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							className: css$5.label,
+							className: css$6.label,
 							children: t("entry")
 						}),
 						unread.count > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							className: css$5.entryBadge,
+							className: css$6.entryBadge,
 							title: t("unreadChanges", { n: unread.count }),
 							children: unread.count > 99 ? "99+" : unread.count
 						})
@@ -273459,7 +273492,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			output: "#22b8cf",
 			cache: "var(--dsw-alias-label-tertiary)"
 		};
-		const STYLE_ID$9 = "dsh-usage-area-chart-styles";
+		const STYLE_ID$10 = "dsh-usage-area-chart-styles";
 		/** 入场动画（受 Workbench 注入的 --dsh-chart-anim 控制：reduced-motion 时为 none）。 */
 		const ANIM_SHEET = `
 @keyframes dsh-area-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -273470,9 +273503,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 .dsh-area-chart:hover .dsh-area-hover { opacity: 1; }
 `;
 		function ensureAreaChartStyles() {
-			if (typeof document === "undefined" || document.getElementById(STYLE_ID$9) !== null) return;
+			if (typeof document === "undefined" || document.getElementById(STYLE_ID$10) !== null) return;
 			const tag = document.createElement("style");
-			tag.id = STYLE_ID$9;
+			tag.id = STYLE_ID$10;
 			tag.textContent = ANIM_SHEET;
 			document.head.appendChild(tag);
 		}
@@ -274133,12 +274166,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			}, []);
 			return mobile;
 		}
-		const STYLE_ID$8 = "dsh-webui-responsive-styles";
+		const STYLE_ID$9 = "dsh-webui-responsive-styles";
 		/**
 		* 全局移动端覆盖样式。这里只放插件自身无法覆盖的宿主（DSH 设置面板）与
 		* 通用对话框行为；插件自有弹窗的移动端规则在各组件 styles 里。
 		*/
-		const SHEET$6 = `
+		const SHEET$7 = `
 /* 修复官方通用设置条目：selector 撑满导致文字容器 0 宽、中文逐字竖排。 */
 [role="dialog"][aria-modal="true"] [class*="_row"] { width: 100% !important; }
 [role="dialog"][aria-modal="true"] [class*="_row"] > div:first-child { flex: 1 1 auto !important; min-width: 0 !important; }
@@ -274214,23 +274247,23 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   }
 }
 `;
-		let injected$3 = false;
+		let injected$4 = false;
 		/** 注入全局响应式覆盖样式（幂等）；返回移除函数。 */
 		function injectResponsiveStyles() {
 			if (typeof document === "undefined") return () => {};
-			if (!injected$3) {
+			if (!injected$4) {
 				const tag = document.createElement("style");
-				tag.id = STYLE_ID$8;
+				tag.id = STYLE_ID$9;
 				tag.dataset.plugin = "@dsh-external/dsh-webui";
 				tag.dataset.pluginCss = "webui/responsive";
-				tag.textContent = SHEET$6;
+				tag.textContent = SHEET$7;
 				document.head.appendChild(tag);
-				injected$3 = true;
+				injected$4 = true;
 			}
 			return () => {
-				if (!injected$3) return;
-				document.getElementById(STYLE_ID$8)?.remove();
-				injected$3 = false;
+				if (!injected$4) return;
+				document.getElementById(STYLE_ID$9)?.remove();
+				injected$4 = false;
 			};
 		}
 		//#endregion
@@ -275738,7 +275771,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				label: "余额/配额"
 			}
 		];
-		const css$4 = {
+		const css$5 = {
 			shell: {
 				position: "fixed",
 				inset: 0,
@@ -275825,18 +275858,18 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [tab, setTab] = (0, react.useState)("overview");
 			const isMobile = useIsMobile();
 			const modalStyle = isMobile ? {
-				...css$4.modal,
+				...css$5.modal,
 				width: "100vw",
 				maxWidth: "100vw",
 				height: "100dvh",
 				minHeight: 0,
 				maxHeight: "100dvh",
 				borderRadius: 0
-			} : css$4.modal;
+			} : css$5.modal;
 			const contentStyle = isMobile ? {
-				...css$4.content,
+				...css$5.content,
 				padding: "12px 16px 32px"
-			} : css$4.content;
+			} : css$5.content;
 			(0, react.useEffect)(() => {
 				if (typeof window === "undefined" || typeof window.matchMedia !== "function") return void 0;
 				const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -275866,7 +275899,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				accounts: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(AccountsTab, {})
 			};
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-				style: css$4.shell,
+				style: css$5.shell,
 				className: modalMaskAnimClass(closing),
 				onClick: onClose,
 				"data-dsh-sidebar-window": "true",
@@ -275876,23 +275909,23 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					onClick: (e) => e.stopPropagation(),
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							style: css$4.topbar,
+							style: css$5.topbar,
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								style: css$4.title,
+								style: css$5.title,
 								children: "用量工作台"
 							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
-								style: css$4.close,
+								style: css$5.close,
 								"aria-label": "关闭",
 								onClick: onClose,
 								children: "✕"
 							})]
 						}),
 						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							style: css$4.tabNav,
+							style: css$5.tabNav,
 							children: NAV.map((item) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
-								style: css$4.tabItem(tab === item.key),
+								style: css$5.tabItem(tab === item.key),
 								onClick: () => setTab(item.key),
 								children: item.label
 							}, item.key))
@@ -276047,7 +276080,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			})
 		};
 		/** ---------------------------------------------------------------- 样式 */
-		const css$3 = {
+		const css$4 = {
 			entry: "skm-entry",
 			label: "skm-label",
 			modal: "skm-modal",
@@ -276104,8 +276137,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			toggleKnob: "skm-toggle-knob",
 			bundleToggle: "skm-bundle-toggle"
 		};
-		const STYLE_ID$7 = "dsh-skill-manager-styles";
-		const SHEET$5 = `
+		const STYLE_ID$8 = "dsh-skill-manager-styles";
+		const SHEET$6 = `
 .skm-entry{flex:1 1 50%;min-width:0;display:inline-flex;align-items:center;gap:8px;height:32px;box-sizing:border-box;border:none;border-radius:10px;padding:0 8px;background:transparent;cursor:pointer;color:var(--dsw-alias-label-primary,#eee);font-family:inherit;font-size:14px;line-height:20px;overflow:hidden}
 .skm-entry:hover{background:transparent}
 .skm-entry[aria-expanded='true']{background:transparent;color:var(--dsw-alias-label-primary,#eee)}
@@ -276219,10 +276252,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 `;
 		function ensureStyles$2() {
 			if (typeof document === "undefined") return;
-			if (document.getElementById(STYLE_ID$7) !== null) return;
+			if (document.getElementById(STYLE_ID$8) !== null) return;
 			const tag = document.createElement("style");
-			tag.id = STYLE_ID$7;
-			tag.textContent = SHEET$5;
+			tag.id = STYLE_ID$8;
+			tag.textContent = SHEET$6;
 			document.head.appendChild(tag);
 		}
 		/** ---------------------------------------------------------------- 文件收集 */
@@ -276392,19 +276425,19 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				"aria-checked": enabled,
 				"aria-label": enabled ? skillT("disableSkill") : skillT("enableSkill"),
 				title: enabled ? skillT("disableSkill") : skillT("enableSkill"),
-				className: `${css$3.toggle} ${enabled ? css$3.toggleOn : css$3.toggleOff}`,
+				className: `${css$4.toggle} ${enabled ? css$4.toggleOn : css$4.toggleOff}`,
 				onClick: (event) => {
 					event.stopPropagation();
 					onToggle(skill, !enabled);
 				},
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-					className: css$3.toggleKnob,
+					className: css$4.toggleKnob,
 					"aria-hidden": "true"
 				})
 			}, "toggle"));
 			if (files.length > 0) head.push(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 				type: "button",
-				className: css$3.skillExpand,
+				className: css$4.skillExpand,
 				"aria-label": skillT("viewSkillFiles"),
 				"aria-expanded": false,
 				onClick: () => {
@@ -276416,22 +276449,22 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				})
 			}, "view"));
 			head.push(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-				className: css$3.skillLabel,
+				className: css$4.skillLabel,
 				title: description,
 				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-					className: css$3.skillName,
+					className: css$4.skillName,
 					children: skill.name
 				}), description !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-					className: css$3.skillDescription,
+					className: css$4.skillDescription,
 					children: description
 				})]
 			}, "label"));
 			if (typeof skill.fileCount === "number") head.push(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-				className: css$3.skillCount,
+				className: css$4.skillCount,
 				children: skillT("fileCount", { n: skill.fileCount })
 			}, "count"));
 			if ((skill.compatibility ?? "") !== "") head.push(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-				className: css$3.skillCompat,
+				className: css$4.skillCompat,
 				title: skill.compatibility,
 				children: skill.compatibility
 			}, "compat"));
@@ -276441,7 +276474,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				delayMs: 500,
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 					type: "button",
-					className: css$3.iconAction,
+					className: css$4.iconAction,
 					"aria-label": skillT("removeSkill"),
 					onClick: () => {
 						onRemove?.(skill);
@@ -276455,7 +276488,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				delayMs: 500,
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 					type: "button",
-					className: css$3.iconAction,
+					className: css$4.iconAction,
 					"aria-label": skillT("assignToBundle"),
 					onClick: () => {
 						onAssign?.(skill);
@@ -276469,7 +276502,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				delayMs: 500,
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 					type: "button",
-					className: css$3.iconAction,
+					className: css$4.iconAction,
 					"aria-label": skillT("deleteSkillBtn"),
 					onClick: () => {
 						onDelete?.(skill);
@@ -276478,9 +276511,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				})
 			}, "delete"));
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", {
-				className: css$3.skillItem,
+				className: css$4.skillItem,
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					className: css$3.skillRow,
+					className: css$4.skillRow,
 					children: head
 				})
 			});
@@ -276791,22 +276824,22 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				},
 				closeLabel: t("close"),
 				title: t("panelTitle"),
-				className: `${css$3.modal} ${modalAnimClass(closing)}`,
-				contentClassName: css$3.modalBody,
+				className: `${css$4.modal} ${modalAnimClass(closing)}`,
+				contentClassName: css$4.modalBody,
 				children: [
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: css$3.panel,
+						className: css$4.panel,
 						"aria-busy": state.status === "loading",
 						children: [
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: css$3.topRow,
+								className: css$4.topRow,
 								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
 									label: t("newBundle"),
 									side: "bottom",
 									delayMs: 500,
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 										type: "button",
-										className: css$3.newBundleButton,
+										className: css$4.newBundleButton,
 										"aria-label": t("newBundle"),
 										"aria-expanded": newBundleOpen,
 										onClick: () => {
@@ -276817,13 +276850,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								})
 							}),
 							newBundleOpen && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("form", {
-								className: css$3.inlineForm,
+								className: css$4.inlineForm,
 								onSubmit: (event) => {
 									submitNewBundle(event);
 								},
 								children: [
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-										className: css$3.inlineInput,
+										className: css$4.inlineInput,
 										value: newBundleName,
 										placeholder: t("newBundlePlaceholder"),
 										"aria-label": t("newBundlePlaceholder"),
@@ -276851,7 +276884,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								]
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: `${css$3.upload} ${dropActive ? css$3.uploadActive : ""}`,
+								className: `${css$4.upload} ${dropActive ? css$4.uploadActive : ""}`,
 								onClick: () => {
 									fileInput.current?.click();
 								},
@@ -276883,7 +276916,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 										ref: fileInput,
 										type: "file",
-										className: css$3.hiddenInput,
+										className: css$4.hiddenInput,
 										multiple: true,
 										webkitdirectory: "",
 										onChange: (event) => {
@@ -276893,16 +276926,16 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								]
 							}),
 							install !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("form", {
-								className: css$3.installForm,
+								className: css$4.installForm,
 								onSubmit: (event) => {
 									confirmInstall(event);
 								},
 								children: [
 									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-										className: css$3.installRow,
+										className: css$4.installRow,
 										children: [
 											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-												className: css$3.inlineInput,
+												className: css$4.inlineInput,
 												value: installName,
 												placeholder: install.archive === true ? t("installNameFromArchive") : t("installNamePlaceholder"),
 												"aria-label": t("installName"),
@@ -276912,7 +276945,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 												}
 											}),
 											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-												className: css$3.inlineInput,
+												className: css$4.inlineInput,
 												value: installDescription,
 												placeholder: t("installDescription"),
 												"aria-label": t("installDescription"),
@@ -276922,9 +276955,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 												}
 											}),
 											/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-												className: css$3.bundleSelect,
+												className: css$4.bundleSelect,
 												children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-													className: css$3.visuallyHidden,
+													className: css$4.visuallyHidden,
 													children: t("installBundle")
 												}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
 													value: installBundleId ?? "",
@@ -276942,7 +276975,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 												})]
 											}),
 											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-												className: css$3.installMeta,
+												className: css$4.installMeta,
 												children: install.archive === true ? t("uploadMeta", {
 													n: 1,
 													folder: install.folderName
@@ -276954,12 +276987,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										]
 									}),
 									install.archive !== true && nameInvalid && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-										className: css$3.error,
+										className: css$4.error,
 										role: "alert",
 										children: t("installNameInvalid")
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-										className: css$3.installActions,
+										className: css$4.installActions,
 										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 											variant: "primary",
 											type: "submit",
@@ -276976,18 +277009,18 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										})]
 									}),
 									installError !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-										className: css$3.error,
+										className: css$4.error,
 										role: "alert",
 										children: installError
 									})
 								]
 							}),
 							state.status === "loading" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-								className: css$3.status,
+								className: css$4.status,
 								children: t("loading")
 							}) : null,
 							state.status === "error" ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$3.failure,
+								className: css$4.failure,
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 									role: "alert",
 									children: t("error")
@@ -277003,30 +277036,30 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							}) : null,
 							state.status === "ready" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
-									className: css$3.sectionTitle,
+									className: css$4.sectionTitle,
 									children: t("bundlesTitle")
 								}),
 								bundles.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-									className: css$3.status,
+									className: css$4.status,
 									children: t("bundlesEmpty")
 								}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", {
-									className: css$3.bundleList,
+									className: css$4.bundleList,
 									children: bundles.map((bundle) => {
 										const open2 = expanded.has(bundle.id);
 										const renamingThis = renameTarget?.bundleId === bundle.id;
 										const bundleEnabled = toggles.bundles[bundle.id] !== false;
 										const bundleToggling = toggling.has(`bundle:${bundle.id}`);
 										return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", {
-											className: css$3.bundle,
+											className: css$4.bundle,
 											"data-open": open2 ? "true" : void 0,
 											children: [renamingThis ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("form", {
-												className: css$3.inlineForm,
+												className: css$4.inlineForm,
 												onSubmit: (event) => {
 													submitRename(event);
 												},
 												children: [
 													/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-														className: css$3.inlineInput,
+														className: css$4.inlineInput,
 														value: renameTarget.name,
 														placeholder: t("renameBundlePlaceholder"),
 														"aria-label": t("renameBundlePlaceholder"),
@@ -277057,57 +277090,57 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 												]
 											}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-													className: css$3.bundleToggle,
+													className: css$4.bundleToggle,
 													children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 														type: "button",
 														role: "switch",
 														"aria-checked": bundleEnabled,
 														"aria-label": bundleEnabled ? t("disableBundle") : t("enableBundle"),
 														title: bundleEnabled ? t("disableBundle") : t("enableBundle"),
-														className: `${css$3.toggle} ${bundleEnabled ? css$3.toggleOn : css$3.toggleOff}`,
+														className: `${css$4.toggle} ${bundleEnabled ? css$4.toggleOn : css$4.toggleOff}`,
 														disabled: bundleToggling || bundle.skillCount === 0,
 														onClick: (event) => {
 															event.stopPropagation();
 															toggleBundle(bundle, !bundleEnabled);
 														},
 														children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-															className: css$3.toggleKnob,
+															className: css$4.toggleKnob,
 															"aria-hidden": "true"
 														})
 													})
 												}),
 												/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 													type: "button",
-													className: css$3.bundleRow,
+													className: css$4.bundleRow,
 													"aria-expanded": open2,
 													onClick: () => {
 														toggleExpanded(bundle.id);
 													},
 													children: [
 														/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-															className: css$3.bundleName,
+															className: css$4.bundleName,
 															children: bundle.name
 														}),
 														/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-															className: css$3.bundleCount,
+															className: css$4.bundleCount,
 															children: t("skillsCount", { n: bundle.skillCount })
 														}),
 														/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, {
-															className: css$3.chevron,
+															className: css$4.chevron,
 															size: 12,
 															"aria-hidden": "true"
 														})
 													]
 												}),
 												/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-													className: css$3.bundleActions,
+													className: css$4.bundleActions,
 													children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
 														label: t("rename"),
 														side: "bottom",
 														delayMs: 500,
 														children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 															type: "button",
-															className: css$3.iconAction,
+															className: css$4.iconAction,
 															"aria-label": t("rename"),
 															onClick: () => {
 																setRenameTarget({
@@ -277123,7 +277156,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 														delayMs: 500,
 														children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 															type: "button",
-															className: css$3.iconAction,
+															className: css$4.iconAction,
 															"aria-label": t("delete"),
 															onClick: () => {
 																setConfirm({
@@ -277136,9 +277169,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 													})]
 												})
 											] }), open2 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", {
-												className: css$3.skillList,
+												className: css$4.skillList,
 												children: bundle.skills.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", {
-													className: css$3.status,
+													className: css$4.status,
 													children: t("bundleNoSkills")
 												}) : bundle.skills.map((skill) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(SkillRowItem, {
 													skill,
@@ -277161,14 +277194,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									})
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
-									className: css$3.sectionTitle,
+									className: css$4.sectionTitle,
 									children: t("looseTitle")
 								}),
 								loose.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-									className: css$3.looseEmpty,
+									className: css$4.looseEmpty,
 									children: t("looseEmpty")
 								}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", {
-									className: css$3.skillList,
+									className: css$4.skillList,
 									children: loose.map((skill) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(SkillRowItem, {
 										skill,
 										bundleId: null,
@@ -277219,15 +277252,15 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						},
 						closeLabel: t("close"),
 						title: viewer.skill.name + (viewer.file === "SKILL.md" ? "" : " · " + viewer.file),
-						className: css$3.viewerModal,
-						contentClassName: css$3.viewerBody,
+						className: css$4.viewerModal,
+						contentClassName: css$4.viewerBody,
 						children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: css$3.viewerLayout,
+							className: css$4.viewerLayout,
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("nav", {
-								className: css$3.viewerNav,
+								className: css$4.viewerNav,
 								"aria-label": t("viewerNav"),
 								children: skillFileRows(Array.isArray(viewer.skill.files) ? viewer.skill.files : []).map((row, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-									className: css$3.viewerNavItem + (row.kind === "dir" ? " " + css$3.viewerNavDir : ""),
+									className: css$4.viewerNavItem + (row.kind === "dir" ? " " + css$4.viewerNavDir : ""),
 									"data-active": row.kind === "file" && row.path === viewer.file ? "true" : void 0,
 									"data-dir": row.kind === "dir" ? "true" : void 0,
 									style: { paddingLeft: 8 + row.depth * 14 },
@@ -277238,7 +277271,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									children: [row.kind === "dir" ? "📁 " : "📄 ", row.path]
 								}, row.path + "-" + String(index)))
 							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: css$3.viewerContent,
+								className: css$4.viewerContent,
 								children: viewer.loading === true ? t("previewLoading") : viewer.error !== void 0 ? viewer.error : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: renderSkillMarkdown(viewer.content ?? "") } })
 							})]
 						})
@@ -277250,26 +277283,26 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						},
 						closeLabel: t("close"),
 						title: t("assignTitle", { name: assignTarget.name }),
-						className: css$3.viewerModal,
-						contentClassName: css$3.viewerBody,
+						className: css$4.viewerModal,
+						contentClassName: css$4.viewerBody,
 						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$3.skillList,
+							className: css$4.skillList,
 							children: bundles.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-								className: css$3.looseEmpty,
+								className: css$4.looseEmpty,
 								children: t("assignEmpty")
 							}) : bundles.map((bundle) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: css$3.skillRow,
+								className: css$4.skillRow,
 								style: { cursor: "pointer" },
 								onClick: () => {
 									doAssign(assignTarget, bundle.id);
 								},
 								children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-									className: css$3.skillLabel,
+									className: css$4.skillLabel,
 									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-										className: css$3.skillName,
+										className: css$4.skillName,
 										children: bundle.name
 									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-										className: css$3.skillDescription,
+										className: css$4.skillDescription,
 										children: t("skillsCount", { n: bundle.skillCount })
 									})]
 								})
@@ -277503,9 +277536,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		/** Services required by the footer registration. */
 		/** Contribute the footer entry wired to the dsh-memory HTTP API. */
 		function applyMemoryClient(ctx) {
-			ctx.effect(() => ctx.locale.register(NS$2, {
-				zh: zh$1,
-				en: en$1
+			ctx.effect(() => ctx.locale.register(NS$4, {
+				zh: zh$2,
+				en: en$2
 			}), "dsh-memory: dictionaries");
 			const listModels = () => {
 				const sessions = ctx.get("sessions");
@@ -277528,14 +277561,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				id: "ventus-footer-row",
 				order: 0,
 				label: () => "Ventus",
-				locale: NS$2,
+				locale: NS$4,
 				inject: panelInjected
 			}, VentusFooterRow));
 			ctx.slots.inject("conversation.input.left", () => ctx.slots.register({
 				name: "conversation.input.left",
 				id: "dsh-memory-inject-toggle",
 				order: 100,
-				locale: NS$2,
+				locale: NS$4,
 				inject: panelInjected
 			}, MemoryToggle));
 		}
@@ -278632,6 +278665,17 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			contextWindow: "上下文窗口",
 			maxTokens: "最大输出 token",
 			modelAdvanced: "容量",
+			supportsImage: "识图",
+			supportsImageHint: "聊天中发送的图片直接交给该模型识别（多模态），不再降级为辅助视觉文字描述。",
+			supportsImageGen: "生图",
+			supportsImageGenHint: "声明该模型可生成图片，生图候选列表将标注「生图」。",
+			supportsVideoGen: "生视频",
+			supportsVideoGenHint: "声明该模型可生成视频，生视频候选列表将标注「生视频」。",
+			capabilityHint: "模型能力（手动开关声明）",
+			detectReasoning: "🔍 检测推理等级",
+			detectReasoningTitle: "逐级探测该模型支持的推理等级（off/minimal/low/medium/high/xhigh/max），完成后自动保存配置。识图/生图/生视频请用上方开关手动声明，不做实测。",
+			detectingReasoning: "检测中…（约 30 秒）",
+			capSaveFailed: "能力声明保存失败",
 			addModel: "添加模型",
 			removeModel: "删除模型",
 			modelIdRequired: "模型 ID 不能为空。",
@@ -278684,6 +278728,36 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		};
 		/** 直接查字典的本地化函数（MVP 仅中文）。 */
 		const t$1 = (key) => chatCopy[key];
+		/**
+		* 展开编辑 UI 的共享伪类样式：focus 描边、placeholder、disabled、按钮 hover
+		* 都无法用内联样式表达，随首个编辑器挂载注入一次（幂等）。规格与官方
+		* ModelsSection.module.css 的 `.input:focus/::placeholder/:disabled` 与各
+		* 按钮 `:hover` 一致。
+		*/
+		function ensureProviderFieldStyles() {
+			const marker = "dsh-webui-provider-fields";
+			if (document.getElementById(marker) !== null) return;
+			const style = document.createElement("style");
+			style.id = marker;
+			style.textContent = [
+				".dsh-webui-field:focus{outline:none;border-color:var(--dsw-alias-brand-primary)}",
+				".dsh-webui-field::placeholder{color:var(--dsw-alias-label-dimmed,#c9cdd4)}",
+				".dsh-webui-field:disabled{opacity:.6;cursor:default}",
+				".dsh-webui-link-btn:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-secondary)}",
+				".dsh-webui-icon-btn:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}",
+				".dsh-webui-icon-btn-danger:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover-danger);color:var(--dsw-alias-state-error-primary)}",
+				".dsh-webui-capsule-btn:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover)}",
+				".dsh-webui-primary-btn:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover,var(--dsw-alias-button-primary-fill))}",
+				".dsh-webui-secondary-btn:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover-solid,rgba(0,0,0,0.05))}",
+				".dsh-webui-danger-btn:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover-danger)}",
+				"/* 供应商导航行：状态一律用底色表达，任何来源的描边/外圈一律压掉 */",
+				".dsh-webui-provider-nav-row{border:0 !important;outline:0 !important;-webkit-tap-highlight-color:transparent}",
+				".dsh-webui-provider-nav-row:focus,.dsh-webui-provider-nav-row:focus-visible,.dsh-webui-provider-nav-row:active{border:0 !important;outline:0 !important}",
+				".dsh-webui-provider-nav-row:hover:not([aria-current=\"true\"]){background:var(--dsw-alias-interactive-bg-hover,rgba(65,118,230,0.08))}",
+				".dsh-webui-provider-nav-row:focus-visible:not([aria-current=\"true\"]){background:var(--dsw-alias-interactive-bg-hover,rgba(65,118,230,0.08))}"
+			].join("\n");
+			document.head.append(style);
+		}
 		/** 一行中的文本字段；未设置或非字符串时返回空串。 */
 		function textOf(model, key) {
 			const value = model[key];
@@ -278693,6 +278767,15 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		function numberOf(model, key) {
 			const value = model[key];
 			return typeof value === "number" ? value : void 0;
+		}
+		/** 模型声明的 input 模态数组；未声明（继承路由默认 text）时为 `undefined`。 */
+		function inputOf(model) {
+			const input = model["input"];
+			return Array.isArray(input) ? input.filter((x) => typeof x === "string") : void 0;
+		}
+		/** 该模型是否声明支持图像输入（识图）。 */
+		function supportsImage(model) {
+			return inputOf(model)?.includes("image") === true;
 		}
 		/** 接受的后缀拼写：十进制数 + 可选 K/M 后缀。 */
 		const CAPACITY_PATTERN = /^(\d+(?:\.\d+)?)([km])?$/i;
@@ -278731,6 +278814,41 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			if (value % CAPACITY_SCALE.k === 0) return `${String(value / CAPACITY_SCALE.k)}K`;
 			return String(value);
 		}
+		/**
+		* 容量字段的常用档位，作为输入框的下拉预设；列表外的值仍可自由键入。
+		* 上下文窗口覆盖主流模型报价（含 Claude 的 200K 与 Gemini 的 1M/2M），
+		* 输出上限取常见的生成预算档位。
+		*/
+		const CAPACITY_PRESETS = {
+			contextWindow: [
+				"2M",
+				"1M",
+				"512K",
+				"400K",
+				"256K",
+				"200K",
+				"128K",
+				"96K",
+				"64K",
+				"48K",
+				"32K",
+				"24K",
+				"16K",
+				"8K"
+			],
+			maxTokens: [
+				"256K",
+				"128K",
+				"64K",
+				"32K",
+				"24K",
+				"16K",
+				"12K",
+				"8K",
+				"4K",
+				"2K"
+			]
+		};
 		/**
 		* 一个模型 profile 可声明的全部推理等级，按升级顺序。与官方 llm-pi-ai 的
 		* `THINKING_LEVELS` 镜像；适配器 schema 拒绝任何其他键，因此编辑器只提供
@@ -278854,6 +278972,121 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				})
 			});
 		}
+		/**
+		* 「检测推理等级」实时进度:分组行式列表(不用表格)。host 每完成一项写入状态,
+		* 前端轮询渲染——完成的项立即点亮(✓/✗ + 说明),运行中的显示「… 检测中」。
+		* 全部完成后底部显示自动保存结果。中性色,无表格。
+		*/
+		function DetectProgress({ state }) {
+			if (!state) return null;
+			const items = Array.isArray(state.items) ? state.items : [];
+			const doneCount = items.filter((i) => i.status === "done").length;
+			const levelRows = items.filter((i) => i.key.startsWith("level:"));
+			const rowOf = (it) => {
+				const mark = it.status === "pending" ? "—" : it.status === "running" ? "…" : it.ok === true ? "✓" : it.ok === false ? "✗" : "—";
+				const markColor = it.status !== "done" ? "var(--dsw-alias-label-tertiary, #8f959e)" : it.ok === true ? "var(--dsw-alias-label-primary, #1f2329)" : "var(--dsw-alias-label-tertiary, #8f959e)";
+				return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					style: {
+						display: "flex",
+						alignItems: "center",
+						gap: 12,
+						padding: "2px 0",
+						minWidth: 0
+					},
+					children: [
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							style: {
+								flex: "none",
+								width: 96,
+								fontSize: 12,
+								lineHeight: "18px",
+								color: "var(--dsw-alias-label-primary, #1f2329)",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								whiteSpace: "nowrap"
+							},
+							children: it.key.startsWith("level:") ? it.key.slice(6) : it.label
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+							style: {
+								flex: "none",
+								width: 76,
+								fontSize: 12,
+								lineHeight: "18px",
+								color: markColor
+							},
+							children: [mark, it.status === "running" ? " 检测中" : ""]
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							style: {
+								flex: 1,
+								minWidth: 0,
+								fontSize: 12,
+								lineHeight: "18px",
+								color: "var(--dsw-alias-label-tertiary, #8f959e)",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								whiteSpace: "nowrap"
+							},
+							title: it.note,
+							children: it.note
+						})
+					]
+				}, it.key);
+			};
+			const groupTitle = (t) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+				style: {
+					marginTop: 4,
+					marginBottom: 2,
+					fontSize: 12,
+					lineHeight: "18px",
+					fontWeight: 500,
+					color: "var(--dsw-alias-label-secondary, #4e5969)"
+				},
+				children: t
+			});
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					padding: "8px 12px",
+					border: "1px solid var(--dsw-alias-border-l3, #e5e6eb)",
+					borderRadius: 10
+				},
+				children: [
+					levelRows.length > 0 ? groupTitle("推理等级") : null,
+					levelRows.map(rowOf),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						style: {
+							...hintStyle$2,
+							marginTop: 6
+						},
+						children: state.running ? `检测中… ${doneCount}/${items.length}（可离开此页，后台继续）` : `已自动保存：推理等级 ${state.savedLevels ? "✓" : "—"}${state.saveError ? `｜保存出错：${state.saveError}` : ""}`
+					})
+				]
+			});
+		}
+		/** 能力声明开关：小圆钮 switch + 标签，title 承载说明；点击切换后由回调落盘。 */
+		function CapabilitySwitch({ label, hint, checked, disabled, onToggle }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+				style: capSwitchRowStyle,
+				title: hint,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+					type: "button",
+					role: "switch",
+					"aria-checked": checked,
+					disabled,
+					style: checked ? capSwitchOnStyle : capSwitchStyle,
+					onClick: () => {
+						onToggle(!checked);
+					},
+					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { style: checked ? capKnobOnStyle : capKnobStyle })
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					style: capSwitchLabelStyle,
+					children: label
+				})]
+			});
+		}
 		/** 空容量字段的占位：适配器自身的路由级回退（llm-pi-ai 的默认值），以人话拼写。 */
 		const CAPACITY_HINT = {
 			contextWindow: "256K",
@@ -278881,6 +279114,142 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [picked, setPicked] = (0, react.useState)(/* @__PURE__ */ new Set());
 			const [expanded, setExpanded] = (0, react.useState)(/* @__PURE__ */ new Set());
 			const [editing, setEditing] = (0, react.useState)(/* @__PURE__ */ new Map());
+			const [capacityMenu, setCapacityMenu] = (0, react.useState)(void 0);
+			const [detecting, setDetecting] = (0, react.useState)(/* @__PURE__ */ new Set());
+			const [detectState, setDetectState] = (0, react.useState)(/* @__PURE__ */ new Map());
+			const [detectError, setDetectError] = (0, react.useState)(/* @__PURE__ */ new Map());
+			const [caps, setCaps] = (0, react.useState)({});
+			const [capsError, setCapsError] = (0, react.useState)(void 0);
+			(0, react.useEffect)(() => {
+				let alive = true;
+				const load = () => {
+					fetch("/api/model-capabilities", { cache: "no-store" }).then((r) => r.json()).then((d) => {
+						if (!alive) return;
+						if (d && typeof d.capabilities === "object" && d.capabilities !== null) setCaps(d.capabilities);
+					}).catch(() => {});
+				};
+				load();
+				window.addEventListener("dsh-webui:model-capabilities-changed", load);
+				return () => {
+					alive = false;
+					window.removeEventListener("dsh-webui:model-capabilities-changed", load);
+				};
+			}, []);
+			/** 生图/生视频声明的 key:provider/model;行内任一字段缺失则不可写。 */
+			const capKeyOf = (index) => {
+				const provider = probe.provider;
+				const modelId = textOf(models[index], "id");
+				return provider !== void 0 && modelId.length > 0 ? `${provider}/${modelId}` : "";
+			};
+			/** 切换生图/生视频开关:乐观更新 + POST 全量落盘,失败回滚。 */
+			const toggleCap = (index, cap, on) => {
+				const key = capKeyOf(index);
+				if (!key) return;
+				const next = { ...caps };
+				const cur = new Set(next[key] ?? []);
+				if (on) cur.add(cap);
+				else cur.delete(cap);
+				if (cur.size > 0) next[key] = [...cur];
+				else delete next[key];
+				setCaps(next);
+				setCapsError(void 0);
+				fetch("/api/model-capabilities", {
+					method: "POST",
+					headers: { "content-type": "application/json" },
+					body: JSON.stringify({ capabilities: next })
+				}).then((r) => r.json()).then((d) => {
+					if (!d || d.ok !== true) {
+						setCapsError(d && d.error || chatCopy.capSaveFailed);
+						setCaps(caps);
+						return;
+					}
+					window.dispatchEvent(new CustomEvent("dsh-webui:model-capabilities-changed"));
+				}).catch(() => {
+					setCapsError(chatCopy.capSaveFailed);
+					setCaps(caps);
+				});
+			};
+			/** 切换识图开关:读写模型草稿的 input 数组(含/不含 image)。 */
+			const toggleVision = (index, on) => {
+				const model = models[index];
+				if (on) patch(index, { input: Array.from(/* @__PURE__ */ new Set([...inputOf(model) ?? ["text"], "image"])) });
+				else {
+					const rest = (inputOf(model) ?? []).filter((x) => x !== "image");
+					patch(index, { input: rest.length <= 1 ? void 0 : rest });
+				}
+			};
+			const runFullDetect = (index) => {
+				const provider = probe.provider;
+				const modelId = textOf(models[index], "id");
+				if (!provider || !modelId) return;
+				if (detecting.has(index)) return;
+				setDetecting((current) => new Set(current).add(index));
+				setDetectError((current) => new Map(current).set(index, ""));
+				let timer;
+				const pollOnce = async () => {
+					try {
+						const d = await (await fetch("/api/detect-capability", { cache: "no-store" })).json();
+						if (!d?.ok || !d.state) return;
+						setDetectState((current) => new Map(current).set(index, d.state));
+						if (!d.state.running) {
+							if (timer !== void 0) window.clearInterval(timer);
+							const st = d.state;
+							const patches = {};
+							const thinkers = (st.items ?? []).filter((i) => i.key.startsWith("level:") && i.ok === true && i.key !== "level:off");
+							if (thinkers.length > 0) {
+								const efforts = { off: null };
+								for (const t of thinkers) efforts[t.key.slice(6)] = t.key.slice(6);
+								patches.reasoningEfforts = efforts;
+							}
+							if (Object.keys(patches).length > 0) patch(index, patches);
+							setDetecting((current) => {
+								const next = new Set(current);
+								next.delete(index);
+								return next;
+							});
+						}
+					} catch {}
+				};
+				fetch("/api/detect-capability", {
+					method: "POST",
+					headers: { "content-type": "application/json" },
+					body: JSON.stringify({
+						provider,
+						model: modelId
+					})
+				}).then((r) => r.json()).then((d) => {
+					if (!d || !d.ok) {
+						setDetectError((current) => new Map(current).set(index, `检测失败：${d && d.error || "未知错误"}`));
+						setDetecting((current) => {
+							const next = new Set(current);
+							next.delete(index);
+							return next;
+						});
+						return;
+					}
+					if (d.state !== void 0 && d.state !== null) setDetectState((current) => new Map(current).set(index, d.state));
+					timer = window.setInterval(() => {
+						pollOnce();
+					}, 800);
+					pollOnce();
+				}).catch((error) => {
+					setDetectError((current) => new Map(current).set(index, `检测失败：${String(error?.message ?? error)}`));
+					setDetecting((current) => {
+						const next = new Set(current);
+						next.delete(index);
+						return next;
+					});
+				});
+			};
+			(0, react.useEffect)(() => {
+				ensureProviderFieldStyles();
+				const marker = "dsh-webui-capacity-menu";
+				if (document.getElementById(marker) !== null) return;
+				const style = document.createElement("style");
+				style.id = marker;
+				style.textContent = ".dsh-capacity-menu-item:hover{background:var(--dsw-alias-interactive-bg-hover, rgba(22,93,255,0.08))}";
+				document.head.append(style);
+			}, []);
 			/** 一个容量字段的 buffer 键；行移动时行号半段随之移动。 */
 			const bufferKey = (index, field) => `${String(index)}:${field}`;
 			const patch = (index, next) => {
@@ -278893,29 +279262,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					}).filter(([key]) => !cleared.has(key)));
 				}));
 			};
-			/** 一行的已声明等级映射；无声明时为空映射。 */
-			const effortMapOf = (model) => {
-				const efforts = model["reasoningEfforts"];
-				return typeof efforts === "object" && efforts !== null && !Array.isArray(efforts) ? efforts : {};
-			};
-			/** 一个等级的线上值字段显示什么：存储值，省略的 off 显示为空。 */
-			const effortWire = (map, level) => {
-				const value = map[level];
-				return value === null || value === void 0 ? "" : String(value);
-			};
-			/** 勾选/取消一个已声明等级，勾选时线上值从等级名播种。 */
-			const toggleEffort = (index, level, on) => {
-				const next = { ...effortMapOf(models[index]) };
-				if (on) next[level] = level === "off" ? null : level;
-				else delete next[level];
-				patch(index, { reasoningEfforts: next });
-			};
-			/** 编辑一个等级的线上值；清空 off 表示「不发送该参数」。 */
-			const setEffortWire = (index, level, text) => {
-				const next = { ...effortMapOf(models[index]) };
-				next[level] = text.length === 0 ? level === "off" ? null : "" : text;
-				patch(index, { reasoningEfforts: next });
-			};
+			/** 键入或选取一个容量拼写，即时解析进草稿。 */
 			const editCapacity = (index, field, text) => {
 				setEditing((current) => new Map(current).set(bufferKey(index, field), text));
 				patch(index, { [field]: parseCapacity(text) });
@@ -278962,9 +279309,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						setFailure(chatCopy.fetchEmpty);
 						return;
 					}
-					const known = new Set(models.map((model) => textOf(model, "id")));
 					setCandidates(found);
-					setPicked(new Set(found.filter((model) => !known.has(model.id)).map((model) => model.id)));
+					setPicked(/* @__PURE__ */ new Set());
 				} catch (error) {
 					setFailure(messageOf(error));
 				} finally {
@@ -279010,9 +279356,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						},
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 							style: {
-								fontSize: 13,
-								fontWeight: 600,
-								color: "var(--dsw-alias-label-primary, #1f2329)"
+								fontSize: 12,
+								lineHeight: "18px",
+								fontWeight: 500,
+								color: "var(--dsw-alias-label-secondary, #4e5969)"
 							},
 							children: chatCopy.models
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
@@ -279023,12 +279370,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							},
 							children: [props.overridden === true && props.onReset !== void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
+								className: "dsh-webui-link-btn",
 								style: linkButtonStyle,
 								disabled,
 								onClick: props.onReset,
 								children: chatCopy.restoreDefaults
 							}) : null, /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
+								className: "dsh-webui-link-btn",
 								disabled: disabled || busy || !askable,
 								title: askable ? void 0 : chatCopy.fetchNeedsBaseUrl,
 								style: linkButtonStyle,
@@ -279044,11 +279393,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						children: chatCopy.modelsEmpty
 					}) : null,
 					models.map((model, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: {
-							display: "flex",
-							flexDirection: "column",
-							gap: 4
-						},
+						style: modelEntryStyle,
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							style: {
 								display: "flex",
@@ -279057,6 +279402,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							},
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+									className: "dsh-webui-field",
 									style: inputStyle$1,
 									type: "text",
 									value: textOf(model, "id"),
@@ -279068,6 +279414,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									}
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+									className: "dsh-webui-field",
 									style: inputStyle$1,
 									type: "text",
 									value: textOf(model, "name"),
@@ -279080,6 +279427,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 									type: "button",
+									className: "dsh-webui-icon-btn",
 									style: iconButtonStyle,
 									"aria-label": `${chatCopy.modelAdvanced} ${index + 1}`,
 									"aria-expanded": expanded.has(index),
@@ -279091,6 +279439,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 									type: "button",
+									className: "dsh-webui-icon-btn dsh-webui-icon-btn-danger",
 									style: {
 										...iconButtonStyle,
 										color: "var(--dsw-alias-state-error-primary, #d54941)"
@@ -279111,117 +279460,177 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(IconTrash, {})
 								})
 							]
-						}), expanded.has(index) ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						}), expanded.has(index) ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 							style: {
 								display: "flex",
 								gap: 12,
 								paddingLeft: 4
 							},
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								style: {
-									display: "flex",
-									flexDirection: "column",
-									gap: 4,
-									flex: 1
-								},
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-									style: fieldLabelStyle$1,
-									children: chatCopy.contextWindow
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-									style: inputStyle$1,
-									type: "text",
-									inputMode: "numeric",
-									value: capacityText(model, index, "contextWindow"),
-									placeholder: CAPACITY_HINT.contextWindow,
-									"aria-label": `${chatCopy.contextWindow} ${index + 1}`,
-									disabled,
-									onChange: (event) => {
-										editCapacity(index, "contextWindow", event.target.value);
-									}
-								})]
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-								style: {
-									display: "flex",
-									flexDirection: "column",
-									gap: 4,
-									flex: 1
-								},
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-									style: fieldLabelStyle$1,
-									children: chatCopy.maxTokens
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-									style: inputStyle$1,
-									type: "text",
-									inputMode: "numeric",
-									value: capacityText(model, index, "maxTokens"),
-									placeholder: CAPACITY_HINT.maxTokens,
-									"aria-label": `${chatCopy.maxTokens} ${index + 1}`,
-									disabled,
-									onChange: (event) => {
-										editCapacity(index, "maxTokens", event.target.value);
-									}
-								})]
-							})]
+							children: ["contextWindow", "maxTokens"].map((field) => {
+								const menuKey = `${String(index)}:${field}`;
+								const menuOpen = capacityMenu === menuKey;
+								return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									style: {
+										position: "relative",
+										display: "flex",
+										flexDirection: "column",
+										gap: 4,
+										flex: 1,
+										minWidth: 0
+									},
+									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											style: fieldLabelStyle$1,
+											children: chatCopy[field]
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+											className: "dsh-webui-field",
+											style: capacityInputStyle,
+											type: "text",
+											value: capacityText(model, index, field),
+											placeholder: CAPACITY_HINT[field],
+											"aria-label": `${chatCopy[field]} ${index + 1}`,
+											role: "combobox",
+											"aria-expanded": menuOpen,
+											"aria-controls": `dsh-capacity-menu-${field}`,
+											disabled,
+											onChange: (event) => {
+												editCapacity(index, field, event.target.value);
+											},
+											onClick: () => {
+												setCapacityMenu((current) => current === menuKey ? void 0 : menuKey);
+											},
+											onKeyDown: (event) => {
+												if (event.key === "Escape") setCapacityMenu(void 0);
+											}
+										}),
+										menuOpen ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+											style: capacityMenuBackdropStyle,
+											onClick: () => {
+												setCapacityMenu(void 0);
+											}
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+											id: `dsh-capacity-menu-${field}`,
+											role: "listbox",
+											"aria-label": chatCopy[field],
+											style: capacityMenuPanelStyle,
+											children: CAPACITY_PRESETS[field].map((preset) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+												type: "button",
+												className: "dsh-capacity-menu-item",
+												style: capacityMenuItemStyle,
+												onMouseDown: (event) => {
+													event.preventDefault();
+													editCapacity(index, field, preset);
+													setCapacityMenu(void 0);
+												},
+												children: preset
+											}, preset))
+										})] }) : null
+									]
+								}, field);
+							})
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							style: effortBlockStyle,
+							style: capabilityBlockStyle,
 							children: [
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-									style: fieldLabelStyle$1,
-									children: chatCopy.reasoningEfforts
-								}),
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-									style: hintStyle$2,
-									children: chatCopy.effortHint
-								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 									style: {
 										display: "flex",
-										flexDirection: "column",
-										gap: 4
+										alignItems: "center",
+										gap: 10
 									},
-									children: REASONING_LEVELS.map((level) => {
-										const map = effortMapOf(model);
-										const checked = level in map;
-										return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-											style: {
-												display: "flex",
-												alignItems: "center",
-												gap: 8
-											},
-											children: [
-												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-													type: "checkbox",
-													checked,
-													disabled,
-													"aria-label": `${chatCopy.effortLevel} ${level} ${index + 1}`,
-													onChange: (event) => {
-														toggleEffort(index, level, event.target.checked);
-													}
-												}),
-												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-													style: effortLevelNameStyle,
-													children: level
-												}),
-												/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-													style: inputStyle$1,
-													type: "text",
-													value: effortWire(map, level),
-													placeholder: level === "off" ? chatCopy.effortOffWire : level,
-													"aria-label": `${chatCopy.effortWire} ${level} ${index + 1}`,
-													disabled: disabled || !checked,
-													onChange: (event) => {
-														setEffortWire(index, level, event.target.value);
-													}
-												})
-											]
-										}, level);
+									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										style: fieldLabelStyle$1,
+										children: chatCopy.capabilityHint
 									})
-								})
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									style: {
+										display: "flex",
+										alignItems: "center",
+										gap: 14,
+										flexWrap: "wrap"
+									},
+									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)(CapabilitySwitch, {
+											label: chatCopy.supportsImage,
+											hint: chatCopy.supportsImageHint,
+											checked: supportsImage(model),
+											disabled,
+											onToggle: (on) => {
+												toggleVision(index, on);
+											}
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)(CapabilitySwitch, {
+											label: chatCopy.supportsImageGen,
+											hint: chatCopy.supportsImageGenHint,
+											checked: (caps[capKeyOf(index)] ?? []).includes("image"),
+											disabled: disabled || capKeyOf(index) === "",
+											onToggle: (on) => {
+												toggleCap(index, "image", on);
+											}
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)(CapabilitySwitch, {
+											label: chatCopy.supportsVideoGen,
+											hint: chatCopy.supportsVideoGenHint,
+											checked: (caps[capKeyOf(index)] ?? []).includes("video"),
+											disabled: disabled || capKeyOf(index) === "",
+											onToggle: (on) => {
+												toggleCap(index, "video", on);
+											}
+										})
+									]
+								}),
+								capsError !== void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+									style: errorStyle$2,
+									children: capsError
+								}) : null,
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									style: {
+										display: "flex",
+										alignItems: "center",
+										gap: 10
+									},
+									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											style: fieldLabelStyle$1,
+											children: "推理等级"
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											style: {
+												...capabilityTestButtonStyle,
+												color: "var(--dsw-alias-state-business-primary, #4176e6)",
+												borderColor: "var(--dsw-alias-state-business-primary, #4176e6)"
+											},
+											disabled: disabled || detecting.has(index) || probe.provider === void 0,
+											title: chatCopy.detectReasoningTitle,
+											onClick: (event) => {
+												event.stopPropagation();
+												runFullDetect(index);
+											},
+											children: detecting.has(index) ? chatCopy.detectingReasoning : chatCopy.detectReasoning
+										}),
+										probe.provider === void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											style: hintStyle$2,
+											children: "保存供应商后可检测"
+										}) : null
+									]
+								}),
+								(detectError.get(index) ?? "") !== "" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+									style: {
+										margin: 0,
+										fontSize: 12,
+										color: "var(--dsw-alias-state-error-primary, #d54941)"
+									},
+									children: detectError.get(index)
+								}) : null,
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(DetectProgress, { state: detectState.get(index) })
 							]
 						})] }) : null]
 					}, index)),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 						type: "button",
+						className: "dsh-webui-capsule-btn",
 						style: addModelButtonStyle,
 						disabled,
 						onClick: () => {
@@ -279248,7 +279657,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 									style: {
 										fontSize: 14,
-										fontWeight: 600,
+										lineHeight: "22px",
+										fontWeight: 500,
 										color: "var(--dsw-alias-label-primary, #1f2329)"
 									},
 									children: chatCopy.fetchTitle
@@ -279262,35 +279672,35 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										listStyle: "none",
 										margin: 0,
 										padding: 0,
-										maxHeight: 260,
+										maxHeight: 320,
 										overflowY: "auto",
 										display: "flex",
 										flexDirection: "column",
 										gap: 2
 									},
-									children: candidates.map((candidate) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
-										style: {
-											display: "flex",
-											gap: 8,
-											alignItems: "center",
-											padding: "6px 8px",
-											borderRadius: 6,
-											cursor: "pointer"
-										},
-										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
-											type: "checkbox",
-											checked: picked.has(candidate.id),
-											onChange: () => {
-												toggle(candidate.id);
-											}
-										}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									children: candidates.map((candidate) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", {
+										style: candidateStyle,
+										children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 											style: {
-												fontSize: 13,
-												color: "var(--dsw-alias-label-primary, #1f2329)"
+												display: "flex",
+												gap: 8,
+												alignItems: "center",
+												padding: "6px 8px",
+												borderRadius: 6,
+												cursor: "pointer"
 											},
-											children: candidate.id
-										})]
-									}) }, candidate.id))
+											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+												type: "checkbox",
+												checked: picked.has(candidate.id),
+												onChange: () => {
+													toggle(candidate.id);
+												}
+											}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+												style: candidateIdStyle,
+												children: candidate.id
+											})]
+										})
+									}, candidate.id))
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 									style: {
@@ -279301,11 +279711,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									},
 									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										style: secondaryButtonStyle$2,
+										className: "dsh-webui-secondary-btn",
+										style: secondaryButtonStyle$1,
 										onClick: closePicker,
 										children: chatCopy.cancel
 									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
+										className: "dsh-webui-primary-btn",
 										style: primaryButtonStyle$1,
 										onClick: adoptPicked,
 										children: chatCopy.fetchAdopt
@@ -279317,23 +279729,76 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				]
 			});
 		}
+		const modelEntryStyle = {
+			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+			borderRadius: 8,
+			padding: 6,
+			display: "flex",
+			flexDirection: "column",
+			gap: 6
+		};
 		const inputStyle$1 = {
 			flex: 1,
 			minWidth: 0,
-			padding: "6px 8px",
-			fontSize: 13,
-			borderRadius: 6,
+			boxSizing: "border-box",
+			height: 32,
+			padding: "0 10px",
+			fontSize: 14,
+			lineHeight: "22px",
+			borderRadius: 8,
 			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
 			background: "var(--dsw-alias-bg-layer-1, #fff)",
 			color: "var(--dsw-alias-label-primary, #1f2329)",
 			outline: "none"
 		};
+		const capacityInputStyle = {
+			...inputStyle$1,
+			paddingRight: 32,
+			backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2381858C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
+			backgroundRepeat: "no-repeat",
+			backgroundPosition: "right 12px center",
+			backgroundSize: "12px 12px"
+		};
+		const capacityMenuBackdropStyle = {
+			position: "fixed",
+			inset: 0,
+			zIndex: 990
+		};
+		const capacityMenuPanelStyle = {
+			position: "absolute",
+			top: "calc(100% + 4px)",
+			left: 0,
+			right: 0,
+			zIndex: 991,
+			boxSizing: "border-box",
+			maxHeight: 240,
+			overflowY: "auto",
+			padding: 4,
+			display: "flex",
+			flexDirection: "column",
+			gap: 2,
+			background: "var(--dsw-alias-bg-module-platform, #fff)",
+			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+			borderRadius: 8,
+			boxShadow: "0 8px 24px rgba(0,0,0,0.18)"
+		};
+		const capacityMenuItemStyle = {
+			padding: "6px 10px",
+			fontSize: 13,
+			lineHeight: "20px",
+			textAlign: "left",
+			border: "none",
+			borderRadius: 6,
+			background: "transparent",
+			color: "var(--dsw-alias-label-primary, #1f2329)",
+			cursor: "pointer"
+		};
 		const iconButtonStyle = {
 			display: "inline-flex",
 			alignItems: "center",
 			justifyContent: "center",
-			width: 26,
-			height: 26,
+			width: 28,
+			height: 28,
 			padding: 0,
 			border: "none",
 			borderRadius: 6,
@@ -279342,50 +279807,117 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			cursor: "pointer"
 		};
 		const linkButtonStyle = {
-			padding: "4px 8px",
-			fontSize: 12,
+			boxSizing: "border-box",
+			display: "inline-flex",
+			alignItems: "center",
+			height: 28,
+			padding: "0 10px",
 			border: "none",
-			borderRadius: 6,
-			background: "var(--dsw-alias-interactive-bg-hover, rgba(22,93,255,0.08))",
-			color: "var(--dsw-alias-brand-primary, #165dff)",
+			borderRadius: 14,
+			background: "transparent",
+			color: "var(--dsw-alias-label-tertiary, #8f959e)",
+			fontSize: 12,
+			lineHeight: "18px",
 			cursor: "pointer"
 		};
 		const addModelButtonStyle = {
+			boxSizing: "border-box",
 			alignSelf: "flex-start",
-			padding: "4px 10px",
-			fontSize: 12,
-			borderRadius: 6,
-			border: "1px dashed var(--dsw-alias-border-l3, #c9cdd4)",
+			display: "inline-flex",
+			alignItems: "center",
+			gap: 4,
+			height: 28,
+			padding: "0 10px",
+			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+			borderRadius: 14,
 			background: "transparent",
-			color: "var(--dsw-alias-label-secondary, #4e5969)",
+			color: "var(--dsw-alias-label-primary, #1f2329)",
+			fontSize: 12,
+			lineHeight: "18px",
 			cursor: "pointer"
 		};
 		const fieldLabelStyle$1 = {
 			fontSize: 12,
+			lineHeight: "18px",
+			fontWeight: 500,
 			color: "var(--dsw-alias-label-secondary, #4e5969)"
 		};
-		const effortBlockStyle = {
+		const capabilityBlockStyle = {
 			display: "flex",
 			flexDirection: "column",
-			gap: 6,
+			gap: 8,
 			paddingTop: 10,
 			marginTop: 2,
 			borderTop: "1px solid var(--dsw-alias-border-l2, #dcdfe6)"
 		};
-		const effortLevelNameStyle = {
-			fontFamily: "var(--ds-font-family-code, ui-monospace, SFMono-Regular, monospace)",
-			fontSize: 13,
-			minWidth: 64,
-			color: "var(--dsw-alias-label-primary, #1f2329)"
+		const capSwitchRowStyle = {
+			display: "inline-flex",
+			alignItems: "center",
+			gap: 6,
+			cursor: "pointer",
+			userSelect: "none"
+		};
+		const capSwitchStyle = {
+			position: "relative",
+			width: 34,
+			height: 18,
+			borderRadius: 9,
+			border: "none",
+			cursor: "pointer",
+			flex: "none",
+			padding: 0,
+			background: "var(--dsw-alias-border-l2, #dcdfe6)",
+			transition: "background .15s"
+		};
+		const capSwitchOnStyle = {
+			...capSwitchStyle,
+			background: "var(--dsw-alias-state-business-primary, #4176e6)"
+		};
+		const capKnobStyle = {
+			position: "absolute",
+			top: 2,
+			left: 2,
+			width: 14,
+			height: 14,
+			borderRadius: "50%",
+			background: "var(--dsw-alias-label-tertiary, #8f959e)",
+			transition: "left .15s, background .15s",
+			boxShadow: "0 1px 2px rgba(0,0,0,.2)"
+		};
+		const capKnobOnStyle = {
+			...capKnobStyle,
+			left: 18,
+			background: "#fff"
+		};
+		const capSwitchLabelStyle = {
+			fontSize: 12,
+			lineHeight: "18px",
+			color: "var(--dsw-alias-label-secondary, #4e5969)",
+			whiteSpace: "nowrap"
+		};
+		const capabilityTestButtonStyle = {
+			boxSizing: "border-box",
+			height: 28,
+			padding: "0 12px",
+			border: "1px solid var(--dsw-alias-state-business-primary, #4176e6)",
+			borderRadius: 14,
+			background: "transparent",
+			color: "var(--dsw-alias-state-business-primary, #4176e6)",
+			fontSize: 12,
+			lineHeight: "18px",
+			cursor: "pointer",
+			flex: "none"
 		};
 		const hintStyle$2 = {
 			margin: 0,
 			fontSize: 12,
+			lineHeight: "18px",
 			color: "var(--dsw-alias-label-tertiary, #8f959e)"
 		};
 		const errorStyle$2 = {
 			margin: 0,
 			fontSize: 12,
+			lineHeight: "18px",
 			color: "var(--dsw-alias-state-error-primary, #d54941)"
 		};
 		const overlayStyle = {
@@ -279398,8 +279930,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			justifyContent: "center"
 		};
 		const modalStyle = {
-			width: 420,
-			maxWidth: "calc(100vw - 48px)",
+			width: "min(520px, calc(100vw - 48px))",
 			maxHeight: "70vh",
 			overflowY: "auto",
 			padding: 16,
@@ -279410,118 +279941,319 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			flexDirection: "column",
 			gap: 6
 		};
-		const primaryButtonStyle$1 = {
-			padding: "6px 14px",
+		const candidateStyle = { borderRadius: 6 };
+		const candidateIdStyle = {
+			flex: "1 1 auto",
+			fontFamily: "var(--ds-font-family-code, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)",
 			fontSize: 13,
-			borderRadius: 6,
+			lineHeight: "20px",
+			color: "var(--dsw-alias-label-primary, #1f2329)",
+			overflowWrap: "anywhere"
+		};
+		const primaryButtonStyle$1 = {
+			boxSizing: "border-box",
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			height: 36,
+			padding: "0 14px",
+			fontSize: 14,
+			lineHeight: "22px",
+			borderRadius: 18,
 			border: "none",
-			background: "var(--dsw-alias-button-primary-fill, #165dff)",
+			background: "var(--dsw-alias-button-primary-fill, #4176e6)",
 			color: "var(--dsw-alias-label-primary-foreground, #fff)",
 			cursor: "pointer"
 		};
-		const secondaryButtonStyle$2 = {
-			padding: "6px 14px",
-			fontSize: 13,
-			borderRadius: 6,
+		const secondaryButtonStyle$1 = {
+			boxSizing: "border-box",
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			height: 36,
+			padding: "0 14px",
+			fontSize: 14,
+			lineHeight: "22px",
+			borderRadius: 18,
 			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
 			background: "transparent",
 			color: "var(--dsw-alias-label-primary, #1f2329)",
 			cursor: "pointer"
 		};
 		//#endregion
-		//#region src/client/provider-hub/chat/ChatProviderList.tsx
-		/** 一行提供方解析出的 profile 中 `models` 数组的长度（无则 0）。 */
-		function modelsCountOf(state, row) {
-			const namespace = state.namespaces.get(row.entry.settingsNs);
-			if (namespace === void 0) return 0;
-			const models = getPath(namespace.value, [...row.entry.settingsPath, "models"]);
-			return Array.isArray(models) ? models.length : 0;
+		//#region src/client/provider-hub/provider-icons.data.ts
+		/**
+		* 内置供应商标官方 SVG 数据（品牌色 / currentColor 单色标混合）。
+		* 数据源：@lobehub/icons-static-svg@1.94.0（MIT），构建期生成，无运行时网络依赖。
+		* 每个 svg 以 width/height="1em" 书写，尺寸由宿主 font-size 控制。
+		*/
+		const PROVIDER_ICON_SVGS = {
+			"deepseek": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M23.748 4.482c-.254-.124-.364.113-.512.234-.051.039-.094.09-.137.136-.372.397-.806.657-1.373.626-.829-.046-1.537.214-2.163.848-.133-.782-.575-1.248-1.247-1.548-.352-.156-.708-.311-.955-.65-.172-.241-.219-.51-.305-.774-.055-.16-.11-.323-.293-.35-.2-.031-.278.136-.356.276-.313.572-.434 1.202-.422 1.84.027 1.436.633 2.58 1.838 3.393.137.093.172.187.129.323-.082.28-.18.552-.266.833-.055.179-.137.217-.329.14a5.526 5.526 0 01-1.736-1.18c-.857-.828-1.631-1.742-2.597-2.458a11.365 11.365 0 00-.689-.471c-.985-.957.13-1.743.388-1.836.27-.098.093-.432-.779-.428-.872.004-1.67.295-2.687.684a3.055 3.055 0 01-.465.137 9.597 9.597 0 00-2.883-.102c-1.885.21-3.39 1.102-4.497 2.623C.082 8.606-.231 10.684.152 12.85c.403 2.284 1.569 4.175 3.36 5.653 1.858 1.533 3.997 2.284 6.438 2.14 1.482-.085 3.133-.284 4.994-1.86.47.234.962.327 1.78.397.63.059 1.236-.03 1.705-.128.735-.156.684-.837.419-.961-2.155-1.004-1.682-.595-2.113-.926 1.096-1.296 2.746-2.642 3.392-7.003.05-.347.007-.565 0-.845-.004-.17.035-.237.23-.256a4.173 4.173 0 001.545-.475c1.396-.763 1.96-2.015 2.093-3.517.02-.23-.004-.467-.247-.588zM11.581 18c-2.089-1.642-3.102-2.183-3.52-2.16-.392.024-.321.471-.235.763.09.288.207.486.371.739.114.167.192.416-.113.603-.673.416-1.842-.14-1.897-.167-1.361-.802-2.5-1.86-3.301-3.307-.774-1.393-1.224-2.887-1.298-4.482-.02-.386.093-.522.477-.592a4.696 4.696 0 011.529-.039c2.132.312 3.946 1.265 5.468 2.774.868.86 1.525 1.887 2.202 2.891.72 1.066 1.494 2.082 2.48 2.914.348.292.625.514.891.677-.802.09-2.14.11-3.054-.614zm1-6.44a.306.306 0 01.415-.287.302.302 0 01.2.288.306.306 0 01-.31.307.303.303 0 01-.304-.308zm3.11 1.596c-.2.081-.399.151-.59.16a1.245 1.245 0 01-.798-.254c-.274-.23-.47-.358-.552-.758a1.73 1.73 0 01.016-.588c.07-.327-.008-.537-.239-.727-.187-.156-.426-.199-.688-.199a.559.559 0 01-.254-.078c-.11-.054-.2-.19-.114-.358.028-.054.16-.186.192-.21.356-.202.767-.136 1.146.016.352.144.618.408 1.001.782.391.451.462.576.685.914.176.265.336.537.445.848.067.195-.019.354-.25.452z\" fill=\"#4D6BFE\"></path></svg>",
+			"bedrock": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><defs><linearGradient id=\"lobe-icons-bedrock-_R_0_\" x1=\"80%\" x2=\"20%\" y1=\"20%\" y2=\"80%\"><stop offset=\"0%\" stop-color=\"#6350FB\"></stop><stop offset=\"50%\" stop-color=\"#3D8FFF\"></stop><stop offset=\"100%\" stop-color=\"#9AD8F8\"></stop></linearGradient></defs><path d=\"M13.05 15.513h3.08c.214 0 .389.177.389.394v1.82a1.704 1.704 0 011.296 1.661c0 .943-.755 1.708-1.685 1.708-.931 0-1.686-.765-1.686-1.708 0-.807.554-1.484 1.297-1.662v-1.425h-2.69v4.663a.395.395 0 01-.188.338l-2.69 1.641a.385.385 0 01-.405-.002l-4.926-3.086a.395.395 0 01-.185-.336V16.3L2.196 14.87A.395.395 0 012 14.555L2 14.528V9.406c0-.14.073-.27.192-.34l2.465-1.462V4.448c0-.129.062-.249.165-.322l.021-.014L9.77 1.058a.385.385 0 01.407 0l2.69 1.675a.395.395 0 01.185.336V7.6h3.856V5.683a1.704 1.704 0 01-1.296-1.662c0-.943.755-1.708 1.685-1.708.931 0 1.685.765 1.685 1.708 0 .807-.553 1.484-1.296 1.662v2.311a.391.391 0 01-.389.394h-4.245v1.806h6.624a1.69 1.69 0 011.64-1.313c.93 0 1.685.764 1.685 1.707 0 .943-.754 1.708-1.685 1.708a1.69 1.69 0 01-1.64-1.314H13.05v1.937h4.953l.915 1.18a1.66 1.66 0 01.84-.227c.931 0 1.685.764 1.685 1.707 0 .943-.754 1.708-1.685 1.708-.93 0-1.685-.765-1.685-1.708 0-.346.102-.668.276-.937l-.724-.935H13.05v1.806zM9.973 1.856L7.93 3.122V6.09h-.778V3.604L5.435 4.669v2.945l2.11 1.36L9.712 7.61V5.334h.778V7.83c0 .136-.07.263-.184.335L7.963 9.638v2.081l1.422 1.009-.446.646-1.406-.998-1.53 1.005-.423-.66 1.605-1.055v-1.99L5.038 8.29l-2.26 1.34v1.676l1.972-1.189.398.677-2.37 1.429V14.3l2.166 1.258 2.27-1.368.397.677-2.176 1.311V19.3l1.876 1.175 2.365-1.426.398.678-2.017 1.216 1.918 1.201 2.298-1.403v-5.78l-4.758 2.893-.4-.675 5.158-3.136V3.289L9.972 1.856zM16.13 18.47a.913.913 0 00-.908.92c0 .507.406.918.908.918a.913.913 0 00.907-.919.913.913 0 00-.907-.92zm3.63-3.81a.913.913 0 00-.908.92c0 .508.406.92.907.92a.913.913 0 00.908-.92.913.913 0 00-.908-.92zm1.555-4.99a.913.913 0 00-.908.92c0 .507.407.918.908.918a.913.913 0 00.907-.919.913.913 0 00-.907-.92zM17.296 3.1a.913.913 0 00-.907.92c0 .508.406.92.907.92a.913.913 0 00.908-.92.913.913 0 00-.908-.92z\" fill=\"url(#lobe-icons-bedrock-_R_0_)\" fill-rule=\"nonzero\"></path></svg>",
+			"anthropic": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M13.827 3.52h3.603L24 20h-3.603l-6.57-16.48zm-7.258 0h3.767L16.906 20h-3.674l-1.343-3.461H5.017l-1.344 3.46H0L6.57 3.522zm4.132 9.959L8.453 7.687 6.205 13.48H10.7z\"></path></svg>",
+			"azure": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7.242 1.613A1.11 1.11 0 018.295.857h6.977L8.03 22.316a1.11 1.11 0 01-1.052.755h-5.43a1.11 1.11 0 01-1.053-1.466L7.242 1.613z\" fill=\"url(#lobe-icons-azure-0-_R_0_)\"></path><path d=\"M18.397 15.296H7.4a.51.51 0 00-.347.882l7.066 6.595c.206.192.477.298.758.298h6.226l-2.706-7.775z\" fill=\"#0078D4\"></path><path d=\"M15.272.857H7.497L0 23.071h7.775l1.596-4.73 5.068 4.73h6.665l-2.707-7.775h-7.998L15.272.857z\" fill=\"url(#lobe-icons-azure-1-_R_0_)\"></path><path d=\"M17.193 1.613a1.11 1.11 0 00-1.052-.756h-7.81.035c.477 0 .9.304 1.052.756l6.748 19.992a1.11 1.11 0 01-1.052 1.466h-.12 7.895a1.11 1.11 0 001.052-1.466L17.193 1.613z\" fill=\"url(#lobe-icons-azure-2-_R_0_)\"></path><defs><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-azure-0-_R_0_\" x1=\"8.247\" x2=\"1.002\" y1=\"1.626\" y2=\"23.03\"><stop stop-color=\"#114A8B\"></stop><stop offset=\"1\" stop-color=\"#0669BC\"></stop></linearGradient><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-azure-1-_R_0_\" x1=\"14.042\" x2=\"12.324\" y1=\"15.302\" y2=\"15.888\"><stop stop-opacity=\".3\"></stop><stop offset=\".071\" stop-opacity=\".2\"></stop><stop offset=\".321\" stop-opacity=\".1\"></stop><stop offset=\".623\" stop-opacity=\".05\"></stop><stop offset=\"1\" stop-opacity=\"0\"></stop></linearGradient><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-azure-2-_R_0_\" x1=\"12.841\" x2=\"20.793\" y1=\"1.626\" y2=\"22.814\"><stop stop-color=\"#3CCBF4\"></stop><stop offset=\"1\" stop-color=\"#2892DF\"></stop></linearGradient></defs></svg>",
+			"cerebras": "<svg fill=\"currentColor\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path clip-rule=\"evenodd\" d=\"M14.121 2.701a9.299 9.299 0 000 18.598V22.7c-5.91 0-10.7-4.791-10.7-10.701S8.21 1.299 14.12 1.299V2.7zm4.752 3.677A7.353 7.353 0 109.42 17.643l-.901 1.074a8.754 8.754 0 01-1.08-12.334 8.755 8.755 0 0112.335-1.08l-.901 1.075zm-2.255.844a5.407 5.407 0 00-5.048 9.563l-.656 1.24a6.81 6.81 0 016.358-12.043l-.654 1.24zM14.12 8.539a3.46 3.46 0 100 6.922v1.402a4.863 4.863 0 010-9.726v1.402z\" fill=\"#F15A29\" fill-rule=\"evenodd\"></path><path d=\"M15.407 10.836a2.24 2.24 0 00-.51-.409 1.084 1.084 0 00-.544-.152c-.255 0-.483.047-.684.14a1.58 1.58 0 00-.84.912c-.074.203-.11.416-.11.631 0 .218.036.43.11.631a1.594 1.594 0 00.84.913c.2.093.43.14.684.14.216 0 .417-.046.602-.135.188-.09.35-.225.475-.392l.928 1.006c-.14.14-.3.261-.482.363a3.367 3.367 0 01-1.083.38c-.17.026-.317.04-.44.04a3.315 3.315 0 01-1.182-.21 2.825 2.825 0 01-.961-.597 2.816 2.816 0 01-.644-.929 2.987 2.987 0 01-.238-1.21c0-.444.08-.847.238-1.21.15-.35.368-.666.643-.929.278-.261.605-.464.962-.596a3.315 3.315 0 011.182-.21c.355 0 .712.068 1.072.204.361.138.685.36.944.649l-.962.97z\"></path></svg>",
+			"cloudflare": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M16.493 17.4c.135-.52.08-.983-.161-1.338-.215-.328-.592-.519-1.05-.519l-8.663-.109a.148.148 0 01-.135-.082c-.027-.054-.027-.109-.027-.163.027-.082.108-.164.189-.164l8.744-.11c1.05-.054 2.153-.9 2.556-1.937l.511-1.31c.027-.055.027-.11.027-.164C17.92 8.91 15.66 7 12.942 7c-2.503 0-4.628 1.638-5.381 3.903a2.432 2.432 0 00-1.803-.491c-1.21.109-2.153 1.092-2.287 2.32-.027.328 0 .628.054.9C1.56 13.688 0 15.326 0 17.319c0 .19.027.355.027.545 0 .082.08.137.161.137h15.983c.08 0 .188-.055.215-.164l.107-.437\" fill=\"#F38020\"></path><path d=\"M19.238 11.75h-.242c-.054 0-.108.054-.135.109l-.35 1.2c-.134.52-.08.983.162 1.338.215.328.592.518 1.05.518l1.855.11c.054 0 .108.027.135.082.027.054.027.109.027.163-.027.082-.108.164-.188.164l-1.91.11c-1.05.054-2.153.9-2.557 1.937l-.134.355c-.027.055.026.137.107.137h6.592c.081 0 .162-.055.162-.137.107-.41.188-.846.188-1.31-.027-2.62-2.153-4.777-4.762-4.777\" fill=\"#FCAD32\"></path></svg>",
+			"fireworks": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path clip-rule=\"evenodd\" d=\"M14.8 5l-2.801 6.795L9.195 5H7.397l3.072 7.428a1.64 1.64 0 003.038.002L16.598 5H14.8zm1.196 10.352l5.124-5.244-.699-1.669-5.596 5.739a1.664 1.664 0 00-.343 1.807 1.642 1.642 0 001.516 1.012L16 17l8-.02-.699-1.669-7.303.041h-.002zM2.88 10.104l.699-1.669 5.596 5.739c.468.479.603 1.189.343 1.807a1.643 1.643 0 01-1.516 1.012l-8-.018-.002.002.699-1.669 7.303.042-5.122-5.246z\" fill=\"#5019C5\" fill-rule=\"evenodd\"></path></svg>",
+			"githubcopilot": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M19.245 5.364c1.322 1.36 1.877 3.216 2.11 5.817.622 0 1.2.135 1.592.654l.73.964c.21.278.323.61.323.955v2.62c0 .339-.173.669-.453.868C20.239 19.602 16.157 21.5 12 21.5c-4.6 0-9.205-2.583-11.547-4.258-.28-.2-.452-.53-.453-.868v-2.62c0-.345.113-.679.321-.956l.73-.963c.392-.517.974-.654 1.593-.654l.029-.297c.25-2.446.81-4.213 2.082-5.52 2.461-2.54 5.71-2.851 7.146-2.864h.198c1.436.013 4.685.323 7.146 2.864zm-7.244 4.328c-.284 0-.613.016-.962.05-.123.447-.305.85-.57 1.108-1.05 1.023-2.316 1.18-2.994 1.18-.638 0-1.306-.13-1.851-.464-.516.165-1.012.403-1.044.996a65.882 65.882 0 00-.063 2.884l-.002.48c-.002.563-.005 1.126-.013 1.69.002.326.204.63.51.765 2.482 1.102 4.83 1.657 6.99 1.657 2.156 0 4.504-.555 6.985-1.657a.854.854 0 00.51-.766c.03-1.682.006-3.372-.076-5.053-.031-.596-.528-.83-1.046-.996-.546.333-1.212.464-1.85.464-.677 0-1.942-.157-2.993-1.18-.266-.258-.447-.661-.57-1.108-.32-.032-.64-.049-.96-.05zm-2.525 4.013c.539 0 .976.426.976.95v1.753c0 .525-.437.95-.976.95a.964.964 0 01-.976-.95v-1.752c0-.525.437-.951.976-.951zm5 0c.539 0 .976.426.976.95v1.753c0 .525-.437.95-.976.95a.964.964 0 01-.976-.95v-1.752c0-.525.437-.951.976-.951zM7.635 5.087c-1.05.102-1.935.438-2.385.906-.975 1.037-.765 3.668-.21 4.224.405.394 1.17.657 1.995.657h.09c.649-.013 1.785-.176 2.73-1.11.435-.41.705-1.433.675-2.47-.03-.834-.27-1.52-.63-1.813-.39-.336-1.275-.482-2.265-.394zm6.465.394c-.36.292-.6.98-.63 1.813-.03 1.037.24 2.06.675 2.47.968.957 2.136 1.104 2.776 1.11h.044c.825 0 1.59-.263 1.995-.657.555-.556.765-3.187-.21-4.224-.45-.468-1.335-.804-2.385-.906-.99-.088-1.875.058-2.265.394zM12 7.615c-.24 0-.525.015-.84.044.03.16.045.336.06.526l-.001.159a2.94 2.94 0 01-.014.25c.225-.022.425-.027.612-.028h.366c.187 0 .387.006.612.028-.015-.146-.015-.277-.015-.409.015-.19.03-.365.06-.526a9.29 9.29 0 00-.84-.044z\"></path></svg>",
+			"gemini": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"#3186FF\"></path><path d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-0-_R_0_)\"></path><path d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-1-_R_0_)\"></path><path d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-2-_R_0_)\"></path><defs><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-0-_R_0_\" x1=\"7\" x2=\"11\" y1=\"15.5\" y2=\"12\"><stop stop-color=\"#08B962\"></stop><stop offset=\"1\" stop-color=\"#08B962\" stop-opacity=\"0\"></stop></linearGradient><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-1-_R_0_\" x1=\"8\" x2=\"11.5\" y1=\"5.5\" y2=\"11\"><stop stop-color=\"#F94543\"></stop><stop offset=\"1\" stop-color=\"#F94543\" stop-opacity=\"0\"></stop></linearGradient><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-2-_R_0_\" x1=\"3.5\" x2=\"17.5\" y1=\"13.5\" y2=\"12\"><stop stop-color=\"#FABC12\"></stop><stop offset=\".46\" stop-color=\"#FABC12\" stop-opacity=\"0\"></stop></linearGradient></defs></svg>",
+			"vertexai": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M11.995 20.216a1.892 1.892 0 100 3.785 1.892 1.892 0 000-3.785zm0 2.806a.927.927 0 11.927-.914.914.914 0 01-.927.914z\" fill=\"#4285F4\"></path><path clip-rule=\"evenodd\" d=\"M21.687 14.144c.237.038.452.16.605.344a.978.978 0 01-.18 1.3l-8.24 6.082a1.892 1.892 0 00-1.147-1.508l8.28-6.08a.991.991 0 01.682-.138z\" fill=\"#669DF6\" fill-rule=\"evenodd\"></path><path clip-rule=\"evenodd\" d=\"M10.122 21.842l-8.217-6.066a.952.952 0 01-.206-1.287.978.978 0 011.287-.206l8.28 6.08a1.893 1.893 0 00-1.144 1.479z\" fill=\"#AECBFA\" fill-rule=\"evenodd\"></path><path d=\"M4.273 4.475a.978.978 0 01-.965-.965V1.09a.978.978 0 111.943 0v2.42a.978.978 0 01-.978.965zM4.247 13.034a.978.978 0 100-1.956.978.978 0 000 1.956zM4.247 10.19a.978.978 0 100-1.956.978.978 0 000 1.956zM4.247 7.332a.978.978 0 100-1.956.978.978 0 000 1.956z\" fill=\"#AECBFA\"></path><path d=\"M19.718 7.307a.978.978 0 01-.965-.979v-2.42a.965.965 0 011.93 0v2.42a.964.964 0 01-.965.979zM19.743 13.047a.978.978 0 100-1.956.978.978 0 000 1.956zM19.743 10.151a.978.978 0 100-1.956.978.978 0 000 1.956zM19.743 2.068a.978.978 0 100-1.956.978.978 0 000 1.956z\" fill=\"#4285F4\"></path><path d=\"M11.995 15.917a.978.978 0 01-.965-.965v-2.459a.978.978 0 011.943 0v2.433a.976.976 0 01-.978.991zM11.995 18.762a.978.978 0 100-1.956.978.978 0 000 1.956zM11.995 10.64a.978.978 0 100-1.956.978.978 0 000 1.956zM11.995 7.783a.978.978 0 100-1.956.978.978 0 000 1.956z\" fill=\"#669DF6\"></path><path d=\"M15.856 10.177a.978.978 0 01-.965-.965v-2.42a.977.977 0 011.702-.763.979.979 0 01.241.763v2.42a.978.978 0 01-.978.965zM15.869 4.913a.978.978 0 100-1.956.978.978 0 000 1.956zM15.869 15.853a.978.978 0 100-1.956.978.978 0 000 1.956zM15.869 12.996a.978.978 0 100-1.956.978.978 0 000 1.956z\" fill=\"#4285F4\"></path><path d=\"M8.121 15.853a.978.978 0 100-1.956.978.978 0 000 1.956zM8.121 7.783a.978.978 0 100-1.956.978.978 0 000 1.956zM8.121 4.913a.978.978 0 100-1.957.978.978 0 000 1.957zM8.134 12.996a.978.978 0 01-.978-.94V9.611a.965.965 0 011.93 0v2.445a.966.966 0 01-.952.94z\" fill=\"#AECBFA\"></path></svg>",
+			"groq": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.036 2c-3.853-.035-7 3-7.036 6.781-.035 3.782 3.055 6.872 6.908 6.907h2.42v-2.566h-2.292c-2.407.028-4.38-1.866-4.408-4.23-.029-2.362 1.901-4.298 4.308-4.326h.1c2.407 0 4.358 1.915 4.365 4.278v6.305c0 2.342-1.944 4.25-4.323 4.279a4.375 4.375 0 01-3.033-1.252l-1.851 1.818A7 7 0 0012.029 22h.092c3.803-.056 6.858-3.083 6.879-6.816v-6.5C18.907 4.963 15.817 2 12.036 2z\"></path></svg>",
+			"huggingface": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2.25 11.535c0-3.407 1.847-6.554 4.844-8.258a9.822 9.822 0 019.687 0c2.997 1.704 4.844 4.851 4.844 8.258 0 5.266-4.337 9.535-9.687 9.535S2.25 16.8 2.25 11.535z\" fill=\"#FF9D0B\"></path><path d=\"M11.938 20.086c4.797 0 8.687-3.829 8.687-8.551 0-4.722-3.89-8.55-8.687-8.55-4.798 0-8.688 3.828-8.688 8.55 0 4.722 3.89 8.55 8.688 8.55z\" fill=\"#FFD21E\"></path><path d=\"M11.875 15.113c2.457 0 3.25-2.156 3.25-3.263 0-.576-.393-.394-1.023-.089-.582.283-1.365.675-2.224.675-1.798 0-3.25-1.693-3.25-.586 0 1.107.79 3.263 3.25 3.263h-.003z\" fill=\"#FF323D\"></path><path d=\"M14.76 9.21c.32.108.445.753.767.585.447-.233.707-.708.659-1.204a1.235 1.235 0 00-.879-1.059 1.262 1.262 0 00-1.33.394c-.322.384-.377.92-.14 1.36.153.283.638-.177.925-.079l-.002.003zm-5.887 0c-.32.108-.448.753-.768.585a1.226 1.226 0 01-.658-1.204c.048-.495.395-.913.878-1.059a1.262 1.262 0 011.33.394c.322.384.377.92.14 1.36-.152.283-.64-.177-.925-.079l.003.003zm1.12 5.34a2.166 2.166 0 011.325-1.106c.07-.02.144.06.219.171l.192.306c.069.1.139.175.209.175.074 0 .15-.074.223-.172l.205-.302c.08-.11.157-.188.234-.165.537.168.986.536 1.25 1.026.932-.724 1.275-1.905 1.275-2.633 0-.508-.306-.426-.81-.19l-.616.296c-.52.24-1.148.48-1.824.48-.676 0-1.302-.24-1.823-.48l-.589-.283c-.52-.248-.838-.342-.838.177 0 .703.32 1.831 1.187 2.56l.18.14z\" fill=\"#3A3B45\"></path><path d=\"M17.812 10.366a.806.806 0 00.813-.8c0-.441-.364-.8-.813-.8a.806.806 0 00-.812.8c0 .442.364.8.812.8zm-11.624 0a.806.806 0 00.812-.8c0-.441-.364-.8-.812-.8a.806.806 0 00-.813.8c0 .442.364.8.813.8zM4.515 13.073c-.405 0-.765.162-1.017.46a1.455 1.455 0 00-.333.925 1.801 1.801 0 00-.485-.074c-.387 0-.737.146-.985.409a1.41 1.41 0 00-.2 1.722 1.302 1.302 0 00-.447.694c-.06.222-.12.69.2 1.166a1.267 1.267 0 00-.093 1.236c.238.533.81.958 1.89 1.405l.24.096c.768.3 1.473.492 1.478.494.89.243 1.808.375 2.732.394 1.465 0 2.513-.443 3.115-1.314.93-1.342.842-2.575-.274-3.763l-.151-.154c-.692-.684-1.155-1.69-1.25-1.912-.195-.655-.71-1.383-1.562-1.383-.46.007-.889.233-1.15.605-.25-.31-.495-.553-.715-.694a1.87 1.87 0 00-.993-.312zm14.97 0c.405 0 .767.162 1.017.46.216.262.333.588.333.925.158-.047.322-.071.487-.074.388 0 .738.146.985.409a1.41 1.41 0 01.2 1.722c.22.178.377.422.445.694.06.222.12.69-.2 1.166.244.37.279.836.093 1.236-.238.533-.81.958-1.889 1.405l-.239.096c-.77.3-1.475.492-1.48.494-.89.243-1.808.375-2.732.394-1.465 0-2.513-.443-3.115-1.314-.93-1.342-.842-2.575.274-3.763l.151-.154c.695-.684 1.157-1.69 1.252-1.912.195-.655.708-1.383 1.56-1.383.46.007.889.233 1.15.605.25-.31.495-.553.718-.694.244-.162.523-.265.814-.3l.176-.012z\" fill=\"#FF9D0B\"></path><path d=\"M9.785 20.132c.688-.994.638-1.74-.305-2.667-.945-.928-1.495-2.288-1.495-2.288s-.205-.788-.672-.714c-.468.074-.81 1.25.17 1.971.977.721-.195 1.21-.573.534-.375-.677-1.405-2.416-1.94-2.751-.532-.332-.907-.148-.782.541.125.687 2.357 2.35 2.14 2.707-.218.362-.983-.42-.983-.42S2.953 14.9 2.43 15.46c-.52.558.398 1.026 1.7 1.803 1.308.778 1.41.985 1.225 1.28-.187.295-3.07-2.1-3.34-1.083-.27 1.011 2.943 1.304 2.745 2.006-.2.7-2.265-1.324-2.685-.537-.425.79 2.913 1.718 2.94 1.725 1.075.276 3.813.859 4.77-.522zm4.432 0c-.687-.994-.64-1.74.305-2.667.943-.928 1.493-2.288 1.493-2.288s.205-.788.675-.714c.465.074.807 1.25-.17 1.971-.98.721.195 1.21.57.534.377-.677 1.407-2.416 1.94-2.751.532-.332.91-.148.782.541-.125.687-2.355 2.35-2.137 2.707.215.362.98-.42.98-.42S21.05 14.9 21.57 15.46c.52.558-.395 1.026-1.7 1.803-1.308.778-1.408.985-1.225 1.28.187.295 3.07-2.1 3.34-1.083.27 1.011-2.94 1.304-2.743 2.006.2.7 2.263-1.324 2.685-.537.423.79-2.912 1.718-2.94 1.725-1.077.276-3.815.859-4.77-.522z\" fill=\"#FFD21E\"></path></svg>",
+			"kimi": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M21.846 0a1.923 1.923 0 110 3.846H20.15a.226.226 0 01-.227-.226V1.923C19.923.861 20.784 0 21.846 0z\" fill=\"#1783FF\"></path><path d=\"M11.065 11.199l7.257-7.2c.137-.136.06-.41-.116-.41H14.3a.164.164 0 00-.117.051l-7.82 7.756c-.122.12-.302.013-.302-.179V3.82c0-.127-.083-.23-.185-.23H3.186c-.103 0-.186.103-.186.23V19.77c0 .128.083.23.186.23h2.69c.103 0 .186-.102.186-.23v-3.25c0-.069.025-.135.069-.178l2.424-2.406a.158.158 0 01.205-.023l6.484 4.772a7.677 7.677 0 003.453 1.283c.108.012.2-.095.2-.23v-3.06c0-.117-.07-.212-.164-.227a5.028 5.028 0 01-2.027-.807l-5.613-4.064c-.117-.078-.132-.279-.028-.381z\" fill=\"#fff\"></path></svg>",
+			"minimax": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><defs><linearGradient id=\"lobe-icons-minimax-_R_0_\" x1=\"0%\" x2=\"100.182%\" y1=\"50.057%\" y2=\"50.057%\"><stop offset=\"0%\" stop-color=\"#E2167E\"></stop><stop offset=\"100%\" stop-color=\"#FE603C\"></stop></linearGradient></defs><path d=\"M16.278 2c1.156 0 2.093.927 2.093 2.07v12.501a.74.74 0 00.744.709.74.74 0 00.743-.709V9.099a2.06 2.06 0 012.071-2.049A2.06 2.06 0 0124 9.1v6.561a.649.649 0 01-.652.645.649.649 0 01-.653-.645V9.1a.762.762 0 00-.766-.758.762.762 0 00-.766.758v7.472a2.037 2.037 0 01-2.048 2.026 2.037 2.037 0 01-2.048-2.026v-12.5a.785.785 0 00-.788-.753.785.785 0 00-.789.752l-.001 15.904A2.037 2.037 0 0113.441 22a2.037 2.037 0 01-2.048-2.026V18.04c0-.356.292-.645.652-.645.36 0 .652.289.652.645v1.934c0 .263.142.506.372.638.23.131.514.131.744 0a.734.734 0 00.372-.638V4.07c0-1.143.937-2.07 2.093-2.07zm-5.674 0c1.156 0 2.093.927 2.093 2.07v11.523a.648.648 0 01-.652.645.648.648 0 01-.652-.645V4.07a.785.785 0 00-.789-.78.785.785 0 00-.789.78v14.013a2.06 2.06 0 01-2.07 2.048 2.06 2.06 0 01-2.071-2.048V9.1a.762.762 0 00-.766-.758.762.762 0 00-.766.758v3.8a2.06 2.06 0 01-2.071 2.049A2.06 2.06 0 010 12.9v-1.378c0-.357.292-.646.652-.646.36 0 .653.29.653.646V12.9c0 .418.343.757.766.757s.766-.339.766-.757V9.099a2.06 2.06 0 012.07-2.048 2.06 2.06 0 012.071 2.048v8.984c0 .419.343.758.767.758.423 0 .766-.339.766-.758V4.07c0-1.143.937-2.07 2.093-2.07z\" fill=\"url(#lobe-icons-minimax-_R_0_)\" fill-rule=\"nonzero\"></path></svg>",
+			"mistral": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M3.428 3.4h3.429v3.428H3.428V3.4zm13.714 0h3.43v3.428h-3.43V3.4z\" fill=\"gold\"></path><path d=\"M3.428 6.828h6.857v3.429H3.429V6.828zm10.286 0h6.857v3.429h-6.857V6.828z\" fill=\"#FFAF00\"></path><path d=\"M3.428 10.258h17.144v3.428H3.428v-3.428z\" fill=\"#FF8205\"></path><path d=\"M3.428 13.686h3.429v3.428H3.428v-3.428zm6.858 0h3.429v3.428h-3.429v-3.428zm6.856 0h3.43v3.428h-3.43v-3.428z\" fill=\"#FA500F\"></path><path d=\"M0 17.114h10.286v3.429H0v-3.429zm13.714 0H24v3.429H13.714v-3.429z\" fill=\"#E10500\"></path></svg>",
+			"moonshot": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M1.052 16.916l9.539 2.552a21.007 21.007 0 00.06 2.033l5.956 1.593a11.997 11.997 0 01-5.586.865l-.18-.016-.044-.004-.084-.009-.094-.01a11.605 11.605 0 01-.157-.02l-.107-.014-.11-.016a11.962 11.962 0 01-.32-.051l-.042-.008-.075-.013-.107-.02-.07-.015-.093-.019-.075-.016-.095-.02-.097-.023-.094-.022-.068-.017-.088-.022-.09-.024-.095-.025-.082-.023-.109-.03-.062-.02-.084-.025-.093-.028-.105-.034-.058-.019-.08-.026-.09-.031-.066-.024a6.293 6.293 0 01-.044-.015l-.068-.025-.101-.037-.057-.022-.08-.03-.087-.035-.088-.035-.079-.032-.095-.04-.063-.028-.063-.027a5.655 5.655 0 01-.041-.018l-.066-.03-.103-.047-.052-.024-.096-.046-.062-.03-.084-.04-.086-.044-.093-.047-.052-.027-.103-.055-.057-.03-.058-.032a6.49 6.49 0 01-.046-.026l-.094-.053-.06-.034-.051-.03-.072-.041-.082-.05-.093-.056-.052-.032-.084-.053-.061-.039-.079-.05-.07-.047-.053-.035a7.785 7.785 0 01-.054-.036l-.044-.03-.044-.03a6.066 6.066 0 01-.04-.028l-.057-.04-.076-.054-.069-.05-.074-.054-.056-.042-.076-.057-.076-.059-.086-.067-.045-.035-.064-.052-.074-.06-.089-.073-.046-.039-.046-.039a7.516 7.516 0 01-.043-.037l-.045-.04-.061-.053-.07-.062-.068-.06-.062-.058-.067-.062-.053-.05-.088-.084a13.28 13.28 0 01-.099-.097l-.029-.028-.041-.042-.069-.07-.05-.051-.05-.053a6.457 6.457 0 01-.168-.179l-.08-.088-.062-.07-.071-.08-.042-.049-.053-.062-.058-.068-.046-.056a7.175 7.175 0 01-.027-.033l-.045-.055-.066-.082-.041-.052-.05-.064-.02-.025a11.99 11.99 0 01-1.44-2.402zm-1.02-5.794l11.353 3.037a20.468 20.468 0 00-.469 2.011l10.817 2.894a12.076 12.076 0 01-1.845 2.005L.657 15.923l-.016-.046-.035-.104a11.965 11.965 0 01-.05-.153l-.007-.023a11.896 11.896 0 01-.207-.741l-.03-.126-.018-.08-.021-.097-.018-.081-.018-.09-.017-.084-.018-.094c-.026-.141-.05-.283-.071-.426l-.017-.118-.011-.083-.013-.102a12.01 12.01 0 01-.019-.161l-.005-.047a12.12 12.12 0 01-.034-2.145zm1.593-5.15l11.948 3.196c-.368.605-.705 1.231-1.01 1.875l11.295 3.022c-.142.82-.368 1.612-.668 2.365l-11.55-3.09L.124 10.26l.015-.1.008-.049.01-.067.015-.087.018-.098c.026-.148.056-.295.088-.442l.028-.124.02-.085.024-.097c.022-.09.045-.18.07-.268l.028-.102.023-.083.03-.1.025-.082.03-.096.026-.082.031-.095a11.896 11.896 0 011.01-2.232zm4.442-4.4L17.352 4.59a20.77 20.77 0 00-1.688 1.721l7.823 2.093c.267.852.442 1.744.513 2.665L2.106 5.213l.045-.065.027-.04.04-.055.046-.065.055-.076.054-.072.064-.086.05-.065.057-.073.055-.07.06-.074.055-.069.065-.077.054-.066.066-.077.053-.06.072-.082.053-.06.067-.074.054-.058.073-.078.058-.06.063-.067.168-.17.1-.098.059-.056.076-.071a12.084 12.084 0 012.272-1.677zM12.017 0h.097l.082.001.069.001.054.002.068.002.046.001.076.003.047.002.06.003.054.002.087.005.105.007.144.011.088.007.044.004.077.008.082.008.047.005.102.012.05.006.108.014.081.01.042.006.065.01.207.032.07.012.065.011.14.026.092.018.11.022.046.01.075.016.041.01L14.7.3l.042.01.065.015.049.012.071.017.096.024.112.03.113.03.113.032.05.015.07.02.078.024.073.023.05.016.05.016.076.025.099.033.102.036.048.017.064.023.093.034.11.041.116.045.1.04.047.02.06.024.041.018.063.026.04.018.057.025.11.048.1.046.074.035.075.036.06.028.092.046.091.045.102.052.053.028.049.026.046.024.06.033.041.022.052.029.088.05.106.06.087.051.057.034.053.032.096.059.088.055.098.062.036.024.064.041.084.056.04.027.062.042.062.043.023.017c.054.037.108.075.161.114l.083.06.065.048.056.043.086.065.082.064.04.03.05.041.086.069.079.065.085.071c.712.6 1.353 1.283 1.909 2.031L7.222.994l.062-.027.065-.028.081-.034.086-.035c.113-.045.227-.09.341-.131l.096-.035.093-.033.084-.03.096-.031c.087-.03.176-.058.264-.085l.091-.027.086-.025.102-.03.085-.023.1-.026L9.04.37l.09-.023.091-.022.095-.022.09-.02.098-.021.091-.02.095-.018.092-.018.1-.018.091-.016.098-.017.092-.014.097-.015.092-.013.102-.013.091-.012.105-.012.09-.01.105-.01c.093-.01.186-.018.28-.024l.106-.008.09-.005.11-.006.093-.004.1-.004.097-.002.099-.002.197-.002z\"></path></svg>",
+			"nvidia": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M10.212 8.976V7.62c.127-.01.256-.017.388-.021 3.596-.117 5.957 3.184 5.957 3.184s-2.548 3.647-5.282 3.647a3.227 3.227 0 01-1.063-.175v-4.109c1.4.174 1.681.812 2.523 2.258l1.873-1.627a4.905 4.905 0 00-3.67-1.846 6.594 6.594 0 00-.729.044m0-4.476v2.025c.13-.01.259-.019.388-.024 5.002-.174 8.261 4.226 8.261 4.226s-3.743 4.69-7.643 4.69c-.338 0-.675-.031-1.007-.092v1.25c.278.038.558.057.838.057 3.629 0 6.253-1.91 8.794-4.169.421.347 2.146 1.193 2.501 1.564-2.416 2.083-8.048 3.763-11.24 3.763-.308 0-.603-.02-.894-.048V19.5H24v-15H10.21zm0 9.756v1.068c-3.356-.616-4.287-4.21-4.287-4.21a7.173 7.173 0 014.287-2.138v1.172h-.005a3.182 3.182 0 00-2.502 1.178s.615 2.276 2.507 2.931m-5.961-3.3c1.436-1.935 3.604-3.148 5.961-3.336V6.523C5.81 6.887 2 10.723 2 10.723s2.158 6.427 8.21 7.015v-1.166C5.77 16 4.25 10.958 4.25 10.958h-.002z\" fill=\"#74B71B\" fill-rule=\"nonzero\"></path></svg>",
+			"openai": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9.205 8.658v-2.26c0-.19.072-.333.238-.428l4.543-2.616c.619-.357 1.356-.523 2.117-.523 2.854 0 4.662 2.212 4.662 4.566 0 .167 0 .357-.024.547l-4.71-2.759a.797.797 0 00-.856 0l-5.97 3.473zm10.609 8.8V12.06c0-.333-.143-.57-.429-.737l-5.97-3.473 1.95-1.118a.433.433 0 01.476 0l4.543 2.617c1.309.76 2.189 2.378 2.189 3.948 0 1.808-1.07 3.473-2.76 4.163zM7.802 12.703l-1.95-1.142c-.167-.095-.239-.238-.239-.428V5.899c0-2.545 1.95-4.472 4.591-4.472 1 0 1.927.333 2.712.928L8.23 5.067c-.285.166-.428.404-.428.737v6.898zM12 15.128l-2.795-1.57v-3.33L12 8.658l2.795 1.57v3.33L12 15.128zm1.796 7.23c-1 0-1.927-.332-2.712-.927l4.686-2.712c.285-.166.428-.404.428-.737v-6.898l1.974 1.142c.167.095.238.238.238.428v5.233c0 2.545-1.974 4.472-4.614 4.472zm-5.637-5.303l-4.544-2.617c-1.308-.761-2.188-2.378-2.188-3.948A4.482 4.482 0 014.21 6.327v5.423c0 .333.143.571.428.738l5.947 3.449-1.95 1.118a.432.432 0 01-.476 0zm-.262 3.9c-2.688 0-4.662-2.021-4.662-4.519 0-.19.024-.38.047-.57l4.686 2.71c.286.167.571.167.856 0l5.97-3.448v2.26c0 .19-.07.333-.237.428l-4.543 2.616c-.619.357-1.356.523-2.117.523zm5.899 2.83a5.947 5.947 0 005.827-4.756C22.287 18.339 24 15.84 24 13.296c0-1.665-.713-3.282-1.998-4.448.119-.5.19-.999.19-1.498 0-3.401-2.759-5.947-5.946-5.947-.642 0-1.26.095-1.88.31A5.962 5.962 0 0010.205 0a5.947 5.947 0 00-5.827 4.757C1.713 5.447 0 7.945 0 10.49c0 1.666.713 3.283 1.998 4.448-.119.5-.19 1-.19 1.499 0 3.401 2.759 5.946 5.946 5.946.642 0 1.26-.095 1.88-.309a5.96 5.96 0 004.162 1.713z\"></path></svg>",
+			"opencode": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M16 6H8v12h8V6zm4 16H4V2h16v20z\"></path></svg>",
+			"openrouter": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M18.654 3.87a5.087 5.087 0 110 10.174L23.7 19.09c.64.641.187 1.737-.72 1.737H8.48a8.479 8.479 0 010-16.958h10.175zM8.479 7.26a5.087 5.087 0 100 10.176 5.087 5.087 0 000-10.175z\" fill=\"#C8FF00\"></path></svg>",
+			"qwen": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.604 1.34c.393.69.784 1.382 1.174 2.075a.18.18 0 00.157.091h5.552c.174 0 .322.11.446.327l1.454 2.57c.19.337.24.478.024.837-.26.43-.513.864-.76 1.3l-.367.658c-.106.196-.223.28-.04.512l2.652 4.637c.172.301.111.494-.043.77-.437.785-.882 1.564-1.335 2.34-.159.272-.352.375-.68.37-.777-.016-1.552-.01-2.327.016a.099.099 0 00-.081.05 575.097 575.097 0 01-2.705 4.74c-.169.293-.38.363-.725.364-.997.003-2.002.004-3.017.002a.537.537 0 01-.465-.271l-1.335-2.323a.09.09 0 00-.083-.049H4.982c-.285.03-.553-.001-.805-.092l-1.603-2.77a.543.543 0 01-.002-.54l1.207-2.12a.198.198 0 000-.197 550.951 550.951 0 01-1.875-3.272l-.79-1.395c-.16-.31-.173-.496.095-.965.465-.813.927-1.625 1.387-2.436.132-.234.304-.334.584-.335a338.3 338.3 0 012.589-.001.124.124 0 00.107-.063l2.806-4.895a.488.488 0 01.422-.246c.524-.001 1.053 0 1.583-.006L11.704 1c.341-.003.724.032.9.34zm-3.432.403a.06.06 0 00-.052.03L6.254 6.788a.157.157 0 01-.135.078H3.253c-.056 0-.07.025-.041.074l5.81 10.156c.025.042.013.062-.034.063l-2.795.015a.218.218 0 00-.2.116l-1.32 2.31c-.044.078-.021.118.068.118l5.716.008c.046 0 .08.02.104.061l1.403 2.454c.046.081.092.082.139 0l5.006-8.76.783-1.382a.055.055 0 01.096 0l1.424 2.53a.122.122 0 00.107.062l2.763-.02a.04.04 0 00.035-.02.041.041 0 000-.04l-2.9-5.086a.108.108 0 010-.113l.293-.507 1.12-1.977c.024-.041.012-.062-.035-.062H9.2c-.059 0-.073-.026-.043-.077l1.434-2.505a.107.107 0 000-.114L9.225 1.774a.06.06 0 00-.053-.031zm6.29 8.02c.046 0 .058.02.034.06l-.832 1.465-2.613 4.585a.056.056 0 01-.05.029.058.058 0 01-.05-.029L8.498 9.841c-.02-.034-.01-.052.028-.054l.216-.012 6.722-.012z\" fill=\"url(#lobe-icons-qwen-_R_0_)\" fill-rule=\"nonzero\"></path><defs><linearGradient id=\"lobe-icons-qwen-_R_0_\" x1=\"0%\" x2=\"100%\" y1=\"0%\" y2=\"0%\"><stop offset=\"0%\" stop-color=\"#6336E7\" stop-opacity=\".84\"></stop><stop offset=\"100%\" stop-color=\"#6F69F7\" stop-opacity=\".84\"></stop></linearGradient></defs></svg>",
+			"together": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M23.197 4.503A6 6 0 0015 2.307a5.973 5.973 0 00-2.995 4.933l5.996.008v.515h-5.996c.039.937.298 1.87.8 2.74a6 6 0 1010.39-6z\" fill=\"#EF2CC1\"></path><path d=\"M.805 4.5A6 6 0 003 12.697a5.972 5.972 0 005.77.127L5.779 7.627l.446-.257 2.997 5.192A6 6 0 10.804 4.5z\" fill=\"#CAAEF5\"></path><path d=\"M12 23.894a6 6 0 005.999-6c0-2.13-1.1-3.996-2.775-5.06l-3.005 5.189-.444-.258 2.997-5.192A6 6 0 1012 23.894z\" fill=\"#FC4C02\"></path></svg>",
+			"vercel": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 0l12 20.785H0L12 0z\"></path></svg>",
+			"xai": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6.469 8.776L16.512 23h-4.464L2.005 8.776H6.47zm-.004 7.9l2.233 3.164L6.467 23H2l4.465-6.324zM22 2.582V23h-3.659V7.764L22 2.582zM22 1l-9.952 14.095-2.233-3.163L17.533 1H22z\"></path></svg>",
+			"mimo": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M.958 15.936a.459.459 0 01.459.44v2.729a.46.46 0 01-.918 0v-2.729a.459.459 0 01.459-.44zm4.814-2.035a.46.46 0 01.553.45v4.754a.458.458 0 11-.918 0V15.48L3.74 17.202a.462.462 0 01-.655.016.462.462 0 01-.065-.082L.628 14.67a.459.459 0 01.658-.637l2.124 2.187 2.127-2.188a.46.46 0 01.235-.13zm2.068.004a.46.46 0 01.458.445v4.755a.46.46 0 01-.458.458.459.459 0 01-.458-.458V14.35a.459.459 0 01.458-.445zm1.973 2.014a.46.46 0 01.46.457v2.729a.46.46 0 01-.784.324.46.46 0 01-.134-.324v-2.729a.46.46 0 01.458-.458zm.002-2.045a.458.458 0 01.328.157l2.127 2.19 2.125-2.19a.459.459 0 01.784.318v4.756a.46.46 0 01-.455.458.46.46 0 01-.458-.458V15.48l-1.667 1.723a.46.46 0 01-.65.008l-.005-.005c0-.002-.002-.002-.004-.003l-2.455-2.534a.46.46 0 01-.008-.667.461.461 0 01.338-.128zm6.797 1.206a.46.46 0 01.53.651A1.966 1.966 0 0019.81 18.4a.462.462 0 01.623.18.46.46 0 01-.181.624 2.863 2.863 0 01-1.38.353l-.142-.004a2.88 2.88 0 01-2.393-4.263.461.461 0 01.274-.21zm.864-.931a2.884 2.884 0 013.915 3.914.46.46 0 01-.402.24l-.057-.004a.458.458 0 01-.164-.055.46.46 0 01-.182-.622 1.967 1.967 0 00-2.669-2.67.459.459 0 11-.441-.803zM9.59 6.368c1.481 0 1.696 1.202 1.696 1.654v2.648h-.917v-.432c-.26.346-.792.535-1.36.535-.133 0-1.289-.03-1.384-1.136-.082-.932.675-1.61 2.053-1.61h.691c0-.563-.367-.886-.983-.886-.44.013-.864.174-1.2.458l-.36-.664c.484-.379 1.012-.567 1.764-.567zm4.427.1c1.263 0 2.082.97 2.083 2.15 0 1.181-.824 2.154-2.083 2.154-1.26 0-2.084-.972-2.084-2.152 0-1.18.82-2.153 2.084-2.153zm6.801.015c.68 0 1.202.465 1.197 1.548v2.642H21.1V8.29c0-.312-.002-.98-.63-.98s-.628.667-.628.838v2.524h-.89V8.148c0-.17-.001-.838-.63-.838-.628 0-.628.668-.628.98v2.383h-.917v-4.03h.917V7a1.22 1.22 0 01.947-.516c.398 0 .76.193.982.686a1.321 1.321 0 011.195-.686zm-18.093.872l1.457-1.772H5.32L3.311 8.07l2.14 2.602H4.24L2.725 8.796 1.21 10.672H0L2.138 8.07.13 5.583h1.138l1.458 1.772zm4.149 3.317h-.916V6.644h.916v4.028zm16.99 0h-.916V6.644h.916v4.028zM9.925 8.71c-1.055 0-1.359.412-1.326.742.032.329.324.537.757.537a1.013 1.013 0 001.014-.968l.002-.31h-.447zM14.018 7.3c-.663 0-1.184.487-1.184 1.32 0 .832.52 1.32 1.184 1.32.662 0 1.182-.49 1.182-1.32 0-.832-.52-1.32-1.182-1.32zM6.417 5.001a.568.568 0 01.587.582.588.588 0 01-1.175 0A.57.57 0 016.417 5zm16.991 0a.57.57 0 01.592.582.588.588 0 01-1.174 0 .57.57 0 01.357-.542.572.572 0 01.225-.04z\"></path></svg>",
+			"zai": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.105 2L9.927 4.953H.653L2.83 2h9.276zM23.254 19.048L21.078 22h-9.242l2.174-2.952h9.244zM24 2L9.264 22H0L14.736 2H24z\"></path></svg>",
+			"zhipu": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><defs><linearGradient id=\"lobe-icons-chat-glm-_R_0_\" x1=\"-18.756%\" x2=\"70.894%\" y1=\"49.371%\" y2=\"90.944%\"><stop offset=\"0%\" stop-color=\"#504AF4\"></stop><stop offset=\"100%\" stop-color=\"#3485FF\"></stop></linearGradient></defs><path d=\"M9.917 2c4.906 0 10.178 3.947 8.93 10.58-.014.07-.037.14-.057.21l-.003-.277c-.083-3-1.534-8.934-8.87-8.934-3.393 0-8.137 3.054-7.93 8.158-.04 4.778 3.555 8.4 7.95 8.332l.073-.001c1.2-.033 2.763-.429 3.1-1.657.063-.031.26.534.268.598.048.256.112.369.192.34.981-.348 2.286-1.222 1.952-2.38-.176-.61-1.775-.147-1.921-.347.418-.979 2.234-.926 3.153-.716.443.102.657.38 1.012.442.29.052.981-.2.96.242-1.5 3.042-4.893 5.41-8.808 5.41C3.654 22 0 16.574 0 11.737 0 5.947 4.959 2 9.917 2zM9.9 5.3c.484 0 1.125.225 1.38.585 3.669.145 4.313 2.686 4.694 5.444.255 1.838.315 2.3.182 1.387l.083.59c.068.448.554.737.982.516.144-.075.254-.231.328-.47a.2.2 0 01.258-.13l.625.22a.2.2 0 01.124.238 2.172 2.172 0 01-.51.92c-.878.917-2.757.664-3.08-.62-.14-.554-.055-.626-.345-1.242-.292-.621-1.238-.709-1.69-.295-.345.315-.407.805-.406 1.282L12.6 15.9a.9.9 0 01-.9.9h-1.4a.9.9 0 01-.9-.9v-.65a1.15 1.15 0 10-2.3 0v.65a.9.9 0 01-.9.9H4.8a.9.9 0 01-.9-.9l.035-3.239c.012-1.884.356-3.658 2.47-4.134.2-.045.252.13.29.342.025.154.043.252.053.294.701 3.058 1.75 4.299 3.144 3.722l.66-.331.254-.13c.158-.082.25-.131.276-.15.012-.01-.165-.206-.407-.464l-1.012-1.067a8.925 8.925 0 01-.199-.216c-.047-.034-.116.068-.208.306-.074.157-.251.252-.272.326-.013.058.108.298.362.72.164.288.22.508-.31.343-1.04-.8-1.518-2.273-1.684-3.725-.004-.035-.162-1.913-.162-1.913a1.2 1.2 0 011.113-1.281L9.9 5.3zm12.994 8.68c.037.697-.403.704-1.213.591l-1.783-.276c-.265-.053-.385-.099-.313-.147.47-.315 3.268-.93 3.31-.168zm-.915-.083l-.926.042c-.85.077-1.452.24.338.336l.103.003c.815.012 1.264-.359.485-.381zm1.667-3.601h.01c.79.398.067 1.03-.65 1.393-.14.07-.491.176-1.052.315-.241.04-.457.092-.333.16l.01.005c1.952.958-3.123 1.534-2.495 1.285l.38-.148c.68-.266 1.614-.682 1.666-1.337.038-.48 1.253-.442 1.493-.968.048-.106 0-.236-.144-.389-.05-.047-.094-.094-.107-.148-.073-.305.7-.431 1.222-.168zm-2.568-.474c-.135 1.198-2.479 4.192-1.949 2.863l.017-.042c.298-.717.376-2.221 1.337-3.221.25-.26.636.035.595.4zm-7.976-.253c.02-.694 1.002-.968 1.346-.347.01-1.274-1.941-.768-1.346.347z\" fill=\"url(#lobe-icons-chat-glm-_R_0_)\" fill-rule=\"evenodd\"></path></svg>",
+			"siliconflow": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path clip-rule=\"evenodd\" d=\"M22.956 6.521H12.522c-.577 0-1.044.468-1.044 1.044v3.13c0 .577-.466 1.044-1.043 1.044H1.044c-.577 0-1.044.467-1.044 1.044v4.174C0 17.533.467 18 1.044 18h10.434c.577 0 1.044-.467 1.044-1.043v-3.13c0-.578.466-1.044 1.043-1.044h9.391c.577 0 1.044-.467 1.044-1.044V7.565c0-.576-.467-1.044-1.044-1.044z\" fill=\"#6E29F6\" fill-rule=\"evenodd\"></path></svg>",
+			"volcengine": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M19.44 10.153l-2.936 11.586a.215.215 0 00.214.261h5.87a.215.215 0 00.214-.261l-2.95-11.586a.214.214 0 00-.412 0zM3.28 12.778l-2.275 8.96A.214.214 0 001.22 22h4.532a.212.212 0 00.214-.165.214.214 0 000-.097l-2.276-8.96a.214.214 0 00-.41 0z\" fill=\"#00E5E5\"></path><path d=\"M7.29 5.359L3.148 21.738a.215.215 0 00.203.261h8.29a.214.214 0 00.215-.261L7.7 5.358a.214.214 0 00-.41 0z\" fill=\"#006EFF\"></path><path d=\"M14.44.15a.214.214 0 00-.41 0L8.366 21.739a.214.214 0 00.214.261H19.9a.216.216 0 00.171-.078.214.214 0 00.044-.183L14.439.15z\" fill=\"#006EFF\"></path><path d=\"M10.278 7.741L6.685 21.736a.214.214 0 00.214.264h7.17a.215.215 0 00.214-.264L10.688 7.741a.214.214 0 00-.41 0z\" fill=\"#00E5E5\"></path></svg>",
+			"doubao": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M5.31 15.756c.172-3.75 1.883-5.999 2.549-6.739-3.26 2.058-5.425 5.658-6.358 8.308v1.12C1.501 21.513 4.226 24 7.59 24a6.59 6.59 0 002.2-.375c.353-.12.7-.248 1.039-.378.913-.899 1.65-1.91 2.243-2.992-4.877 2.431-7.974.072-7.763-4.5l.002.001z\" fill=\"#1E37FC\"></path><path d=\"M22.57 10.283c-1.212-.901-4.109-2.404-7.397-2.8.295 3.792.093 8.766-2.1 12.773a12.782 12.782 0 01-2.244 2.992c3.764-1.448 6.746-3.457 8.596-5.219 2.82-2.683 3.353-5.178 3.361-6.66a2.737 2.737 0 00-.216-1.084v-.002z\" fill=\"#37E1BE\"></path><path d=\"M14.303 1.867C12.955.7 11.248 0 9.39 0 7.532 0 5.883.677 4.545 1.807 2.791 3.29 1.627 5.557 1.5 8.125v9.201c.932-2.65 3.097-6.25 6.357-8.307.5-.318 1.025-.595 1.569-.829 1.883-.801 3.878-.932 5.746-.706-.222-2.83-.718-5.002-.87-5.617h.001z\" fill=\"#A569FF\"></path><path d=\"M17.305 4.961a199.47 199.47 0 01-1.08-1.094c-.202-.213-.398-.419-.586-.622l-1.333-1.378c.151.615.648 2.786.869 5.617 3.288.395 6.185 1.898 7.396 2.8-1.306-1.275-3.475-3.487-5.266-5.323z\" fill=\"#1E37FC\"></path></svg>",
+			"hunyuan": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"12\" cy=\"12\" fill=\"#0055E9\" r=\"12\"></circle><path d=\"M12 0c.518 0 1.028.033 1.528.096A6.188 6.188 0 0112.12 12.28l-.12.001c-2.99 0-5.242 2.179-5.554 5.11-.223 2.086.353 4.412 2.242 6.146C3.672 22.1 0 17.479 0 12 0 5.373 5.373 0 12 0z\" fill=\"#A8DFF5\"></path><path d=\"M5.286 5a2.438 2.438 0 01.682 3.38c-3.962 5.966-3.215 10.743 2.648 15.136C3.636 22.056 0 17.452 0 12c0-1.787.39-3.482 1.09-5.006.253-.435.525-.872.817-1.311A2.438 2.438 0 015.286 5z\" fill=\"#0055E9\"></path><path d=\"M12.98.04c.272.021.543.053.81.093.583.106 1.117.254 1.538.44 6.638 2.927 8.07 10.052 1.748 15.642a4.125 4.125 0 01-5.822-.358c-1.51-1.706-1.3-4.184.357-5.822.858-.848 3.108-1.223 4.045-2.441 1.257-1.634 2.122-6.009-2.523-7.506L12.98.039z\" fill=\"#00BCFF\"></path><path d=\"M13.528.096A6.187 6.187 0 0112 12.281a5.75 5.75 0 00-1.71.255c.147-.905.595-1.784 1.321-2.501.858-.848 3.108-1.223 4.045-2.441 1.27-1.651 2.14-6.104-2.676-7.554.184.014.367.033.548.056z\" fill=\"#ECECEE\"></path></svg>",
+			"spark": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 13.08C2 9.182 4.772 6.367 9.32 2.122c-.65 7.883 6.41 8.272 5.023 12.214-.99 2.815-4.244 1.949-4.59 1.342 0 0 1.212.347 1.385-.866.174-1.213-2.252-1.862-3.81-4.937-2.6 2.988-.954 9.008 4.2 9.008 4.764 0 6.583-4.937 4.894-8.099 0 0 4.071.693 4.418 3.811.346 3.119-3.638 8.533-9.095 8.403C6.288 22.868 2 18.84 2 13.08z\" fill=\"#3DC8F9\"></path><path d=\"M17.852 6.107L11.615 0c-.52 5.933.866 8.374 4.894 9.485 2.729.753 3.307 1.04 4.504 2.772-.338-2.407-.78-3.812-3.161-6.15z\" fill=\"#EA0100\"></path><path clip-rule=\"evenodd\" d=\"M9.033 18.323c.709.354 1.542.56 2.495.56 4.764 0 6.583-4.937 4.894-8.099 0 0 4.071.693 4.418 3.811.156 1.403-.565 3.27-1.902 4.89-3.458 1.57-7.29.84-9.905-1.162z\" fill=\"#1652D8\" fill-rule=\"evenodd\"></path></svg>",
+			"stepfun": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M22.012 0h1.032v.927H24v.968h-.956V3.78h-1.032V1.896h-1.878v-.97h1.878V0zM2.6 12.371V1.87h.969v10.502h-.97zm10.423.66h10.95v.918h-6.208v9.579h-4.742V13.03zM5.629 3.333v12.356H0v4.51h10.386V8L20.859 8l-.003-4.668-15.227.001z\" fill=\"url(#lobe-icons-stepfun-_R_0_)\" fill-rule=\"evenodd\"></path><defs><linearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-stepfun-_R_0_\" x1=\"1.646\" x2=\"18.342\" y1=\"1.916\" y2=\"22.091\"><stop stop-color=\"#01A9FF\"></stop><stop offset=\"1\" stop-color=\"#0160FF\"></stop></linearGradient></defs></svg>",
+			"baichuan": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><defs><linearGradient id=\"lobe-icons-baichuan-_R_0_\" x1=\"17.764%\" x2=\"100%\" y1=\"8.678%\" y2=\"91.322%\"><stop offset=\"0%\" stop-color=\"#FEC13E\"></stop><stop offset=\"100%\" stop-color=\"#FF6933\"></stop></linearGradient></defs><path d=\"M7.333 2h-3.2l-2 4.333V17.8L0 22h5.2l2.028-4.2L7.333 2zm7.334 0h-5.2v20h5.2V2zM16.8 7.733H22V22h-5.2V7.733zM22 2h-5.2v4.133H22V2z\" fill=\"url(#lobe-icons-baichuan-_R_0_)\" fill-rule=\"nonzero\"></path></svg>",
+			"yi": "<svg fill=\"currentColor\" fill-rule=\"evenodd\" height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M18.62 13.927c.611 0 1.107.505 1.107 1.128v5.817c0 .623-.496 1.128-1.108 1.128a1.118 1.118 0 01-1.108-1.128v-5.817c0-.623.496-1.128 1.108-1.128zM16.59 3.052a1.094 1.094 0 011.562-.129c.466.404.522 1.116.126 1.59l-5.938 7.111v9.147c0 .624-.496 1.129-1.108 1.129a1.118 1.118 0 01-1.108-1.129v-9.477l.003-.088.01-.087c.015-.232.102-.462.261-.654l6.192-7.413zM2.906 2.256a1.094 1.094 0 011.559.157l4.387 5.45a1.142 1.142 0 01-.155 1.587 1.094 1.094 0 01-1.559-.157l-4.387-5.45a1.144 1.144 0 01.06-1.498l.095-.09z\"></path><ellipse cx=\"20.146\" cy=\"10.692\" fill=\"#00FF25\" rx=\"1.354\" ry=\"1.379\"></ellipse></svg>",
+			"perplexity": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M19.785 0v7.272H22.5V17.62h-2.935V24l-7.037-6.194v6.145h-1.091v-6.152L4.392 24v-6.465H1.5V7.188h2.884V0l7.053 6.494V.19h1.09v6.49L19.786 0zm-7.257 9.044v7.319l5.946 5.234V14.44l-5.946-5.397zm-1.099-.08l-5.946 5.398v7.235l5.946-5.234V8.965zm8.136 7.58h1.844V8.349H13.46l6.105 5.54v2.655zm-8.982-8.28H2.59v8.195h1.8v-2.576l6.192-5.62zM5.475 2.476v4.71h5.115l-5.115-4.71zm13.219 0l-5.115 4.71h5.115v-4.71z\" fill=\"#22B8CD\" fill-rule=\"nonzero\"></path></svg>",
+			"cohere": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path clip-rule=\"evenodd\" d=\"M8.128 14.099c.592 0 1.77-.033 3.398-.703 1.897-.781 5.672-2.2 8.395-3.656 1.905-1.018 2.74-2.366 2.74-4.18A4.56 4.56 0 0018.1 1H7.549A6.55 6.55 0 001 7.55c0 3.617 2.745 6.549 7.128 6.549z\" fill=\"#39594D\" fill-rule=\"evenodd\"></path><path clip-rule=\"evenodd\" d=\"M9.912 18.61a4.387 4.387 0 012.705-4.052l3.323-1.38c3.361-1.394 7.06 1.076 7.06 4.715a5.104 5.104 0 01-5.105 5.104l-3.597-.001a4.386 4.386 0 01-4.386-4.387z\" fill=\"#D18EE2\" fill-rule=\"evenodd\"></path><path d=\"M4.776 14.962A3.775 3.775 0 001 18.738v.489a3.776 3.776 0 007.551 0v-.49a3.775 3.775 0 00-3.775-3.775z\" fill=\"#FF7759\"></path></svg>",
+			"meta": "<svg height=\"1em\" style=\"flex:none;line-height:1\" viewBox=\"0 0 24 24\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6.897 4h-.024l-.031 2.615h.022c1.715 0 3.046 1.357 5.94 6.246l.175.297.012.02 1.62-2.438-.012-.019a48.763 48.763 0 00-1.098-1.716 28.01 28.01 0 00-1.175-1.629C10.413 4.932 8.812 4 6.896 4z\" fill=\"url(#lobe-icons-meta-0-_R_0_)\"></path><path d=\"M6.873 4C4.95 4.01 3.247 5.258 2.02 7.17a4.352 4.352 0 00-.01.017l2.254 1.231.011-.017c.718-1.083 1.61-1.774 2.568-1.785h.021L6.896 4h-.023z\" fill=\"url(#lobe-icons-meta-1-_R_0_)\"></path><path d=\"M2.019 7.17l-.011.017C1.2 8.447.598 9.995.274 11.664l-.005.022 2.534.6.004-.022c.27-1.467.786-2.828 1.456-3.845l.011-.017L2.02 7.17z\" fill=\"url(#lobe-icons-meta-2-_R_0_)\"></path><path d=\"M2.807 12.264l-2.533-.6-.005.022c-.177.918-.267 1.851-.269 2.786v.023l2.598.233v-.023a12.591 12.591 0 01.21-2.44z\" fill=\"url(#lobe-icons-meta-3-_R_0_)\"></path><path d=\"M2.677 15.537a5.462 5.462 0 01-.079-.813v-.022L0 14.468v.024a8.89 8.89 0 00.146 1.652l2.535-.585a4.106 4.106 0 01-.004-.022z\" fill=\"url(#lobe-icons-meta-4-_R_0_)\"></path><path d=\"M3.27 16.89c-.284-.31-.484-.756-.589-1.328l-.004-.021-2.535.585.004.021c.192 1.01.568 1.85 1.106 2.487l.014.017 2.018-1.745a2.106 2.106 0 01-.015-.016z\" fill=\"url(#lobe-icons-meta-5-_R_0_)\"></path><path d=\"M10.78 9.654c-1.528 2.35-2.454 3.825-2.454 3.825-2.035 3.2-2.739 3.917-3.871 3.917a1.545 1.545 0 01-1.186-.508l-2.017 1.744.014.017C2.01 19.518 3.058 20 4.356 20c1.963 0 3.374-.928 5.884-5.33l1.766-3.13a41.283 41.283 0 00-1.227-1.886z\" fill=\"#0082FB\"></path><path d=\"M13.502 5.946l-.016.016c-.4.43-.786.908-1.16 1.416.378.483.768 1.024 1.175 1.63.48-.743.928-1.345 1.367-1.807l.016-.016-1.382-1.24z\" fill=\"url(#lobe-icons-meta-6-_R_0_)\"></path><path d=\"M20.918 5.713C19.853 4.633 18.583 4 17.225 4c-1.432 0-2.637.787-3.723 1.944l-.016.016 1.382 1.24.016-.017c.715-.747 1.408-1.12 2.176-1.12.826 0 1.6.39 2.27 1.075l.015.016 1.589-1.425-.016-.016z\" fill=\"#0082FB\"></path><path d=\"M23.998 14.125c-.06-3.467-1.27-6.566-3.064-8.396l-.016-.016-1.588 1.424.015.016c1.35 1.392 2.277 3.98 2.361 6.971v.023h2.292v-.022z\" fill=\"url(#lobe-icons-meta-7-_R_0_)\"></path><path d=\"M23.998 14.15v-.023h-2.292v.022c.004.14.006.282.006.424 0 .815-.121 1.474-.368 1.95l-.011.022 1.708 1.782.013-.02c.62-.96.946-2.293.946-3.91 0-.083 0-.165-.002-.247z\" fill=\"url(#lobe-icons-meta-8-_R_0_)\"></path><path d=\"M21.344 16.52l-.011.02c-.214.402-.519.67-.917.787l.778 2.462a3.493 3.493 0 00.438-.182 3.558 3.558 0 001.366-1.218l.044-.065.012-.02-1.71-1.784z\" fill=\"url(#lobe-icons-meta-9-_R_0_)\"></path><path d=\"M19.92 17.393c-.262 0-.492-.039-.718-.14l-.798 2.522c.449.153.927.222 1.46.222.492 0 .943-.073 1.352-.215l-.78-2.462c-.167.05-.341.075-.517.073z\" fill=\"url(#lobe-icons-meta-10-_R_0_)\"></path><path d=\"M18.323 16.534l-.014-.017-1.836 1.914.016.017c.637.682 1.246 1.105 1.937 1.337l.797-2.52c-.291-.125-.573-.353-.9-.731z\" fill=\"url(#lobe-icons-meta-11-_R_0_)\"></path><path d=\"M18.309 16.515c-.55-.642-1.232-1.712-2.303-3.44l-1.396-2.336-.011-.02-1.62 2.438.012.02.989 1.668c.959 1.61 1.74 2.774 2.493 3.585l.016.016 1.834-1.914a2.353 2.353 0 01-.014-.017z\" fill=\"url(#lobe-icons-meta-12-_R_0_)\"></path><defs><linearGradient id=\"lobe-icons-meta-0-_R_0_\" x1=\"75.897%\" x2=\"26.312%\" y1=\"89.199%\" y2=\"12.194%\"><stop offset=\".06%\" stop-color=\"#0867DF\"></stop><stop offset=\"45.39%\" stop-color=\"#0668E1\"></stop><stop offset=\"85.91%\" stop-color=\"#0064E0\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-1-_R_0_\" x1=\"21.67%\" x2=\"97.068%\" y1=\"75.874%\" y2=\"23.985%\"><stop offset=\"13.23%\" stop-color=\"#0064DF\"></stop><stop offset=\"99.88%\" stop-color=\"#0064E0\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-2-_R_0_\" x1=\"38.263%\" x2=\"60.895%\" y1=\"89.127%\" y2=\"16.131%\"><stop offset=\"1.47%\" stop-color=\"#0072EC\"></stop><stop offset=\"68.81%\" stop-color=\"#0064DF\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-3-_R_0_\" x1=\"47.032%\" x2=\"52.15%\" y1=\"90.19%\" y2=\"15.745%\"><stop offset=\"7.31%\" stop-color=\"#007CF6\"></stop><stop offset=\"99.43%\" stop-color=\"#0072EC\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-4-_R_0_\" x1=\"52.155%\" x2=\"47.591%\" y1=\"58.301%\" y2=\"37.004%\"><stop offset=\"7.31%\" stop-color=\"#007FF9\"></stop><stop offset=\"100%\" stop-color=\"#007CF6\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-5-_R_0_\" x1=\"37.689%\" x2=\"61.961%\" y1=\"12.502%\" y2=\"63.624%\"><stop offset=\"7.31%\" stop-color=\"#007FF9\"></stop><stop offset=\"100%\" stop-color=\"#0082FB\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-6-_R_0_\" x1=\"34.808%\" x2=\"62.313%\" y1=\"68.859%\" y2=\"23.174%\"><stop offset=\"27.99%\" stop-color=\"#007FF8\"></stop><stop offset=\"91.41%\" stop-color=\"#0082FB\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-7-_R_0_\" x1=\"43.762%\" x2=\"57.602%\" y1=\"6.235%\" y2=\"98.514%\"><stop offset=\"0%\" stop-color=\"#0082FB\"></stop><stop offset=\"99.95%\" stop-color=\"#0081FA\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-8-_R_0_\" x1=\"60.055%\" x2=\"39.88%\" y1=\"4.661%\" y2=\"69.077%\"><stop offset=\"6.19%\" stop-color=\"#0081FA\"></stop><stop offset=\"100%\" stop-color=\"#0080F9\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-9-_R_0_\" x1=\"30.282%\" x2=\"61.081%\" y1=\"59.32%\" y2=\"33.244%\"><stop offset=\"0%\" stop-color=\"#027AF3\"></stop><stop offset=\"100%\" stop-color=\"#0080F9\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-10-_R_0_\" x1=\"20.433%\" x2=\"82.112%\" y1=\"50.001%\" y2=\"50.001%\"><stop offset=\"0%\" stop-color=\"#0377EF\"></stop><stop offset=\"99.94%\" stop-color=\"#0279F1\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-11-_R_0_\" x1=\"40.303%\" x2=\"72.394%\" y1=\"35.298%\" y2=\"57.811%\"><stop offset=\".19%\" stop-color=\"#0471E9\"></stop><stop offset=\"100%\" stop-color=\"#0377EF\"></stop></linearGradient><linearGradient id=\"lobe-icons-meta-12-_R_0_\" x1=\"32.254%\" x2=\"68.003%\" y1=\"19.719%\" y2=\"84.908%\"><stop offset=\"27.65%\" stop-color=\"#0867DF\"></stop><stop offset=\"100%\" stop-color=\"#0471E9\"></stop></linearGradient></defs></svg>"
+		};
+		//#endregion
+		//#region src/client/provider-hub/provider-icons.tsx
+		/**
+		* provider route id → 图标 key 的精确映射（覆盖 pi-ai 内置目录与常见聚合/国产厂商）。
+		*/
+		const EXACT_KEYS = {
+			"amazon-bedrock": "bedrock",
+			"anthropic": "anthropic",
+			"azure-openai-responses": "azure",
+			"cerebras": "cerebras",
+			"deepseek": "deepseek",
+			"fireworks": "fireworks",
+			"github-copilot": "githubcopilot",
+			"google": "gemini",
+			"google-vertex": "vertexai",
+			"groq": "groq",
+			"huggingface": "huggingface",
+			"kimi-coding": "kimi",
+			"minimax": "minimax",
+			"mistral": "mistral",
+			"moonshotai": "moonshot",
+			"nvidia": "nvidia",
+			"openai": "openai",
+			"openai-codex": "openai",
+			"opencode": "opencode",
+			"openrouter": "openrouter",
+			"together": "together",
+			"vercel-ai-gateway": "vercel",
+			"xai": "xai",
+			"xiaomi": "mimo",
+			"zai": "zai",
+			"siliconflow": "siliconflow",
+			"siliconcloud": "siliconflow",
+			"volcengine": "volcengine",
+			"doubao": "doubao",
+			"hunyuan": "hunyuan",
+			"spark": "spark",
+			"stepfun": "stepfun",
+			"baichuan": "baichuan",
+			"yi": "yi",
+			"01ai": "yi",
+			"perplexity": "perplexity",
+			"cohere": "cohere",
+			"meta": "meta",
+			"llama": "meta"
+		};
+		/**
+		* 解析一个 provider route id 的图标 key：先查精确表，再按家族前缀归一化
+		* （同一厂商的 -cn / 区域变体共用一个标）。
+		* @param provider - provider route id，如 `moonshotai-cn`。
+		* @returns 图标 key；未收录返回 undefined。
+		*/
+		function iconKeyForProvider(provider) {
+			const exact = EXACT_KEYS[provider];
+			if (exact !== void 0) return exact;
+			if (provider.startsWith("qwen")) return "qwen";
+			if (provider.startsWith("xiaomi")) return "mimo";
+			if (provider.startsWith("cloudflare")) return "cloudflare";
+			if (provider.startsWith("opencode")) return "opencode";
+			if (provider.startsWith("openrouter")) return "openrouter";
+			if (provider.startsWith("moonshot")) return "moonshot";
+			if (provider.startsWith("minimax")) return "minimax";
+			if (provider.startsWith("vercel")) return "vercel";
+			if (provider.startsWith("azure")) return "azure";
+			if (provider.includes("bedrock") || provider.startsWith("amazon")) return "bedrock";
+			if (provider.startsWith("google")) return provider.includes("vertex") ? "vertexai" : "gemini";
+			if (provider.startsWith("zai")) return provider === "zai" || provider.startsWith("zai-web") ? "zai" : "zhipu";
+		}
+		/** 圆形首字母占位标的样式（与行卡片 14px 名字视觉平衡）。 */
+		function monogramStyle(size) {
+			return {
+				display: "inline-flex",
+				alignItems: "center",
+				justifyContent: "center",
+				width: size,
+				height: size,
+				borderRadius: "50%",
+				flexShrink: 0,
+				border: "1px solid var(--dsw-alias-border-l3, #c9cdd4)",
+				background: "var(--dsw-alias-bg-module-platform, #f2f3f5)",
+				color: "var(--dsw-alias-label-secondary, #4e5969)",
+				fontSize: Math.max(10, Math.round(size * .52)),
+				lineHeight: 1,
+				fontWeight: 600
+			};
 		}
 		/**
-		* 渲染「对话供应商」左列表。
+		* 渲染供应商标图标：命中内置 SVG 时注入原始标记（构建期内置静态内容，
+		* 不含任何用户输入）；否则渲染显示名首字符的圆形占位标。
+		* @param props - provider route id、展示名（fallback 与 title 用）、尺寸 px。
+		*/
+		function ProviderIcon({ provider, name, size = 18 }) {
+			const key = iconKeyForProvider(provider);
+			const svg = key === void 0 ? void 0 : PROVIDER_ICON_SVGS[key];
+			if (svg !== void 0) return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+				"aria-hidden": true,
+				style: {
+					display: "inline-flex",
+					alignItems: "center",
+					justifyContent: "center",
+					width: size,
+					height: size,
+					fontSize: size,
+					flexShrink: 0
+				},
+				title: name,
+				dangerouslySetInnerHTML: { __html: svg }
+			});
+			const letter = (name ?? provider).trim().charAt(0).toUpperCase() || "?";
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+				style: monogramStyle(size),
+				title: name ?? provider,
+				"aria-hidden": true,
+				children: letter
+			});
+		}
+		//#endregion
+		//#region src/client/provider-hub/chat/ChatProviderList.tsx
+		/**
+		* 「对话供应商」左栏导航：分组列表（已配置 / 目录预设）+ 底部「+ 添加自定义提供方」。
+		*
+		* 分栏布局（对齐常见网关控制台）：本组件只渲染导航列——图标 + 名称 + 凭据状态点；
+		* 选中项的编辑详情由父组件 {@link ../ProviderHubSection.tsx} 渲染在右侧详情面板，
+		* 因此这里不再承担行内展开编辑器、能力标签与基准测试入口。
+		*
+		* 「Developer Role 兼容」检测条（{@link DevRoleProbeBar}）也由父组件放到分栏之外的
+		* 全宽区域——它的结果面板需要整页宽度。
+		*/
+		/** 一行提供方的 models 数组（无则 []）；父组件的性能基准测试弹窗用它取模型清单。 */
+		function modelsOf(state, row) {
+			const namespace = state.namespaces.get(row.entry.settingsNs);
+			if (namespace === void 0) return [];
+			const models = getPath(namespace.value, [...row.entry.settingsPath, "models"]);
+			return Array.isArray(models) ? models.filter((m) => typeof m === "object" && m !== null) : [];
+		}
+		/**
+		* 渲染「对话供应商」左栏导航。
 		* @param props - 快照、选中态与回调。
-		* @returns 左列表。
+		* @returns 导航栏（分组列表 + 添加按钮）。
 		*/
 		function ChatProviderList(props) {
 			const { state, selected, onSelect, onAddCustom, onRetry } = props;
 			const configured = state.rows.filter((row) => row.configured);
-			const configuredIds = new Set(configured.map((row) => row.entry.provider));
-			const addable = state.rows.filter((row) => !row.configured && row.entry.settingsNs !== "" && !configuredIds.has(row.entry.provider));
-			if (state.status === "loading" && state.rows.length === 0) return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-				style: listColumnStyle,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ListTitle, {}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+			const addable = state.rows.filter((row) => !row.configured && row.entry.settingsNs !== "");
+			(0, react.useEffect)(() => {
+				ensureProviderFieldStyles();
+			}, []);
+			if (state.status === "loading" && state.rows.length === 0) return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+				style: navColStyle,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+					style: titleStyle$1,
+					children: chatCopy.chatTitle
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 					style: hintStyle$1,
 					children: "加载中…"
 				})]
 			});
-			if (state.status === "error") return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-				style: listColumnStyle,
+			if (state.status === "error") return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+				style: navColStyle,
 				children: [
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ListTitle, {}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						style: titleStyle$1,
+						children: chatCopy.chatTitle
+					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 						style: errorStyle$1,
 						children: `${chatCopy.loadFailed}: ${state.error ?? ""}`
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
-						style: secondaryButtonStyle$1,
+						className: "dsh-webui-capsule-btn",
+						style: addBtnStyle,
 						onClick: onRetry,
 						children: chatCopy.retry
 					})
 				]
 			});
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-				style: listColumnStyle,
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+				style: navColStyle,
 				children: [
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ListTitle, {}),
-					!state.writable && state.status === "ready" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-						style: hintStyle$1,
-						children: chatCopy.readOnly
-					}) : null,
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(GroupLabel, { children: chatCopy.configuredGroup }),
-					configured.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-						style: hintStyle$1,
-						children: "暂无已配置的提供方。"
-					}) : null,
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-						style: {
-							display: "flex",
-							flexDirection: "column",
-							gap: 4
-						},
-						children: configured.map((row) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ProviderRowButton, {
-							row,
-							count: modelsCountOf(state, row),
-							selected: selected === row.entry.provider,
-							onClick: () => {
-								onSelect(row.entry.provider);
-							}
-						}, row.entry.provider))
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						style: titleStyle$1,
+						children: chatCopy.chatTitle
 					}),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(GroupLabel, { children: chatCopy.presetGroup }),
-					addable.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-						style: hintStyle$1,
-						children: "目录中暂无其他提供方。"
-					}) : null,
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-						style: {
-							display: "flex",
-							flexDirection: "column",
-							gap: 4
-						},
-						children: addable.map((row) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ProviderRowButton, {
-							row,
-							preset: true,
-							count: modelsCountOf(state, row),
-							selected: selected === row.entry.provider,
-							onClick: () => {
-								onSelect(row.entry.provider);
-							}
-						}, row.entry.provider))
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						style: navScrollStyle,
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: groupLabelStyle,
+								children: chatCopy.configuredGroup
+							}),
+							configured.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: hintStyle$1,
+								children: "暂无已配置的提供方。"
+							}) : null,
+							configured.map((row) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(NavRow, {
+								row,
+								selected: selected === row.entry.provider,
+								onSelect: () => {
+									onSelect(row.entry.provider);
+								}
+							}, row.entry.provider)),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: {
+									...groupLabelStyle,
+									marginTop: 8
+								},
+								children: chatCopy.presetGroup
+							}),
+							addable.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: hintStyle$1,
+								children: "目录中暂无其他提供方。"
+							}) : null,
+							addable.map((row) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(NavRow, {
+								row,
+								preset: true,
+								selected: selected === row.entry.provider,
+								onSelect: () => {
+									onSelect(row.entry.provider);
+								}
+							}, row.entry.provider))
+						]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 						type: "button",
-						style: addCustomButtonStyle,
+						className: "dsh-webui-capsule-btn",
+						style: addBtnStyle,
 						disabled: !state.writable,
 						onClick: onAddCustom,
 						children: ["+ ", chatCopy.addCustom]
@@ -279529,60 +280261,34 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				]
 			});
 		}
-		/** 分组小标题。 */
-		function GroupLabel({ children }) {
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-				style: groupLabelStyle,
-				children
-			});
-		}
-		/** 列表区标题。 */
-		function ListTitle() {
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-				style: titleStyle$1,
-				children: chatCopy.chatTitle
-			});
-		}
-		/** 一行提供方按钮（已配置行或目录预设行）。 */
-		function ProviderRowButton({ row, preset, count, selected, onClick }) {
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
-				type: "button",
-				style: selected ? rowButtonSelectedStyle : rowButtonStyle,
-				onClick,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-					style: {
-						display: "flex",
-						alignItems: "center",
-						gap: 6,
-						minWidth: 0,
-						flex: 1
-					},
-					children: [
-						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							style: {
-								overflow: "hidden",
-								textOverflow: "ellipsis",
-								whiteSpace: "nowrap",
-								fontSize: 13,
-								color: "var(--dsw-alias-label-primary, #1f2329)"
-							},
-							children: row.entry.displayName
-						}),
-						row.entry.declared === true ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							style: tagStyle,
-							children: chatCopy.customTag
-						}) : null,
-						preset === true ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							style: tagStyle,
-							children: chatCopy.unconfigured
-						}) : null,
-						preset !== true ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(CredentialDot, { row }) : null
-					]
-				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-					style: countBadgeStyle,
-					title: `${count} 模型`,
-					children: count
-				})]
+		/** 左栏导航行：官方图标 + 名称 + 凭据状态点；选中行以填充面高亮。 */
+		function NavRow({ row, preset, selected, onSelect }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: "dsh-webui-provider-nav-row",
+				style: selected ? navRowSelectedStyle : navRowStyle,
+				role: "button",
+				tabIndex: 0,
+				"aria-current": selected ? "true" : void 0,
+				title: row.entry.displayName,
+				onClick: onSelect,
+				onKeyDown: (event) => {
+					if (event.key === "Enter" || event.key === " ") {
+						event.preventDefault();
+						onSelect();
+					}
+				},
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ProviderIcon, {
+						provider: row.entry.provider,
+						name: row.entry.displayName,
+						size: 18
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						style: preset === true ? navNamePresetStyle : navNameStyle,
+						children: row.entry.displayName
+					}),
+					preset !== true ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(CredentialDot, { row }) : null
+				]
 			});
 		}
 		/** 凭据状态点：绿=已配置，红=缺失（无引用时不显示）。 */
@@ -279615,12 +280321,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			});
 			return null;
 		}
-		const listColumnStyle = {
+		const navColStyle = {
 			display: "flex",
 			flexDirection: "column",
 			gap: 8,
-			minWidth: 0,
-			maxWidth: "100%"
+			width: 200,
+			flex: "none",
+			minWidth: 0
 		};
 		const titleStyle$1 = {
 			margin: 0,
@@ -279629,7 +280336,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			color: "var(--dsw-alias-label-primary, #1f2329)"
 		};
 		const groupLabelStyle = {
-			margin: "8px 0 0",
+			margin: "2px 0 0",
 			fontSize: 12,
 			color: "var(--dsw-alias-label-tertiary, #8f959e)"
 		};
@@ -279643,61 +280350,232 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			fontSize: 12,
 			color: "var(--dsw-alias-state-error-primary, #d54941)"
 		};
-		const rowButtonStyle = {
+		const navScrollStyle = {
+			display: "flex",
+			flexDirection: "column",
+			gap: 4,
+			overflowY: "auto",
+			minHeight: 0,
+			maxHeight: 464,
+			paddingRight: 2,
+			marginLeft: -4,
+			paddingLeft: 4
+		};
+		const navRowStyle = {
 			display: "flex",
 			alignItems: "center",
 			gap: 8,
-			width: "100%",
-			padding: "7px 10px",
-			borderRadius: 8,
-			border: "1px solid transparent",
-			background: "transparent",
+			padding: "8px 10px",
+			borderRadius: 10,
 			cursor: "pointer",
-			textAlign: "left"
+			minWidth: 0
 		};
-		const rowButtonSelectedStyle = {
-			...rowButtonStyle,
-			borderColor: "var(--dsw-alias-brand-primary, #165dff)",
-			background: "var(--dsw-alias-interactive-bg-hover, rgba(22,93,255,0.08))"
+		const navRowSelectedStyle = {
+			...navRowStyle,
+			background: "var(--dsw-alias-bg-module-platform, #f2f3f5)",
+			boxShadow: "inset 3px 0 0 0 var(--dsw-alias-state-business-primary, #4176e6)"
 		};
-		const tagStyle = {
-			flexShrink: 0,
-			padding: "1px 6px",
-			fontSize: 11,
-			borderRadius: 4,
-			background: "var(--dsw-alias-interactive-bg-hover, rgba(22,93,255,0.08))",
+		const navNameStyle = {
+			fontSize: 13,
+			lineHeight: "20px",
+			fontWeight: 500,
+			flex: 1,
+			minWidth: 0,
+			color: "var(--dsw-alias-label-primary, #1f2329)",
+			overflow: "hidden",
+			textOverflow: "ellipsis",
+			whiteSpace: "nowrap"
+		};
+		const navNamePresetStyle = {
+			...navNameStyle,
+			fontWeight: 400,
 			color: "var(--dsw-alias-label-secondary, #4e5969)"
 		};
-		const countBadgeStyle = {
-			flexShrink: 0,
-			minWidth: 22,
-			padding: "1px 5px",
-			fontSize: 11,
-			borderRadius: 10,
-			textAlign: "center",
-			background: "var(--dsw-alias-bg-layer-1, #f2f3f5)",
-			color: "var(--dsw-alias-label-tertiary, #8f959e)"
-		};
-		const secondaryButtonStyle$1 = {
+		const addBtnStyle = {
+			boxSizing: "border-box",
 			alignSelf: "flex-start",
-			padding: "5px 12px",
-			fontSize: 12,
-			borderRadius: 6,
+			height: 28,
+			padding: "0 10px",
+			flexShrink: 0,
 			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+			borderRadius: 14,
 			background: "transparent",
 			color: "var(--dsw-alias-label-primary, #1f2329)",
+			fontSize: 12,
+			lineHeight: "18px",
 			cursor: "pointer"
 		};
-		const addCustomButtonStyle = {
-			marginTop: 4,
-			alignSelf: "flex-start",
-			padding: "5px 12px",
-			fontSize: 12,
-			borderRadius: 6,
-			border: "1px dashed var(--dsw-alias-border-l3, #c9cdd4)",
+		/**
+		* 「Developer Role 兼容」一键检测条：对全部 openai-completions 供应商真实发
+		* developer/system 各一条最小请求做对照，判定不支持的自动写入路由级
+		* compat.supportsDeveloperRole=false 并落盘。POST 启动 + GET 轮询逐项点亮，
+		* 与模型行「一键检测」同一交互模式。
+		*/
+		const DEVROLE_API = "/api/webui-devrole/probe";
+		/** 渲染 Developer Role 兼容检测条（父组件放在分栏之外的全宽区域）。 */
+		function DevRoleProbeBar() {
+			const [busy, setBusy] = (0, react.useState)(false);
+			const [state, setState] = (0, react.useState)(null);
+			const timer = (0, react.useRef)(void 0);
+			(0, react.useEffect)(() => () => {
+				if (timer.current !== void 0) window.clearInterval(timer.current);
+			}, []);
+			const pollOnce = async () => {
+				try {
+					const d = await (await fetch(DEVROLE_API, { cache: "no-store" })).json();
+					if (!d?.ok || !d.state) return;
+					setState(d.state);
+					if (d.state.running === false) {
+						if (timer.current !== void 0) window.clearInterval(timer.current);
+						setBusy(false);
+					}
+				} catch {}
+			};
+			const start = () => {
+				if (busy) return;
+				setBusy(true);
+				fetch(DEVROLE_API, {
+					method: "POST",
+					headers: { "content-type": "application/json" },
+					body: "{}"
+				}).then((r) => r.json()).then((d) => {
+					if (!d?.ok) {
+						setBusy(false);
+						setState({
+							running: false,
+							error: String(d?.error ?? "启动失败"),
+							saved: false,
+							saveError: "",
+							items: []
+						});
+						return;
+					}
+					if (d.state !== null && d.state !== void 0) setState(d.state);
+					timer.current = window.setInterval(() => {
+						pollOnce();
+					}, 800);
+					pollOnce();
+				}).catch((error) => {
+					setBusy(false);
+					setState({
+						running: false,
+						error: String(error?.message ?? error),
+						saved: false,
+						saveError: "",
+						items: []
+					});
+				});
+			};
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				style: probeBarStyle,
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						style: {
+							display: "flex",
+							alignItems: "center",
+							gap: 10
+						},
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							style: probeButtonStyle,
+							disabled: busy,
+							title: "向每个供应商真实发送 developer / system 角色的最小请求做对照测试：不认 OpenAI “developer” 角色的网关（症状是该家推理模型一直报错连不通）会被自动改用传统 system 角色并保存，无需手动改配置。",
+							onClick: start,
+							children: busy ? "🛡 检测中…" : "🛡 一键兼容检测"
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							style: hintStyle$1,
+							children: "自动验证各供应商是否接受 OpenAI “developer” 角色，不接受的自动改用 system 并保存"
+						})]
+					}),
+					(state?.error ?? "") !== "" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						style: errorStyle$1,
+						children: `检测失败：${state.error}`
+					}) : null,
+					state !== null && state.items.length > 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						style: probePanelStyle,
+						children: [state.items.map((item) => {
+							const mark = item.status !== "done" ? item.status === "running" ? "…" : "—" : item.ok === true ? "✓" : item.ok === false ? "✗ 已修复" : "?";
+							const markColor = item.status !== "done" ? "var(--dsw-alias-label-tertiary, #8f959e)" : item.ok === true ? "var(--dsw-alias-state-success-primary, #00b42a)" : item.ok === false ? "var(--dsw-alias-state-business-primary, #4176e6)" : "var(--dsw-alias-label-tertiary, #8f959e)";
+							return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									alignItems: "center",
+									gap: 12,
+									padding: "2px 0",
+									minWidth: 0
+								},
+								children: [
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										style: {
+											flex: "none",
+											width: 120,
+											fontSize: 12,
+											lineHeight: "18px",
+											color: "var(--dsw-alias-label-primary, #1f2329)",
+											overflow: "hidden",
+											textOverflow: "ellipsis",
+											whiteSpace: "nowrap"
+										},
+										children: item.label
+									}),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+										style: {
+											flex: "none",
+											width: 86,
+											fontSize: 12,
+											lineHeight: "18px",
+											color: markColor
+										},
+										children: [mark, item.status === "running" ? " 测试中" : ""]
+									}),
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										style: {
+											flex: 1,
+											minWidth: 0,
+											fontSize: 12,
+											lineHeight: "18px",
+											color: "var(--dsw-alias-label-tertiary, #8f959e)",
+											overflow: "hidden",
+											textOverflow: "ellipsis",
+											whiteSpace: "nowrap"
+										},
+										title: item.note,
+										children: item.note || `测试模型 ${item.model}`
+									})
+								]
+							}, item.key);
+						}), state.running === false ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+							style: hintStyle$1,
+							children: state.saveError !== "" ? `保存出错：${state.saveError}` : `完成。${state.items.filter((i) => i.ok === false).length} 家已自动改用 system 角色并保存；✓ 的保持现状。`
+						}) : null]
+					}) : null
+				]
+			});
+		}
+		const probeBarStyle = {
+			display: "flex",
+			flexDirection: "column",
+			gap: 8
+		};
+		const probeButtonStyle = {
+			boxSizing: "border-box",
+			height: 28,
+			padding: "0 10px",
+			border: "1px solid var(--dsw-alias-state-business-primary, #4176e6)",
+			borderRadius: 14,
 			background: "transparent",
-			color: "var(--dsw-alias-label-secondary, #4e5969)",
-			cursor: "pointer"
+			color: "var(--dsw-alias-state-business-primary, #4176e6)",
+			fontSize: 12,
+			lineHeight: "18px",
+			cursor: "pointer",
+			flexShrink: 0
+		};
+		const probePanelStyle = {
+			display: "flex",
+			flexDirection: "column",
+			padding: "8px 12px",
+			border: "1px solid var(--dsw-alias-border-l3, #e5e6eb)",
+			borderRadius: 10
 		};
 		//#endregion
 		//#region src/client/provider-hub/chat/ChatProviderDetail.tsx
@@ -279802,6 +280680,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [failure, setFailure] = (0, react.useState)(void 0);
 			const [saved, setSaved] = (0, react.useState)(false);
 			const [deleteArmed, setDeleteArmed] = (0, react.useState)(false);
+			(0, react.useEffect)(() => {
+				ensureProviderFieldStyles();
+			}, []);
 			const [route, setRoute] = (0, react.useState)("");
 			const [customName, setCustomName] = (0, react.useState)("");
 			const [customBaseURL, setCustomBaseURL] = (0, react.useState)("");
@@ -280038,17 +280919,42 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							flexWrap: "wrap"
 						},
 						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							target.mode === "custom" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								style: {
-									fontSize: 15,
-									fontWeight: 600,
+									fontSize: 14,
+									lineHeight: "22px",
+									fontWeight: 500,
 									color: "var(--dsw-alias-label-primary, #1f2329)"
 								},
-								children: target.mode === "custom" ? chatCopy.addCustom : target.displayName
+								children: chatCopy.addCustom
+							}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+								style: {
+									display: "inline-flex",
+									alignItems: "center",
+									gap: 6,
+									minWidth: 0
+								},
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ProviderIcon, {
+									provider: target.provider,
+									name: target.displayName,
+									size: 18
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									style: {
+										fontSize: 14,
+										lineHeight: "22px",
+										fontWeight: 500,
+										color: "var(--dsw-alias-label-primary, #1f2329)",
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										whiteSpace: "nowrap"
+									},
+									children: target.displayName
+								})]
 							}),
 							target.mode !== "custom" && target.provider !== target.displayName ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								style: {
 									fontSize: 12,
+									lineHeight: "18px",
 									color: "var(--dsw-alias-label-tertiary, #8f959e)"
 								},
 								children: target.provider
@@ -280056,6 +280962,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							saved ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								style: {
 									fontSize: 12,
+									lineHeight: "18px",
 									color: "var(--dsw-alias-state-success-primary, #00b42a)"
 								},
 								children: chatCopy.saved
@@ -280070,6 +280977,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						/* @__PURE__ */ (0, react_jsx_runtime.jsx)(Field, {
 							label: chatCopy.providerId,
 							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+								className: "dsh-webui-field",
 								style: inputStyle,
 								type: "text",
 								value: route,
@@ -280091,6 +280999,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						/* @__PURE__ */ (0, react_jsx_runtime.jsx)(Field, {
 							label: chatCopy.displayName,
 							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+								className: "dsh-webui-field",
 								style: inputStyle,
 								type: "text",
 								value: customName,
@@ -280105,7 +281014,20 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					] }) : null,
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(Field, {
 						label: chatCopy.keyInput,
+						labelExtra: keyState === void 0 ? null : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							role: "img",
+							"aria-label": keyState.configured === true ? chatCopy.credentialConfigured : chatCopy.credentialMissing,
+							title: keyState.configured === true ? chatCopy.credentialConfigured : chatCopy.credentialMissing,
+							style: {
+								width: 8,
+								height: 8,
+								borderRadius: "50%",
+								flexShrink: 0,
+								background: keyState.configured === true ? "var(--dsw-alias-state-success-primary, #00b42a)" : "var(--dsw-alias-state-error-primary, #d54941)"
+							}
+						}),
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+							className: "dsh-webui-field",
 							style: inputStyle,
 							type: "password",
 							autoComplete: "off",
@@ -280125,6 +281047,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					target.mode === "custom" || layout !== "unknown" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Field, {
 						label: chatCopy.baseUrl,
 						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+							className: "dsh-webui-field",
 							style: inputStyle,
 							type: "text",
 							value: target.mode === "custom" ? customBaseURL : stringAt(draft, "baseURL") ?? "",
@@ -280140,7 +281063,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					target.mode === "custom" || target.declared === true && layout === "pi-ai" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Field, {
 						label: chatCopy.apiProtocol,
 						children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-							style: inputStyle,
+							className: "dsh-webui-field",
+							style: selectInputStyle$1,
 							value: target.mode === "custom" ? customProtocol : probeApi ?? "",
 							"aria-label": chatCopy.apiProtocol,
 							disabled,
@@ -280181,12 +281105,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						children: failure
 					}) : null,
 					modelFailure !== void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
-						style: hintStyle,
+						style: errorStyle,
 						children: `${chatCopy.modelId} ${String(modelFailure.index + 1)}: ${t(modelFailure.key)}`
 					}) : null,
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						style: {
 							display: "flex",
+							justifyContent: "flex-end",
 							gap: 8,
 							marginTop: 4,
 							flexWrap: "wrap"
@@ -280194,6 +281119,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						children: [
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
+								className: "dsh-webui-secondary-btn",
 								style: secondaryButtonStyle,
 								disabled: busy,
 								onClick: () => {
@@ -280203,6 +281129,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							}),
 							canRemove ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
+								className: "dsh-webui-danger-btn",
 								style: deleteArmed ? dangerConfirmStyle : dangerButtonStyle,
 								disabled: busy,
 								onClick: confirmDelete,
@@ -280210,6 +281137,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							}) : null,
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
+								className: "dsh-webui-primary-btn",
 								style: primaryButtonStyle,
 								disabled: disabled || (target.mode === "custom" ? !customReady : modelFailure !== void 0 || shownKeyFailure !== void 0),
 								onClick: () => {
@@ -280222,68 +281150,107 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				]
 			});
 		}
-		/** 一个字段（label + 控件 + 字段级错误）。 */
-		function Field({ label, children }) {
+		/** 一个字段（label [+ 标签附加节点] + 控件 + 字段级错误）。 */
+		function Field({ label, labelExtra, children }) {
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				style: {
 					display: "flex",
 					flexDirection: "column",
-					gap: 4
+					gap: 6
 				},
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-					style: fieldLabelStyle,
-					children: label
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+					style: {
+						...fieldLabelStyle,
+						display: "inline-flex",
+						alignItems: "center",
+						gap: 6
+					},
+					children: [label, labelExtra]
 				}), children]
 			});
 		}
 		const inputStyle = {
+			boxSizing: "border-box",
 			width: "100%",
-			padding: "7px 10px",
-			fontSize: 13,
-			borderRadius: 6,
+			height: 32,
+			padding: "0 10px",
+			fontSize: 14,
+			lineHeight: "22px",
+			borderRadius: 8,
 			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
 			background: "var(--dsw-alias-bg-layer-1, #fff)",
 			color: "var(--dsw-alias-label-primary, #1f2329)",
-			outline: "none",
-			boxSizing: "border-box"
+			outline: "none"
+		};
+		const selectInputStyle$1 = {
+			...inputStyle,
+			appearance: "none",
+			paddingRight: 32,
+			backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2381858C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
+			backgroundRepeat: "no-repeat",
+			backgroundPosition: "right 12px center",
+			backgroundSize: "12px 12px",
+			cursor: "pointer",
+			maxWidth: 240
 		};
 		const fieldLabelStyle = {
 			fontSize: 12,
+			lineHeight: "18px",
+			fontWeight: 500,
 			color: "var(--dsw-alias-label-secondary, #4e5969)"
 		};
 		const hintStyle = {
 			margin: 0,
 			fontSize: 12,
+			lineHeight: "18px",
 			color: "var(--dsw-alias-label-tertiary, #8f959e)"
 		};
 		const errorStyle = {
 			margin: 0,
 			fontSize: 12,
+			lineHeight: "18px",
 			color: "var(--dsw-alias-state-error-primary, #d54941)"
 		};
 		const primaryButtonStyle = {
-			marginLeft: "auto",
-			padding: "7px 18px",
-			fontSize: 13,
-			borderRadius: 6,
+			boxSizing: "border-box",
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			height: 36,
+			padding: "0 14px",
+			fontSize: 14,
+			lineHeight: "22px",
+			borderRadius: 18,
 			border: "none",
-			background: "var(--dsw-alias-button-primary-fill, #165dff)",
+			background: "var(--dsw-alias-button-primary-fill, #4176e6)",
 			color: "var(--dsw-alias-label-primary-foreground, #fff)",
 			cursor: "pointer"
 		};
 		const secondaryButtonStyle = {
-			padding: "7px 14px",
-			fontSize: 13,
-			borderRadius: 6,
+			boxSizing: "border-box",
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			height: 36,
+			padding: "0 14px",
+			fontSize: 14,
+			lineHeight: "22px",
+			borderRadius: 18,
 			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
 			background: "transparent",
 			color: "var(--dsw-alias-label-primary, #1f2329)",
 			cursor: "pointer"
 		};
 		const dangerButtonStyle = {
-			padding: "7px 14px",
-			fontSize: 13,
-			borderRadius: 6,
+			boxSizing: "border-box",
+			display: "inline-flex",
+			alignItems: "center",
+			justifyContent: "center",
+			height: 36,
+			padding: "0 14px",
+			fontSize: 14,
+			lineHeight: "22px",
+			borderRadius: 18,
 			border: "1px solid var(--dsw-alias-state-error-primary, #d54941)",
 			background: "transparent",
 			color: "var(--dsw-alias-state-error-primary, #d54941)",
@@ -280294,66 +281261,754 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			background: "var(--dsw-alias-interactive-bg-hover-danger, rgba(213,73,65,0.1))"
 		};
 		//#endregion
-		//#region src/client/provider-hub/vision/VisionModelBlock.tsx
+		//#region src/client/provider-hub/perf/PerfBenchModal.tsx
 		/**
-		* VisionModelBlock — 辅助视觉模型区块。
-		* 可视化编辑「降级方案」：有序列表（第一个为当前使用），支持上移/下移/删除/添加。
-		* 复用 dsh-vision-helper 的 HTTP 接口：/api/vision-helper/providers + /config。
+		* PerfBenchModal — 供应商推理性能基准测试弹窗。
+		*
+		* 交互：供应商行点「测试」→ 居中卡片淡入（opacity + scale）；选模型 → 开始；
+		* 测试运行时卡片平滑扩大（width/height transition），阶段进度实时刷新；
+		* 完成后展示五项指标结果表（原始样本 + avg/P50/P95/min/max）。
+		* 关闭时先淡出再卸载。测试在 host 后台继续，关掉弹窗再点「测试」可恢复视图。
+		*
+		* 注意：必须 createPortal 到 body —— 设置面板本体带 backdrop-filter（玻璃
+		* 质感），fixed 后代会相对面板而非视口定位（dsh-webui 玻璃铁律）。
 		*/
-		const BLOCK_TITLE$1 = {
-			fontSize: 14,
-			fontWeight: 600,
-			marginBottom: 6
-		};
-		const HINT$1 = {
-			fontSize: 12,
-			color: "var(--dsw-alias-label-secondary)",
-			marginBottom: 10
-		};
-		const ROW$1 = {
+		const OVERLAY = {
+			position: "fixed",
+			inset: 0,
+			zIndex: 1200,
+			background: "rgba(0,0,0,0.32)",
 			display: "flex",
-			gap: 8,
 			alignItems: "center",
-			marginBottom: 10
+			justifyContent: "center",
+			opacity: 0,
+			transition: "opacity 260ms ease"
 		};
-		const SELECT$1 = {
-			padding: "6px 10px",
-			borderRadius: 6,
-			border: "1px solid var(--dsw-alias-border-l2)",
-			background: "var(--dsw-alias-bg-layer-2, transparent)",
-			color: "var(--dsw-alias-label-primary)",
-			fontSize: 13,
-			cursor: "pointer"
+		const CARD_BASE = {
+			boxSizing: "border-box",
+			display: "flex",
+			flexDirection: "column",
+			borderRadius: 14,
+			background: "color-mix(in srgb, var(--dsw-alias-bg-layer-1, #fff) 72%, transparent)",
+			backdropFilter: "blur(24px) saturate(1.5)",
+			WebkitBackdropFilter: "blur(24px) saturate(1.5)",
+			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+			boxShadow: "0 18px 48px rgba(0,0,0,0.28)",
+			overflow: "hidden"
 		};
-		const ACTIVE_HINT$1 = {
-			fontSize: 12,
-			color: "var(--dsw-alias-label-secondary)"
-		};
-		const SMALL_BTN = {
-			padding: "2px 9px",
-			fontSize: 12,
-			lineHeight: "18px",
-			borderRadius: 5,
-			cursor: "pointer",
-			border: "1px solid var(--dsw-alias-border-l2)",
-			background: "var(--dsw-alias-bg-layer-2, transparent)",
+		const TITLE = {
+			fontSize: 15,
+			fontWeight: 600,
 			color: "var(--dsw-alias-label-primary)"
 		};
-		const SMALL_BTN_DISABLED = {
-			...SMALL_BTN,
+		const HINT = {
+			margin: 0,
+			fontSize: 12,
+			lineHeight: "18px",
+			color: "var(--dsw-alias-label-tertiary)"
+		};
+		const SELECT = {
+			boxSizing: "border-box",
+			height: 32,
+			padding: "0 32px 0 10px",
+			borderRadius: 8,
+			border: "1px solid var(--dsw-alias-border-l2)",
+			backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2381858C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
+			backgroundRepeat: "no-repeat",
+			backgroundPosition: "right 12px center",
+			backgroundSize: "12px 12px",
+			appearance: "none",
+			color: "var(--dsw-alias-label-primary)",
+			fontSize: 14,
+			cursor: "pointer"
+		};
+		const PRIMARY_BTN = {
+			height: 34,
+			padding: "0 16px",
+			borderRadius: 17,
+			border: "none",
+			background: "var(--dsw-alias-state-business-primary, #4176e6)",
+			color: "#fff",
+			fontSize: 13,
+			cursor: "pointer",
+			flex: "none"
+		};
+		const GHOST_BTN = {
+			height: 30,
+			padding: "0 14px",
+			borderRadius: 15,
+			border: "1px solid var(--dsw-alias-border-l2)",
+			background: "transparent",
+			color: "var(--dsw-alias-label-secondary)",
+			fontSize: 12,
+			cursor: "pointer",
+			flex: "none"
+		};
+		/** 阶段状态徽标。 */
+		function StageDot({ status }) {
+			const s = {
+				pending: {
+					bg: "transparent",
+					text: "·"
+				},
+				running: {
+					bg: "var(--dsw-alias-state-business-primary, #4176e6)",
+					text: "…"
+				},
+				done: {
+					bg: "var(--dsw-alias-state-success-primary, #00b42a)",
+					text: "✓"
+				},
+				skipped: {
+					bg: "var(--dsw-alias-border-l3, #c9cdd4)",
+					text: "—"
+				},
+				failed: {
+					bg: "var(--dsw-alias-state-error-primary, #d54941)",
+					text: "×"
+				}
+			}[status];
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+				style: {
+					width: 16,
+					height: 16,
+					borderRadius: "50%",
+					flex: "none",
+					display: "inline-flex",
+					alignItems: "center",
+					justifyContent: "center",
+					fontSize: 11,
+					lineHeight: "16px",
+					background: s.bg,
+					border: status === "pending" ? "1px solid var(--dsw-alias-border-l3, #c9cdd4)" : "none",
+					color: status === "pending" ? "var(--dsw-alias-label-tertiary)" : "#fff"
+				},
+				children: s.text
+			});
+		}
+		function PerfBenchModal({ provider, models, onClose }) {
+			const [fade, setFade] = (0, react.useState)(0);
+			const [expand, setExpand] = (0, react.useState)(0);
+			const [modelId, setModelId] = (0, react.useState)(models[0]?.id ?? "");
+			const [phase, setPhase] = (0, react.useState)("select");
+			const [state, setState] = (0, react.useState)(null);
+			const [error, setError] = (0, react.useState)("");
+			const pollRef = (0, react.useRef)(null);
+			(0, react.useEffect)(() => {
+				const iv = window.setInterval(() => {
+					setFade((f) => {
+						if (f >= 1) {
+							window.clearInterval(iv);
+							return 1;
+						}
+						return Math.min(1, f + .18);
+					});
+				}, 36);
+				return () => window.clearInterval(iv);
+			}, []);
+			(0, react.useEffect)(() => {
+				if (phase !== "running" && phase !== "done") return;
+				const iv = window.setInterval(() => {
+					setExpand((e) => {
+						if (e >= 1) {
+							window.clearInterval(iv);
+							return 1;
+						}
+						return Math.min(1, e + .12);
+					});
+				}, 40);
+				return () => window.clearInterval(iv);
+			}, [phase]);
+			(0, react.useEffect)(() => {
+				fetch("/api/perf-bench", { cache: "no-store" }).then((r) => r.json()).then((d) => {
+					if (!d?.ok || !d.state || d.state.provider !== provider) return;
+					if (d.state.running) {
+						setState(d.state);
+						setModelId(d.state.model);
+						setPhase("running");
+					} else if (Date.now() - (d.state.finishedAt ?? 0) < 6e4) {
+						setState(d.state);
+						setModelId(d.state.model);
+						setPhase("done");
+					}
+				}).catch(() => {});
+				return () => {
+					if (pollRef.current !== null) window.clearInterval(pollRef.current);
+				};
+			}, [provider]);
+			const pollOnce = async () => {
+				try {
+					const d = await (await fetch("/api/perf-bench", { cache: "no-store" })).json();
+					if (!d?.ok || !d.state) return;
+					setState(d.state);
+					if (!d.state.running) {
+						setPhase(d.state.error ? "error" : "done");
+						if (pollRef.current !== null) {
+							window.clearInterval(pollRef.current);
+							pollRef.current = null;
+						}
+					}
+				} catch {}
+			};
+			const start = () => {
+				if (!modelId) return;
+				setError("");
+				fetch("/api/perf-bench", {
+					method: "POST",
+					headers: { "content-type": "application/json" },
+					body: JSON.stringify({
+						provider,
+						model: modelId
+					})
+				}).then((r) => r.json()).then((d) => {
+					if (!d?.ok) {
+						setError(d?.error || "启动失败");
+						return;
+					}
+					setPhase("running");
+					if (pollRef.current === null) pollRef.current = window.setInterval(() => {
+						pollOnce();
+					}, 900);
+					pollOnce();
+				}).catch((e) => setError(String(e?.message ?? e)));
+			};
+			const close = () => {
+				const iv = window.setInterval(() => {
+					setFade((f) => {
+						if (f <= 0) {
+							window.clearInterval(iv);
+							onClose();
+							return 0;
+						}
+						return Math.max(0, f - .25);
+					});
+				}, 30);
+			};
+			const cardStyle = {
+				...CARD_BASE,
+				width: Math.round(440 + 380 * expand),
+				height: Math.round(250 + 370 * expand),
+				opacity: fade,
+				transform: `scale(${(.92 + .08 * fade).toFixed(3)}) translateY(${Math.round(8 * (1 - fade))}px)`
+			};
+			return (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+				style: {
+					...OVERLAY,
+					opacity: fade
+				},
+				onClick: close,
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					style: cardStyle,
+					onClick: (e) => {
+						e.stopPropagation();
+					},
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						style: {
+							display: "flex",
+							alignItems: "center",
+							gap: 10,
+							padding: "14px 18px 10px",
+							borderBottom: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+							flex: "none"
+						},
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								style: TITLE,
+								children: "推理性能基准测试"
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+								style: HINT,
+								children: [
+									provider,
+									"/",
+									phase === "select" ? "" : state?.model ?? modelId
+								]
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								style: {
+									...GHOST_BTN,
+									marginLeft: "auto"
+								},
+								onClick: close,
+								children: "关闭"
+							})
+						]
+					}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						style: {
+							flex: 1,
+							minHeight: 0,
+							overflowY: "auto",
+							padding: "14px 18px 18px",
+							display: "flex",
+							flexDirection: "column",
+							gap: 12
+						},
+						children: [phase === "select" ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									flexDirection: "column",
+									gap: 6
+								},
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									style: {
+										fontSize: 12,
+										color: "var(--dsw-alias-label-secondary)"
+									},
+									children: "选择模型"
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
+									style: SELECT,
+									value: modelId,
+									onChange: (e) => {
+										setModelId(e.target.value);
+									},
+									children: [models.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+										value: "",
+										children: "（该供应商没有已配置的模型）"
+									}) : null, models.map((m) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+										value: m.id,
+										children: m.name || m.id
+									}, m.id))]
+								})]
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: HINT,
+								children: "固定条件：temperature=0 · 流式 · 单请求超时 45s · 总预算 170s（超时自动跳过剩余阶段）。 指标：TTFT（首字）×5 · TPS/E2E（256 输出）×3 · 预填充（~1400 字输入）×3 · RPS（并发 4×8 请求）。"
+							}),
+							error !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: {
+									margin: 0,
+									fontSize: 12,
+									color: "var(--dsw-alias-state-error-primary, #d54941)"
+								},
+								children: error
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								style: PRIMARY_BTN,
+								disabled: !modelId,
+								onClick: start,
+								children: "开始测试"
+							}) })
+						] }) : null, (phase === "running" || phase === "done" || phase === "error") && state !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+								style: {
+									display: "flex",
+									alignItems: "center",
+									gap: 10
+								},
+								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									style: {
+										fontSize: 13,
+										fontWeight: 600,
+										color: "var(--dsw-alias-label-primary)"
+									},
+									children: state.running ? `测试中… ${(state.elapsedMs / 1e3).toFixed(0)}s / 预算 170s` : phase === "error" ? "测试失败" : `完成，用时 ${(state.elapsedMs / 1e3).toFixed(1)}s`
+								})
+							}),
+							state.error !== "" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: {
+									margin: 0,
+									fontSize: 12,
+									color: "var(--dsw-alias-state-error-primary, #d54941)"
+								},
+								children: state.error
+							}) : null,
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+								style: {
+									display: "flex",
+									flexDirection: "column",
+									gap: 6
+								},
+								children: state.stages.map((s) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									style: {
+										display: "flex",
+										alignItems: "center",
+										gap: 8
+									},
+									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)(StageDot, { status: s.status }),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											style: {
+												fontSize: 13,
+												color: "var(--dsw-alias-label-primary)",
+												minWidth: 128
+											},
+											children: s.name
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											style: HINT,
+											children: s.status === "running" ? `${s.samples.length} 次采样…` : s.note
+										})
+									]
+								}, s.key))
+							}),
+							phase === "done" ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("table", {
+								style: {
+									width: "100%",
+									borderCollapse: "collapse",
+									fontSize: 12
+								},
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("tr", { children: [
+									"指标",
+									"单位",
+									"avg",
+									"P50",
+									"P95",
+									"min",
+									"max"
+								].map((h) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("th", {
+									style: {
+										textAlign: "left",
+										padding: "6px 8px",
+										borderBottom: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+										color: "var(--dsw-alias-label-secondary)",
+										fontWeight: 600
+									},
+									children: h
+								}, h)) }) }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("tbody", { children: state.stages.filter((s) => s.samples.length > 0).map((s) => {
+									const sum = state.summaries[s.key];
+									if (!sum) return null;
+									const fmt = (n) => n >= 100 ? String(Math.round(n)) : String(Math.round(n * 100) / 100);
+									return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("tr", { children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("td", {
+											style: {
+												padding: "6px 8px",
+												color: "var(--dsw-alias-label-primary)"
+											},
+											children: [s.name, s.estimated ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("sup", {
+												style: { color: "var(--dsw-alias-label-tertiary)" },
+												children: "（估）"
+											}) : null]
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("td", {
+											style: {
+												padding: "6px 8px",
+												color: "var(--dsw-alias-label-tertiary)"
+											},
+											children: s.unit
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("td", {
+											style: {
+												padding: "6px 8px",
+												color: "var(--dsw-alias-label-primary)",
+												fontWeight: 600
+											},
+											children: fmt(sum.avg)
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("td", {
+											style: {
+												padding: "6px 8px",
+												color: "var(--dsw-alias-label-primary)"
+											},
+											children: fmt(sum.p50)
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("td", {
+											style: {
+												padding: "6px 8px",
+												color: "var(--dsw-alias-label-primary)"
+											},
+											children: fmt(sum.p95)
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("td", {
+											style: {
+												padding: "6px 8px",
+												color: "var(--dsw-alias-label-tertiary)"
+											},
+											children: fmt(sum.min)
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("td", {
+											style: {
+												padding: "6px 8px",
+												color: "var(--dsw-alias-label-tertiary)"
+											},
+											children: fmt(sum.max)
+										})
+									] }, s.key);
+								}) })]
+							}) : null,
+							phase === "done" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: HINT,
+								children: "口径：TTFT 含推理链首个增量；TPS = completion_tokens ÷ 解码时长（usage 缺失按 chunk 计数并标注「估」）；预填充速度 = prompt_tokens ÷ 长 prompt TTFT；RPS 为非流式短请求 wall-clock。数据为单机单网关实测，受网络波动影响。"
+							}) : null,
+							phase === "running" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+								style: HINT,
+								children: "可以关闭此窗口，测试将在后台继续；重新点击「测试」可回到本视图。"
+							}) : null,
+							phase === "done" || phase === "error" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								style: GHOST_BTN,
+								onClick: () => {
+									setPhase("select");
+									setExpand(0);
+									setState(null);
+								},
+								children: "再测一次"
+							}) }) : null
+						] }) : null]
+					})]
+				})
+			}), document.body);
+		}
+		//#endregion
+		//#region src/client/provider-hub/blocks/shared.tsx
+		/** 官方 .selectInput 规格（自定义 chevron，不用原生箭头）。 */
+		const SELECT_STYLE = {
+			boxSizing: "border-box",
+			height: 32,
+			padding: "0 30px 0 10px",
+			borderRadius: 8,
+			border: "1px solid var(--dsw-alias-border-l2)",
+			background: "var(--dsw-alias-bg-layer-1, transparent)",
+			backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2381858C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
+			backgroundRepeat: "no-repeat",
+			backgroundPosition: "right 10px center",
+			backgroundSize: "12px 12px",
+			appearance: "none",
+			color: "var(--dsw-alias-label-primary)",
+			fontSize: 13,
+			lineHeight: "22px",
+			cursor: "pointer",
+			minWidth: 0
+		};
+		/** 官方行内小胶囊（Button .sm）。 */
+		const CAPSULE_BTN = {
+			boxSizing: "border-box",
+			height: 28,
+			padding: "0 12px",
+			flexShrink: 0,
+			border: "1px solid var(--dsw-alias-border-l2)",
+			borderRadius: 14,
+			background: "transparent",
+			color: "var(--dsw-alias-label-primary)",
+			fontSize: 12,
+			lineHeight: "18px",
+			cursor: "pointer"
+		};
+		const CAPSULE_BTN_DISABLED = {
+			...CAPSULE_BTN,
 			opacity: .45,
 			cursor: "default"
 		};
-		const LIST_ROW = {
+		/** 行卡片：细描边、12px 圆角、无底色。 */
+		const ROW_CARD = {
 			display: "flex",
-			gap: 8,
 			alignItems: "center",
-			padding: "5px 0"
+			gap: 10,
+			padding: "9px 12px",
+			borderRadius: 12,
+			minWidth: 0,
+			border: "1px solid var(--dsw-alias-border-l2)"
 		};
-		const TAG = {
-			fontSize: 13,
-			fontFamily: "ui-monospace, SFMono-Regular, Consolas, monospace"
+		/** 编辑面（填充面）：添加控件所在的一行。 */
+		const FILL_PANEL = {
+			display: "flex",
+			alignItems: "flex-end",
+			gap: 8,
+			flexWrap: "wrap",
+			padding: "10px 12px",
+			borderRadius: 12,
+			background: "var(--dsw-alias-bg-module-platform, #f2f3f5)"
 		};
+		const MONO = {
+			fontFamily: "ui-monospace, SFMono-Regular, Consolas, monospace",
+			fontSize: 12,
+			lineHeight: "18px"
+		};
+		const HINT_TEXT = {
+			margin: 0,
+			fontSize: 12,
+			lineHeight: "19px",
+			color: "var(--dsw-alias-label-tertiary)"
+		};
+		/**
+		* 当前生效值的胶囊徽章。
+		* @param props - 文本与语气（active=成功色点，muted=灰点）。
+		*/
+		function Pill({ text, tone = "active" }) {
+			const color = tone === "active" ? "var(--dsw-alias-state-success-primary, #00b42a)" : "var(--dsw-alias-label-tertiary, #8f959e)";
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+				title: `当前生效：${text}`,
+				style: {
+					display: "inline-flex",
+					alignItems: "center",
+					gap: 6,
+					flexShrink: 0,
+					height: 24,
+					padding: "0 10px",
+					borderRadius: 12,
+					maxWidth: 320,
+					border: "1px solid var(--dsw-alias-border-l3, #c9cdd4)",
+					color: "var(--dsw-alias-label-secondary)"
+				},
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { style: {
+					width: 6,
+					height: 6,
+					borderRadius: "50%",
+					background: color,
+					flexShrink: 0
+				} }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					style: {
+						...MONO,
+						overflow: "hidden",
+						textOverflow: "ellipsis",
+						whiteSpace: "nowrap"
+					},
+					children: text
+				})]
+			});
+		}
+		/** 24px 方形图标钮（上移/下移/删除）。 */
+		function IconButton({ label, glyph, disabled, danger, onClick }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+				type: "button",
+				className: danger === true ? "dsh-webui-icon-btn-danger" : "dsh-webui-icon-btn",
+				"aria-label": label,
+				title: label,
+				disabled,
+				onClick,
+				style: {
+					width: 24,
+					height: 24,
+					flexShrink: 0,
+					display: "inline-flex",
+					alignItems: "center",
+					justifyContent: "center",
+					border: "none",
+					borderRadius: 6,
+					background: "transparent",
+					color: "var(--dsw-alias-label-tertiary)",
+					fontSize: 13,
+					lineHeight: 1,
+					cursor: disabled === true ? "default" : "pointer",
+					opacity: disabled === true ? .35 : 1
+				},
+				children: glyph
+			});
+		}
+		/** 带小标签的下拉字段（标签在上，12px 次级色）。 */
+		function SelectField({ label, value, disabled, width, onChange, children }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					gap: 4,
+					minWidth: 0
+				},
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+					style: {
+						fontSize: 11,
+						lineHeight: "16px",
+						color: "var(--dsw-alias-label-tertiary)"
+					},
+					children: label
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("select", {
+					style: {
+						...SELECT_STYLE,
+						width: width ?? 176
+					},
+					value,
+					disabled,
+					"aria-label": label,
+					onChange: (event) => {
+						onChange(event.target.value);
+					},
+					children
+				})]
+			});
+		}
+		/**
+		* 区块外壳：标题行 + 可折叠说明 + 内容区。
+		* @param props - 标题、当前生效值、说明文本与内容。
+		*/
+		function BlockShell({ title, activeText, description, children }) {
+			const [open, setOpen] = (0, react.useState)(false);
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					gap: 10,
+					minWidth: 0
+				},
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						style: {
+							display: "flex",
+							alignItems: "center",
+							gap: 10,
+							flexWrap: "wrap"
+						},
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								style: {
+									fontSize: 14,
+									fontWeight: 600,
+									color: "var(--dsw-alias-label-primary)",
+									flexShrink: 0
+								},
+								children: title
+							}),
+							activeText !== void 0 && activeText !== "" ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Pill, { text: activeText }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Pill, {
+								text: "未配置",
+								tone: "muted"
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: "dsh-webui-link-btn",
+								"aria-expanded": open,
+								onClick: () => {
+									setOpen((v) => !v);
+								},
+								style: {
+									marginLeft: "auto",
+									flexShrink: 0,
+									height: 24,
+									padding: "0 8px",
+									borderRadius: 12,
+									border: "none",
+									background: "transparent",
+									color: "var(--dsw-alias-label-tertiary)",
+									fontSize: 12,
+									lineHeight: "18px",
+									cursor: "pointer"
+								},
+								children: open ? "收起说明" : "说明"
+							})
+						]
+					}),
+					open ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						style: HINT_TEXT,
+						children: description
+					}) : null,
+					children
+				]
+			});
+		}
+		/** 加载中/错误/空态的统一小字提示。 */
+		function StateHint({ text, tone = "muted" }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+				style: {
+					margin: 0,
+					fontSize: 12,
+					lineHeight: "18px",
+					color: tone === "error" ? "var(--dsw-alias-state-error-primary, #d54941)" : "var(--dsw-alias-label-tertiary)"
+				},
+				children: text
+			});
+		}
+		//#endregion
+		//#region src/client/provider-hub/vision/VisionModelBlock.tsx
+		/**
+		* VisionModelBlock — 辅助视觉模型区块。
+		*
+		* 可视化编辑「降级方案」：有序行卡片列表（第一条为首选，向下依次回退），
+		* 支持上移/下移/删除/添加。版式走 {@link ../blocks/shared.tsx} 的统一外壳：
+		* 标题行带当前生效胶囊 + 说明默认折叠，列表用行卡片而非裸文本行。
+		*
+		* 复用 dsh-vision-helper 的 HTTP 接口：/api/vision-helper/providers + /config。
+		*/
+		const DESCRIPTION$2 = "vision_describe 使用的模型（图片 → 文本描述）。从上到下依次尝试，第一个成功的即返回，可自定义降级方案。标注「视觉」的模型声明了图片输入；对话模型是否支持识图，可在上方供应商的模型设置中开启「识图」。";
 		function isVisionModel(m) {
 			return Array.isArray(m.input) && m.input.includes("image");
 		}
@@ -280431,176 +282086,177 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				const m = providers.find((x) => x.id === item.provider)?.models.find((x) => x.id === item.model);
 				return m && m.name || item.model;
 			};
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [
-				/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					style: BLOCK_TITLE$1,
-					children: "辅助视觉模型"
-				}),
-				/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					style: HINT$1,
-					children: "vision_describe 使用的模型（图片→文本描述）。从上到下依次尝试，第一个成功的即返回（可自定义降级方案）。标注「视觉」的模型声明了图片输入。"
-				}),
-				error && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+			const canAdd = !saving && addProvider !== "" && addModel !== "";
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(BlockShell, {
+				title: "辅助视觉模型",
+				activeText: active,
+				description: DESCRIPTION$2,
+				children: [error !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(StateHint, {
+					text: error,
+					tone: "error"
+				}) : null, providers.length === 0 && error === null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(StateHint, { text: "加载中…" }) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [list.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(StateHint, { text: "尚未配置降级方案，从下方添加第一个模型。" }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 					style: {
-						color: "#d33",
-						marginBottom: 8
+						display: "flex",
+						flexDirection: "column",
+						gap: 6
 					},
-					children: error
-				}),
-				providers.length === 0 && !error ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					style: { color: "#888" },
-					children: "加载中…"
-				}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-					list.length === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-						style: {
-							color: "#888",
-							marginBottom: 8
-						},
-						children: "尚未配置降级方案，请从下方添加模型。"
-					}) : list.map((item, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: LIST_ROW,
+					children: list.map((item, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						style: ROW_CARD,
 						children: [
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								style: {
-									fontSize: 12,
-									color: "var(--dsw-alias-label-secondary)",
-									width: 18,
-									flex: "none"
+									flexShrink: 0,
+									width: 20,
+									height: 20,
+									borderRadius: "50%",
+									display: "inline-flex",
+									alignItems: "center",
+									justifyContent: "center",
+									fontSize: 11,
+									fontWeight: 600,
+									background: index === 0 ? "var(--dsw-alias-state-business-primary, #4176e6)" : "var(--dsw-alias-bg-module-platform, #f2f3f5)",
+									color: index === 0 ? "#fff" : "var(--dsw-alias-label-tertiary)"
 								},
 								children: index + 1
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-								style: TAG,
-								children: [
-									item.provider,
-									"/",
-									item.model
-								]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								style: {
-									fontSize: 12,
+									display: "flex",
+									flexDirection: "column",
+									gap: 1,
+									flex: 1,
+									minWidth: 0
+								},
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									style: {
+										fontSize: 13,
+										lineHeight: "20px",
+										fontWeight: 500,
+										color: "var(--dsw-alias-label-primary)",
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										whiteSpace: "nowrap"
+									},
+									children: modelName(item)
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									style: {
+										...MONO,
+										color: "var(--dsw-alias-label-tertiary)",
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										whiteSpace: "nowrap"
+									},
+									children: keyOf(item)
+								})]
+							}),
+							index === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								style: {
+									flexShrink: 0,
+									padding: "1px 6px",
+									borderRadius: 4,
+									fontSize: 11,
+									lineHeight: "16px",
+									border: "1px solid var(--dsw-alias-border-l3, #c9cdd4)",
 									color: "var(--dsw-alias-label-secondary)"
 								},
-								children: modelName(item)
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+								children: "首选"
+							}) : null,
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 								style: {
-									marginLeft: "auto",
-									display: "flex",
-									gap: 6,
-									flex: "none"
+									display: "inline-flex",
+									gap: 2,
+									flexShrink: 0
 								},
 								children: [
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-										style: saving || index === 0 ? SMALL_BTN_DISABLED : SMALL_BTN,
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(IconButton, {
+										label: "上移",
+										glyph: "↑",
 										disabled: saving || index === 0,
-										onClick: () => move(index, -1),
-										children: "↑"
+										onClick: () => {
+											move(index, -1);
+										}
 									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-										style: saving || index === list.length - 1 ? SMALL_BTN_DISABLED : SMALL_BTN,
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(IconButton, {
+										label: "下移",
+										glyph: "↓",
 										disabled: saving || index === list.length - 1,
-										onClick: () => move(index, 1),
-										children: "↓"
+										onClick: () => {
+											move(index, 1);
+										}
 									}),
-									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-										style: saving ? SMALL_BTN_DISABLED : SMALL_BTN,
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)(IconButton, {
+										label: "移除",
+										glyph: "✕",
+										danger: true,
 										disabled: saving,
-										onClick: () => remove(index),
-										children: "✕"
+										onClick: () => {
+											remove(index);
+										}
 									})
 								]
 							})
 						]
-					}, keyOf(item) + "-" + index)),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: {
-							...ROW$1,
-							marginTop: 10
-						},
-						children: [
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-								style: SELECT$1,
-								"aria-label": "添加供应商",
-								value: addProvider,
-								onChange: (e) => {
-									setAddProvider(e.target.value);
-									setAddModel("");
-								},
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-									value: "",
-									children: "选择供应商"
-								}), providers.map((p) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-									value: p.id,
-									children: p.name || p.id
-								}, p.id))]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-								style: SELECT$1,
-								"aria-label": "添加模型",
-								value: addModel,
-								disabled: !addProvider || addModels.length === 0,
-								onChange: (e) => setAddModel(e.target.value),
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
-									value: "",
-									children: addModels.length === 0 ? "无模型" : "选择模型"
-								}), addModels.map((m) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("option", {
-									value: m.id,
-									children: [m.name || m.id, isVisionModel(m) ? "（视觉）" : ""]
-								}, m.id))]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-								style: saving || !addProvider || !addModel ? SMALL_BTN_DISABLED : SMALL_BTN,
-								disabled: saving || !addProvider || !addModel,
-								onClick: add,
-								children: "+ 添加"
-							})
-						]
-					}),
-					active && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: ACTIVE_HINT$1,
-						children: ["当前生效：", active]
-					})
-				] })
-			] });
+					}, keyOf(item) + "-" + index))
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					style: FILL_PANEL,
+					children: [
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(SelectField, {
+							label: "供应商",
+							value: addProvider,
+							onChange: (v) => {
+								setAddProvider(v);
+								setAddModel("");
+							},
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+								value: "",
+								children: "选择供应商"
+							}), providers.map((p) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+								value: p.id,
+								children: p.name || p.id
+							}, p.id))]
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)(SelectField, {
+							label: "模型",
+							value: addModel,
+							width: 220,
+							disabled: addProvider === "" || addModels.length === 0,
+							onChange: setAddModel,
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+								value: "",
+								children: addModels.length === 0 ? "无可用模型" : "选择模型"
+							}), addModels.map((m) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("option", {
+								value: m.id,
+								children: [m.name || m.id, isVisionModel(m) ? "（视觉）" : ""]
+							}, m.id))]
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							className: "dsh-webui-capsule-btn",
+							style: canAdd ? CAPSULE_BTN : CAPSULE_BTN_DISABLED,
+							disabled: !canAdd,
+							onClick: add,
+							children: "+ 添加"
+						})
+					]
+				})] })]
+			});
 		}
 		//#endregion
 		//#region src/client/provider-hub/image/ImageModelBlock.tsx
 		/**
 		* ImageModelBlock — 生图模型区块。
-		* 交互：两级下拉——先选供应商，再选该供应商下的模型。
+		*
+		* 交互：两级下拉——先选供应商，再选该供应商下的模型；选中即保存。
+		* 版式走 {@link ../blocks/shared.tsx} 的统一外壳：标题行带当前生效胶囊、
+		* 说明默认折叠，两个下拉并排在同一填充面里各带小标签。
+		*
 		* 复用 dsh-vision-helper 的 HTTP 接口：/api/image-gen/snapshot + /config。
 		*/
-		const BLOCK_TITLE = {
-			fontSize: 14,
-			fontWeight: 600,
-			marginBottom: 6
-		};
-		const HINT = {
-			fontSize: 12,
-			color: "var(--dsw-alias-label-secondary)",
-			marginBottom: 10
-		};
-		const ROW = {
-			display: "flex",
-			gap: 8,
-			alignItems: "center",
-			marginBottom: 10
-		};
-		const SELECT = {
-			padding: "6px 10px",
-			borderRadius: 6,
-			border: "1px solid var(--dsw-alias-border-l2)",
-			background: "var(--dsw-alias-bg-layer-2, transparent)",
-			color: "var(--dsw-alias-label-primary)",
-			fontSize: 13,
-			cursor: "pointer"
-		};
-		const ACTIVE_HINT = {
-			fontSize: 12,
-			color: "var(--dsw-alias-label-secondary)"
-		};
+		const DESCRIPTION$1 = "generate_image 使用的模型（提示词 → 图片生成）。标注「生图」的模型声明了图片生成能力，可在供应商的模型设置中开启「生图」。";
+		/** 该模型是否声明了生图能力（outputs 含 image）。 */
+		function isCapable$1(m) {
+			return Array.isArray(m.outputs) && m.outputs.includes("image");
+		}
 		function ImageModelBlock() {
 			const [providers, setProviders] = (0, react.useState)([]);
 			const [active, setActive] = (0, react.useState)("");
@@ -280639,65 +282295,138 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					if (d && d.ok) setActive(key);
 				}).finally(() => setSaving(false));
 			};
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [
-				/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					style: BLOCK_TITLE,
-					children: "生图模型"
-				}),
-				/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					style: HINT,
-					children: "generate_image 使用的模型（提示词 → 图片生成）。"
-				}),
-				error && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					style: {
-						color: "#d33",
-						marginBottom: 8
-					},
-					children: error
-				}),
-				providers.length === 0 && !error ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-					style: { color: "#888" },
-					children: "加载中…"
-				}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					style: ROW,
-					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("select", {
-						style: SELECT,
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(BlockShell, {
+				title: "生图模型",
+				activeText: active,
+				description: DESCRIPTION$1,
+				children: [error !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(StateHint, {
+					text: error,
+					tone: "error"
+				}) : null, providers.length === 0 && error === null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(StateHint, { text: "加载中…" }) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					style: FILL_PANEL,
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(SelectField, {
+						label: "供应商",
 						value: currentProvider,
-						"aria-label": "供应商",
-						onChange: (e) => {
-							setSelectedProvider(e.target.value);
-						},
+						onChange: setSelectedProvider,
 						children: providers.map((p) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
 							value: p.id,
 							children: p.name || p.id
 						}, p.id))
-					}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
-						style: SELECT,
+					}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(SelectField, {
+						label: "模型",
 						value: modelValue,
-						"aria-label": "模型",
+						width: 240,
 						disabled: saving || currentModels.length === 0,
-						onChange: (e) => {
-							if (e.target.value) pick(`${currentProvider}/${e.target.value}`);
+						onChange: (v) => {
+							if (v !== "") pick(`${currentProvider}/${v}`);
 						},
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
 							value: "",
-							children: currentModels.length === 0 ? "无模型" : "选择模型"
-						}), currentModels.map((m) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+							children: currentModels.length === 0 ? "无可用模型" : "选择模型"
+						}), currentModels.map((m) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("option", {
 							value: m.id,
-							children: m.name || m.id
+							children: [m.name || m.id, isCapable$1(m) ? "（生图）" : ""]
 						}, m.id))]
 					})]
-				}), active && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					style: ACTIVE_HINT,
-					children: ["当前：", active]
-				})] })
-			] });
+				})]
+			});
+		}
+		//#endregion
+		//#region src/client/provider-hub/video/VideoModelBlock.tsx
+		/**
+		* VideoModelBlock — 生视频模型区块。
+		*
+		* 交互：两级下拉——先选供应商，再选该供应商下的模型；选中即保存。
+		* 版式走 {@link ../blocks/shared.tsx} 的统一外壳：标题行带当前生效胶囊、
+		* 说明默认折叠，两个下拉并排在同一填充面里各带小标签。
+		*
+		* 复用 dsh-vision-helper 的 HTTP 接口：/api/video-gen/snapshot + /config。
+		*/
+		const DESCRIPTION = "generate_video 使用的模型（提示词 → 视频生成，异步任务自动轮询）。标注「生视频」的模型声明了视频生成能力，可在供应商的模型设置中开启「生视频」。";
+		/** 该模型是否声明了生视频能力（outputs 含 video）。 */
+		function isCapable(m) {
+			return Array.isArray(m.outputs) && m.outputs.includes("video");
+		}
+		function VideoModelBlock() {
+			const [providers, setProviders] = (0, react.useState)([]);
+			const [active, setActive] = (0, react.useState)("");
+			const [error, setError] = (0, react.useState)(null);
+			const [saving, setSaving] = (0, react.useState)(false);
+			const [selectedProvider, setSelectedProvider] = (0, react.useState)("");
+			(0, react.useEffect)(() => {
+				let alive = true;
+				fetch("/api/video-gen/snapshot", { cache: "no-store" }).then((r) => r.json()).then((d) => {
+					if (!alive) return;
+					if (d && d.ok !== false) {
+						setProviders(d.providers || []);
+						setActive(d.videoActive || "");
+					} else setError(d && d.error || "加载失败");
+				}).catch(() => {
+					if (alive) setError("接口不可用");
+				});
+				return () => {
+					alive = false;
+				};
+			}, []);
+			const slash = active.indexOf("/");
+			const activeProvider = slash > 0 ? active.slice(0, slash) : "";
+			const activeModel = slash > 0 ? active.slice(slash + 1) : "";
+			const currentProvider = selectedProvider || activeProvider || providers[0]?.id || "";
+			const currentModels = providers.find((p) => p.id === currentProvider)?.models ?? [];
+			const modelValue = currentProvider === activeProvider ? activeModel : "";
+			const pick = (key) => {
+				if (saving) return;
+				setSaving(true);
+				fetch("/api/video-gen/config", {
+					method: "POST",
+					headers: { "content-type": "application/json" },
+					body: JSON.stringify({ videoActive: key })
+				}).then((r) => r.json()).then((d) => {
+					if (d && d.ok) setActive(key);
+				}).finally(() => setSaving(false));
+			};
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(BlockShell, {
+				title: "生视频模型",
+				activeText: active,
+				description: DESCRIPTION,
+				children: [error !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(StateHint, {
+					text: error,
+					tone: "error"
+				}) : null, providers.length === 0 && error === null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(StateHint, { text: "加载中…" }) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					style: FILL_PANEL,
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(SelectField, {
+						label: "供应商",
+						value: currentProvider,
+						onChange: setSelectedProvider,
+						children: providers.map((p) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+							value: p.id,
+							children: p.name || p.id
+						}, p.id))
+					}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(SelectField, {
+						label: "模型",
+						value: modelValue,
+						width: 240,
+						disabled: saving || currentModels.length === 0,
+						onChange: (v) => {
+							if (v !== "") pick(`${currentProvider}/${v}`);
+						},
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+							value: "",
+							children: currentModels.length === 0 ? "无可用模型" : "选择模型"
+						}), currentModels.map((m) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("option", {
+							value: m.id,
+							children: [m.name || m.id, isCapable(m) ? "（生视频）" : ""]
+						}, m.id))]
+					})]
+				})]
+			});
 		}
 		//#endregion
 		//#region src/client/provider-hub/ProviderHubSection.tsx
 		/**
 		* ProviderHubSection — 「供应商」设置页主布局。
-		* 三区块：对话供应商（左列表 + 右详情）+ 辅助视觉模型 + 生图模型。
+		* 对齐官方 ui-settings-models 的 ModelsSection：整页行卡片列表，点击行内展开
+		* 编辑器；附加区块：辅助视觉模型 + 生图模型。
 		* 对话供应商数据流复用官方 wire 链（ModelsSettingsStore）；视觉/生图复用
 		* dsh-vision-helper 的 HTTP 接口。
 		*/
@@ -280727,28 +282456,79 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			settingsPath: ["providers"],
 			mode: "custom"
 		};
-		const ROW_STYLE = {
-			display: "flex",
-			gap: 16,
-			alignItems: "flex-start"
-		};
-		const LIST_COL_STYLE = {
-			flex: "0 0 200px",
-			minWidth: 0
-		};
-		const DETAIL_COL_STYLE = {
-			flex: 1,
-			minWidth: 0
-		};
-		const EMPTY_STYLE = {
-			color: "var(--dsw-alias-label-tertiary, #888)",
-			padding: 24,
-			fontSize: 13
-		};
 		const SEP_STYLE = {
 			height: 1,
 			background: "var(--dsw-alias-border-l2, #333)",
-			margin: "8px 0"
+			margin: "4px 0"
+		};
+		const hubLayoutStyle = {
+			display: "flex",
+			alignItems: "stretch",
+			gap: 12,
+			maxWidth: 1100,
+			minWidth: 0
+		};
+		const detailColStyle = {
+			flex: 1,
+			minWidth: 0,
+			display: "flex",
+			flexDirection: "column"
+		};
+		const detailPanelStyle = {
+			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+			borderRadius: 12,
+			padding: "14px 16px",
+			display: "flex",
+			flexDirection: "column",
+			gap: 10,
+			minWidth: 0,
+			flex: 1
+		};
+		function DetailPlaceholder() {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				style: placeholderStyle,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+					style: {
+						margin: 0,
+						fontSize: 13,
+						fontWeight: 500
+					},
+					children: "从左侧选择一个提供方"
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+					style: {
+						margin: 0,
+						fontSize: 12
+					},
+					children: "查看或编辑 API Key、Base URL 与模型列表"
+				})]
+			});
+		}
+		const placeholderStyle = {
+			flex: 1,
+			minHeight: 220,
+			display: "flex",
+			flexDirection: "column",
+			alignItems: "center",
+			justifyContent: "center",
+			gap: 4,
+			border: "1px dashed var(--dsw-alias-border-l3, #c9cdd4)",
+			borderRadius: 12,
+			color: "var(--dsw-alias-label-tertiary, #8f959e)",
+			textAlign: "center",
+			padding: 24
+		};
+		const benchButtonStyle = {
+			boxSizing: "border-box",
+			height: 28,
+			padding: "0 10px",
+			flexShrink: 0,
+			border: "1px solid var(--dsw-alias-border-l2, #dcdfe6)",
+			borderRadius: 14,
+			background: "transparent",
+			color: "var(--dsw-alias-label-primary, #1f2329)",
+			fontSize: 12,
+			lineHeight: "18px",
+			cursor: "pointer"
 		};
 		/** 渲染「供应商」section；shell 未注入依赖时先渲染 null。 */
 		function ProviderHubSection(props) {
@@ -280764,59 +282544,88 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const state = useSnapshot(controller.store);
 			const [selected, setSelected] = (0, react.useState)(void 0);
 			const [addingCustom, setAddingCustom] = (0, react.useState)(false);
+			const [benchRow, setBenchRow] = (0, react.useState)(null);
 			(0, react.useEffect)(() => {
 				if (state.status === "idle") controller.load();
 			}, [controller, state.status]);
-			let target;
-			if (addingCustom) target = CUSTOM_TARGET;
-			else if (selected !== void 0) {
-				const row = state.rows.find((r) => r.entry.provider === selected);
-				if (row !== void 0) target = targetOf(row, row.configured ? "edit" : "adopt");
-			}
 			const closeDetail = (changed) => {
 				setSelected(void 0);
 				setAddingCustom(false);
 				if (changed) controller.load();
 			};
+			/** 右侧详情面板内容：选中的已配置/预设行，或「添加自定义提供方」卡片。 */
+			const selectedRow = selected !== void 0 ? state.rows.find((r) => r.entry.provider === selected) : void 0;
+			let detail;
+			if (addingCustom) detail = /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ChatProviderDetail, {
+				state,
+				target: CUSTOM_TARGET,
+				api,
+				onClose: closeDetail
+			}, "custom");
+			else if (selectedRow !== void 0) detail = /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ChatProviderDetail, {
+				state,
+				target: targetOf(selectedRow, selectedRow.configured ? "edit" : "adopt"),
+				api,
+				onClose: closeDetail
+			}, selectedRow.entry.provider);
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: "phub-host",
 				children: [
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: ROW_STYLE,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							style: LIST_COL_STYLE,
-							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ChatProviderList, {
-								state,
-								selected,
-								onSelect: (p) => {
-									setSelected(p);
-									setAddingCustom(false);
-								},
-								onAddCustom: () => {
-									setAddingCustom(true);
-									setSelected(void 0);
-								},
-								onRetry: () => {
-									controller.load();
-								}
-							})
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							style: DETAIL_COL_STYLE,
-							children: target !== void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ChatProviderDetail, {
-								state,
-								target,
-								api,
-								onClose: closeDetail
-							}, addingCustom ? "custom" : target.provider) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								style: EMPTY_STYLE,
-								children: "选择一个供应商查看详情"
+						style: hubLayoutStyle,
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ChatProviderList, {
+							state,
+							selected,
+							onSelect: (p) => {
+								setSelected(p);
+								setAddingCustom(false);
+							},
+							onAddCustom: () => {
+								setAddingCustom(true);
+								setSelected(void 0);
+							},
+							onRetry: () => {
+								controller.load();
+							}
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("section", {
+							style: detailColStyle,
+							children: detail === void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(DetailPlaceholder, {}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+								style: detailPanelStyle,
+								children: [selectedRow !== void 0 && selectedRow.configured ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									style: {
+										display: "flex",
+										justifyContent: "flex-end"
+									},
+									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+										type: "button",
+										className: "dsh-webui-capsule-btn",
+										style: benchButtonStyle,
+										onClick: () => {
+											setBenchRow(selectedRow);
+										},
+										children: "⚡ 性能测试"
+									})
+								}) : null, detail]
 							})
 						})]
 					}),
+					benchRow !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(PerfBenchModal, {
+						provider: benchRow.entry.provider,
+						models: modelsOf(state, benchRow).map((m) => ({
+							id: String(m["id"] ?? ""),
+							name: typeof m["name"] === "string" ? m["name"] : void 0
+						})),
+						onClose: () => {
+							setBenchRow(null);
+						}
+					}, benchRow.entry.provider) : null,
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(DevRoleProbeBar, {}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { style: SEP_STYLE }),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(VisionModelBlock, {}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { style: SEP_STYLE }),
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ImageModelBlock, {})
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ImageModelBlock, {}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { style: SEP_STYLE }),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)(VideoModelBlock, {})
 				]
 			});
 		}
@@ -280825,13 +282634,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		/**
 		* dsh-provider-hub — 全局样式注入 + 隐藏官方「模型」导航项。
 		*/
-		const STYLE_ID$6 = "dsh-provider-hub-styles";
-		let injected$2 = false;
+		const STYLE_ID$7 = "dsh-provider-hub-styles";
+		let injected$3 = false;
 		/** 注入全局样式；返回移除函数。 */
-		function injectStyles$3() {
-			if (!injected$2) {
+		function injectStyles$4() {
+			if (!injected$3) {
 				const tag = document.createElement("style");
-				tag.id = STYLE_ID$6;
+				tag.id = STYLE_ID$7;
 				tag.dataset.plugin = "@dsh-external/dsh-provider-hub";
 				tag.textContent = `
 .phub-host{display:flex;flex-direction:column;gap:20px}
@@ -280839,12 +282648,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 .phub-hint{font-size:12px;color:var(--dsw-alias-label-secondary,#888);margin-bottom:10px}
 `;
 				document.head.appendChild(tag);
-				injected$2 = true;
+				injected$3 = true;
 			}
 			return () => {
-				if (!injected$2) return;
-				document.getElementById(STYLE_ID$6)?.remove();
-				injected$2 = false;
+				if (!injected$3) return;
+				document.getElementById(STYLE_ID$7)?.remove();
+				injected$3 = false;
 			};
 		}
 		/** 官方「模型」页导航项 label（中英文），用于文本匹配隐藏。 */
@@ -280875,7 +282684,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		//#region src/client/provider-hub/index.ts
 		function applyProviderHub(ctx) {
 			ctx.effect(() => {
-				const removeStyles = injectStyles$3();
+				const removeStyles = injectStyles$4();
 				const stopHide = hideOfficialModelsNav();
 				return () => {
 					removeStyles();
@@ -280889,17 +282698,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					controller,
 					api: connection.api
 				});
-				const disposers = [
-					ctx.remote.$on("settings/document-updated", () => {
-						controller.load();
-					}),
-					ctx.remote.$on("credentials/updated", () => {
-						controller.load();
-					}),
-					ctx.remote.$on("llm/adapters-updated", () => {
-						controller.load();
-					})
-				];
+				const disposers = [ctx.remote.$on("settings/document-updated", () => {
+					controller.load();
+				}), ctx.remote.$on("llm/adapters-updated", () => {
+					controller.load();
+				})];
 				const unregister = ctx.slots.inject("settings.section", () => ctx.slots.register({
 					name: "settings.section",
 					id: "provider-hub",
@@ -280912,6 +282715,1224 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					for (const dispose of disposers) dispose();
 				};
 			}, "@dsh-external/dsh-webui: provider section");
+		}
+		//#endregion
+		//#region src/client/image-gallery/definition.ts
+		/** 当前识别的图片工具名（宿主可增减；这里覆盖 dsh-vision-helper 的 generate_image 与 AI 浏览器的 browser_screenshot / browser_see）。 */
+		const IMAGE_TOOL_NAMES = /* @__PURE__ */ new Set([
+			"generate_image",
+			"browser_screenshot",
+			"browser_see"
+		]);
+		function isImageToolName(value) {
+			return IMAGE_TOOL_NAMES.has(value);
+		}
+		/** 从 tool/result 的 message.content 里取第一个纯文本块。 */
+		function resultText$1(content) {
+			for (const block of content) {
+				if (block === null || typeof block !== "object") continue;
+				const candidate = block;
+				if (candidate.type !== "tool-result") continue;
+				const inner = Array.isArray(candidate.content) ? candidate.content : [];
+				for (const part of inner) {
+					if (part === null || typeof part !== "object") continue;
+					const textBlock = part;
+					if (textBlock.type === "text" && typeof textBlock.text === "string") return textBlock.text;
+				}
+			}
+			return null;
+		}
+		/** 生图成功的文本结果里一定带 imageUrl 字段——用这个做 result 侧的低成本指纹。 */
+		function isImageResultText(text) {
+			return text !== null && /"imageUrl"\s*:/.test(text);
+		}
+		/** 解析生图结果 JSON：{ ok, model, imageUrls?/imageUrl? } → 展示 URL 列表。 */
+		function parseImageResult(text) {
+			let parsed;
+			try {
+				parsed = JSON.parse(text);
+			} catch {
+				return null;
+			}
+			if (parsed === null || typeof parsed !== "object") return null;
+			const record = parsed;
+			if (record.ok !== true) return null;
+			const urls = [];
+			const push = (value) => {
+				if (typeof value === "string" && value !== "" && !urls.includes(value)) urls.push(value);
+			};
+			if (Array.isArray(record.imageUrls)) for (const item of record.imageUrls) push(item);
+			push(record.imageUrl);
+			if (typeof record.imageDataUrl === "string" && record.imageDataUrl) push(record.imageDataUrl);
+			if (urls.length === 0) return null;
+			return {
+				urls,
+				model: typeof record.model === "string" ? record.model : null
+			};
+		}
+		/** 从 tool/call arguments（JSON 字符串）里取 prompt 字段。 */
+		function parsePrompt(argumentsRaw) {
+			try {
+				const parsed = JSON.parse(argumentsRaw);
+				return typeof parsed.prompt === "string" ? parsed.prompt : null;
+			} catch {
+				return null;
+			}
+		}
+		function locationOf(context) {
+			return context.start?.location ?? context.matches[0]?.location ?? { kind: "unresolved" };
+		}
+		/** 只含 result（start 被窗口截断）时，从 matches 里回演出画廊状态。 */
+		function fallbackState(context) {
+			let images = [];
+			for (const match of context.matches) {
+				if (match.event.type !== "tool/result") continue;
+				const text = resultText$1(match.event.data.message.content);
+				if (text === null) continue;
+				const parsed = parseImageResult(text);
+				if (parsed === null) continue;
+				const callId = String(match.event.data.message.source.callId);
+				for (const url of parsed.urls) images = [...images, {
+					callId,
+					model: parsed.model,
+					url,
+					prompt: null
+				}];
+			}
+			return images.length === 0 ? void 0 : {
+				toolName: "generate_image",
+				promptRaw: null,
+				images
+			};
+		}
+		/** 生图画廊会话节点定义（Chat 目标）。 */
+		const generatedImagesDefinition = {
+			kind: "generated-images",
+			target: "chat",
+			match: (event) => {
+				if (event.type === "tool/call") return isImageToolName(event.data.name) ? {
+					id: String(event.data.callId),
+					role: "start"
+				} : null;
+				if (event.type === "tool/result" && (0, _deepseek_ai_dsh_client_runtime_client.isAppendSurfaceEvent)(event)) {
+					if (!isImageResultText(resultText$1(event.data.message.content))) return null;
+					const callId = event.data.message.source.callId;
+					return {
+						id: String(callId),
+						role: "update"
+					};
+				}
+				return null;
+			},
+			start: (_context, match) => {
+				if (match.event.type !== "tool/call") throw new Error("generated-images start requires tool/call");
+				return {
+					toolName: match.event.data.name,
+					promptRaw: parsePrompt(match.event.data.arguments),
+					images: []
+				};
+			},
+			update: (context, match) => {
+				if (match.event.type !== "tool/result") return context.state;
+				const text = resultText$1(match.event.data.message.content);
+				if (text === null) return context.state;
+				const parsed = parseImageResult(text);
+				if (parsed === null) return context.state;
+				const callId = String(match.event.data.message.source.callId);
+				const entries = parsed.urls.map((url) => ({
+					callId,
+					model: parsed.model,
+					url,
+					prompt: context.state.promptRaw
+				}));
+				return {
+					...context.state,
+					images: [...context.state.images, ...entries]
+				};
+			},
+			publication: () => "immediate",
+			buildViewNode: (context) => {
+				const state = context.state ?? fallbackState(context);
+				if (state === void 0 || state.images.length === 0) return null;
+				const anchor = context.start?.event.seq ?? context.matches[0]?.event.seq ?? 0;
+				return {
+					key: context.key,
+					kind: "generated-images",
+					id: context.id,
+					target: "chat",
+					anchorSeq: anchor,
+					location: locationOf(context),
+					visibility: "visible",
+					data: {
+						images: state.images,
+						toolName: state.toolName
+					}
+				};
+			}
+		};
+		//#endregion
+		//#region src/client/image-gallery/styles.ts
+		/**
+		* dsh-image-gallery — 样式（运行时注入 <style>，卸载时移除）。
+		* 类名前缀 gig-；颜色走 DSH 主题令牌（--dsw-alias-*），缺省兜底深色值。
+		*/
+		const css$3 = {
+			gallery: "gig-gallery",
+			head: "gig-head",
+			row: "gig-row",
+			item: "gig-item",
+			thumb: "gig-thumb",
+			badge: "gig-badge",
+			backdrop: "gig-backdrop",
+			stage: "gig-stage",
+			full: "gig-full",
+			broken: "gig-broken",
+			metaLine: "gig-meta-line",
+			model: "gig-model",
+			hint: "gig-hint",
+			saveButton: "gig-save-button",
+			saveIcon: "gig-save-icon",
+			hintLine: "gig-hint-line"
+		};
+		const STYLE_ID$6 = "dsh-image-gallery-styles";
+		const SHEET$5 = `
+.gig-gallery{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:1px solid var(--dsw-alias-border-l2,#333);border-radius:12px;background:var(--dsw-alias-bg-layer-2,#16181d)}
+.gig-head{font-size:11px;font-weight:600;color:var(--dsw-alias-label-secondary,#bbb)}
+.gig-row{display:flex;flex-wrap:wrap;gap:10px}
+.gig-item{position:relative;display:block;padding:0;border:none;border-radius:10px;background:transparent;cursor:zoom-in;overflow:hidden;flex:0 0 auto;line-height:0}
+.gig-item:hover .gig-thumb{outline:2px solid var(--dsw-alias-state-business-primary,#4a9eff);outline-offset:-2px}
+.gig-thumb{display:block;max-width:min(220px,38vw);max-height:190px;min-width:80px;object-fit:cover;border-radius:10px;transition:outline 120ms}
+.gig-badge{position:absolute;left:6px;bottom:6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;line-height:18px;text-align:center;font-weight:600}
+.gig-backdrop{position:fixed;inset:0;z-index:6000;display:flex;align-items:center;justify-content:center;background:rgba(8,10,14,.78);backdrop-filter:blur(2px);animation:gig-fade .16s ease-out}
+.gig-stage{position:relative;display:flex;flex-direction:column;gap:10px;max-width:92vw;max-height:92vh}
+.gig-full{display:block;max-width:92vw;max-height:82vh;object-fit:contain;border-radius:8px;box-shadow:0 12px 48px rgba(0,0,0,.55);cursor:zoom-out}
+.gig-broken{display:flex;align-items:center;justify-content:center;min-width:280px;min-height:160px;border:1px dashed var(--dsw-alias-border-l2,#444);border-radius:10px;color:var(--dsw-alias-label-tertiary,#888);font-size:13px}
+.gig-meta-line{display:flex;align-items:center;gap:10px;justify-content:center;font-size:11px;color:var(--dsw-alias-label-secondary,#bbb)}
+.gig-model{font-family:var(--dsw-font-mono,ui-monospace,Menlo,monospace);color:var(--dsw-alias-label-tertiary,#888)}
+.gig-save-button{position:absolute;top:12px;right:12px;z-index:5;display:flex;align-items:center;gap:7px;padding:8px 18px;border:none;border-radius:20px;background:var(--dsw-alias-state-business-primary,#4a9eff);color:#fff;font-size:12px;font-weight:600;line-height:1.3;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45);transition:filter 120ms,transform 120ms}
+.gig-save-button:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
+.gig-save-button:active:not(:disabled){transform:translateY(0)}
+.gig-save-button:disabled{opacity:.6;cursor:default}
+.gig-save-icon{flex:0 0 auto;display:block}
+.gig-hint{color:var(--dsw-alias-label-tertiary,#777)}
+.gig-hint-line{margin-top:-4px;text-align:center;font-size:11px;color:var(--dsw-alias-label-tertiary,#666)}
+@keyframes gig-fade{from{opacity:0}to{opacity:1}}
+
+/* ── 移动端：损坏占位不设最小宽 ───────────────────────────────── */
+@media (max-width: 767.98px) {
+  .gig-broken{min-width:0;min-height:120px}
+}
+`;
+		let injected$2 = false;
+		/** 注入全局样式（幂等）；返回移除函数。 */
+		function injectStyles$3() {
+			if (!injected$2) {
+				const tag = document.createElement("style");
+				tag.id = STYLE_ID$6;
+				tag.dataset.plugin = "@dsh-external/dsh-webui";
+				tag.dataset.pluginCss = "webui/image-gallery/styles";
+				tag.textContent = SHEET$5;
+				document.head.appendChild(tag);
+				injected$2 = true;
+			}
+			return () => {
+				if (!injected$2) return;
+				document.getElementById(STYLE_ID$6)?.remove();
+				injected$2 = false;
+			};
+		}
+		//#endregion
+		//#region src/client/image-gallery/GeneratedImageGallery.tsx
+		/**
+		* dsh-image-gallery — 生图画廊渲染组件。
+		*
+		* 将一次会话中 generate_image 的成功结果渲染为并排缩略图：
+		*   - 单击缩略图打开原图 Lightbox（Esc / 点击遮罩关闭）；
+		*   - Lightbox 右上角「保存图片」按钮：优先弹系统「另存为」对话框
+		*     （showSaveFilePicker，位置和文件名由用户自选）；不支持该 API 的
+		*     浏览器自动降级为普通下载（浏览器默认下载目录）；
+		*   - 链接失效（生图链接仅 24 小时有效）时显示占位提示。
+		*/
+		/** 从远程 URL 提取文件名（含扩展名），兜底 gallery-N.png。 */
+		function filenameFrom(url, index) {
+			try {
+				const last = new URL(url).pathname.split("/").pop() ?? "";
+				if (/\.(png|jpe?g|webp|gif)$/i.test(last)) return last;
+			} catch {}
+			return `gallery-${index + 1}.png`;
+		}
+		/** 普通下载（浏览器默认下载目录 / 下载栏）。失败返回 false。 */
+		async function downloadFallback(url, filename) {
+			try {
+				const response = await fetch(url, { mode: "cors" });
+				if (!response.ok) return false;
+				const blob = await response.blob();
+				if (blob.size === 0) return false;
+				const objectUrl = URL.createObjectURL(blob);
+				const anchor = document.createElement("a");
+				anchor.href = objectUrl;
+				anchor.download = filename;
+				document.body.appendChild(anchor);
+				anchor.click();
+				anchor.remove();
+				setTimeout(() => URL.revokeObjectURL(objectUrl), 6e4);
+				return true;
+			} catch {
+				return false;
+			}
+		}
+		/**
+		* 保存图片：优先系统「另存为」对话框（用户自选位置/文件名）；
+		* 对话框不可用（手势/权限异常、浏览器不支持）时自动降级为普通下载，
+		* 保证任何环境下都能拿到图。
+		*
+		* 顺序关键：showSaveFilePicker 必须在用户点击手势的有效窗口内调用——
+		* 先 await fetch 下载大图会耗尽手势窗口导致 SecurityError，所以先弹
+		* 对话框拿到句柄，再取图写入用户所选的位置。
+		*/
+		async function saveImage(url, filename) {
+			if (typeof window.showSaveFilePicker === "function") {
+				let handle;
+				try {
+					handle = await window.showSaveFilePicker({ suggestedName: filename });
+				} catch (error) {
+					if (error instanceof DOMException && error.name === "AbortError") return "canceled";
+					return await downloadFallback(url, filename) ? "saved" : "failed";
+				}
+				try {
+					const response = await fetch(url, { mode: "cors" });
+					if (!response.ok) return await downloadFallback(url, filename) ? "saved" : "failed";
+					const blob = await response.blob();
+					if (blob.size === 0) return await downloadFallback(url, filename) ? "saved" : "failed";
+					const writable = await handle.createWritable();
+					await writable.write(blob);
+					await writable.close();
+					return "saved";
+				} catch {
+					return await downloadFallback(url, filename) ? "saved" : "failed";
+				}
+			}
+			return await downloadFallback(url, filename) ? "saved" : "failed";
+		}
+		function GeneratedImageGallery({ node, t }) {
+			const images = node.data.images;
+			const isScreenshot = node.data.toolName === "browser_screenshot" || node.data.toolName === "browser_see";
+			const [openIndex, setOpenIndex] = (0, react.useState)(null);
+			const [broken, setBroken] = (0, react.useState)(/* @__PURE__ */ new Set());
+			const [saveState, setSaveState] = (0, react.useState)("idle");
+			(0, react.useEffect)(() => {
+				if (openIndex === null) return;
+				const onKey = (event) => {
+					if (event.key === "Escape") setOpenIndex(null);
+				};
+				window.addEventListener("keydown", onKey);
+				return () => window.removeEventListener("keydown", onKey);
+			}, [openIndex]);
+			const open = openIndex !== null ? images[openIndex] : void 0;
+			const onSave = async () => {
+				if (open === void 0 || saveState === "saving") return;
+				setSaveState("saving");
+				const result = await saveImage(open.url, filenameFrom(open.url, openIndex));
+				setSaveState(result === "canceled" ? "idle" : result);
+			};
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: css$3.gallery,
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+						className: css$3.head,
+						children: isScreenshot ? t("gig.headScreenshot", { n: images.length }) : t("gig.head", { n: images.length })
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+						className: css$3.row,
+						children: images.map((image, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+							type: "button",
+							className: css$3.item,
+							onClick: () => {
+								setOpenIndex(index);
+								setSaveState("idle");
+							},
+							title: t("gig.thumbTitle"),
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("img", {
+								src: image.url,
+								alt: `${t("gig.head", { n: images.length })} ${index + 1}`,
+								loading: "lazy",
+								decoding: "async",
+								referrerPolicy: "no-referrer",
+								draggable: false,
+								className: css$3.thumb,
+								onError: () => setBroken((prev) => new Set(prev).add(index))
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: css$3.badge,
+								children: index + 1
+							})]
+						}, `${image.callId}:${index}`))
+					}),
+					open !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+						className: css$3.backdrop,
+						role: "dialog",
+						"aria-modal": "true",
+						"aria-label": t("gig.lightboxAria"),
+						onClick: () => setOpenIndex(null),
+						children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+							className: css$3.stage,
+							onClick: (event) => event.stopPropagation(),
+							children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+									type: "button",
+									className: css$3.saveButton,
+									onClick: (event) => {
+										event.stopPropagation();
+										onSave();
+									},
+									disabled: saveState === "saving",
+									"aria-label": t("gig.save"),
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("svg", {
+										className: css$3.saveIcon,
+										viewBox: "0 0 16 16",
+										width: "14",
+										height: "14",
+										"aria-hidden": "true",
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", {
+											d: "M8 1v8m0 0L4.5 5.5M8 9l3.5-3.5",
+											stroke: "currentColor",
+											strokeWidth: "2",
+											fill: "none",
+											strokeLinecap: "round",
+											strokeLinejoin: "round"
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", {
+											d: "M2.5 11.5v2h11v-2",
+											stroke: "currentColor",
+											strokeWidth: "2",
+											fill: "none",
+											strokeLinecap: "round"
+										})]
+									}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
+										saveState === "idle" && t("gig.save"),
+										saveState === "saving" && t("gig.saving"),
+										saveState === "saved" && t("gig.saved"),
+										saveState === "failed" && t("gig.saveFailed")
+									] })]
+								}),
+								broken.has(openIndex) ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									className: css$3.broken,
+									children: t("gig.broken")
+								}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("img", {
+									src: open.url,
+									alt: `${t("gig.lightboxAria")} ${openIndex + 1}`,
+									className: css$3.full,
+									onError: () => setBroken((prev) => new Set(prev).add(openIndex))
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									className: css$3.metaLine,
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: ["#", openIndex + 1] }), open.model !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: css$3.model,
+										children: open.model
+									})]
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									className: css$3.hintLine,
+									children: t("gig.hint")
+								})
+							]
+						})
+					})
+				]
+			});
+		}
+		//#endregion
+		//#region src/client/image-gallery/locales.ts
+		/** `gallery` namespace dictionaries（dsh-image-gallery 的界面文案）。 */
+		/** Simplified Chinese dictionary (the key-set source of truth). */
+		const zh$1 = {
+			"gig.head": "生图结果 · {n} 张",
+			"gig.headScreenshot": "浏览器截图 · {n} 张",
+			"gig.thumbTitle": "单击放大",
+			"gig.hint": "点击空白处或按 Esc 关闭 · 右上角按钮可保存图片",
+			"gig.broken": "图片链接已失效（生图链接仅 24 小时有效）",
+			"gig.lightboxAria": "生图预览",
+			"gig.close": "关闭预览",
+			"gig.save": "保存图片",
+			"gig.saving": "保存中…",
+			"gig.saved": "已保存",
+			"gig.saveFailed": "保存失败，请重试"
+		};
+		/** English dictionary, checked complete against the zh key set. */
+		const en$1 = {
+			"gig.head": "Generated images · {n}",
+			"gig.headScreenshot": "Browser screenshots · {n}",
+			"gig.thumbTitle": "Click to zoom",
+			"gig.hint": "Click background or press Esc to close · save via the top-right button",
+			"gig.broken": "Image link expired (generated links are valid for 24 hours)",
+			"gig.lightboxAria": "Generated image preview",
+			"gig.close": "Close preview",
+			"gig.save": "Save image",
+			"gig.saving": "Saving…",
+			"gig.saved": "Saved",
+			"gig.saveFailed": "Save failed, please retry"
+		};
+		//#endregion
+		//#region src/client/image-gallery/index.ts
+		const NS$3 = "gallery";
+		/** 保护 Lightbox 内的原生右键菜单：外部注入（扩展/宿主）可能在
+		* document capture 阶段 preventDefault contextmenu，导致放大后右键无反应。
+		* 这里在 window capture（更早）拦截，仅对画廊遮罩内的右键生效，
+		* 让浏览器原生「另存为」菜单恢复；画廊外行为完全不变。 */
+		function protectLightboxContextMenu() {
+			const onContextMenu = (event) => {
+				const target = event.target;
+				if (target !== null && target.closest(".gig-backdrop") !== null) event.stopImmediatePropagation();
+			};
+			window.addEventListener("contextmenu", onContextMenu, true);
+			return () => window.removeEventListener("contextmenu", onContextMenu, true);
+		}
+		function applyImageGallery(ctx) {
+			injectStyles$3();
+			ctx.effect(protectLightboxContextMenu, "@dsh-external/dsh-image-gallery: lightbox context-menu guard");
+			ctx.conversationEvents.register(generatedImagesDefinition);
+			ctx.effect(() => ctx.locale.register(NS$3, {
+				zh: zh$1,
+				en: en$1
+			}), "@dsh-external/dsh-image-gallery: dictionaries");
+			ctx.slots.inject("conversation.chat.node", () => ctx.slots.register({
+				name: "conversation.chat.node",
+				key: "generated-images",
+				locale: NS$3
+			}, GeneratedImageGallery));
+		}
+		//#endregion
+		//#region src/client/AnySearchCard.tsx
+		/**
+		* AnySearch web-search provider settings card.
+		*
+		* Registers a card into `settings.plugin.item` (the Plugins → Configurable
+		* tab) bound to the `web-search-anysearch` namespace. The card is an exact
+		* visual re-implementation of the built-in plugin cards (`PluginCard` /
+		* `SecretField` / `ValueField` / `CardForm` from `dsh-client-ui-settings-plugins`),
+		* which are internal and not importable by a third-party plugin. The CSS is
+		* copied verbatim (theme variables intact, class names prefixed `ase-`) and
+		* injected once as a style sheet; the form state machine is the built-in
+		* `CardForm` ported verbatim. The API key is written through the credentials
+		* domain (never into the settings section), exactly like the built-in
+		* web-search card does for DeepSeek.
+		*/
+		/** Namespace this card edits. Spelled here rather than imported: a client package must not depend on a Host package. */
+		const NS$2 = "web-search-anysearch";
+		/** Credential reference the provider resolves when the section names none. */
+		const DEFAULT_API_KEY_REF = "ANYSEARCH_API_KEY";
+		/** Form field the credential control stages under. */
+		const API_KEY_FIELD = "apiKey";
+		/** A whole-number field; empty clears, non-finite numbers block the save. */
+		function numberField(field) {
+			return {
+				field,
+				format: (value) => typeof value === "number" ? String(value) : "",
+				parse: (text) => {
+					const trimmed = text.trim();
+					if (trimmed === "") return { kind: "clear" };
+					const parsed = Number(trimmed);
+					return Number.isFinite(parsed) ? {
+						kind: "set",
+						value: parsed
+					} : void 0;
+				}
+			};
+		}
+		/** A free-text field; an empty draft clears the field. */
+		function textField(field) {
+			return {
+				field,
+				format: (value) => typeof value === "string" ? value : "",
+				parse: (text) => {
+					const trimmed = text.trim();
+					return trimmed === "" ? { kind: "clear" } : {
+						kind: "set",
+						value: trimmed
+					};
+				}
+			};
+		}
+		/** Stages one card's edits over one settings namespace and writes them on save. */
+		var CardForm = class {
+			scope;
+			specs;
+			secretSpecs;
+			staged = /* @__PURE__ */ new Map();
+			listeners = /* @__PURE__ */ new Set();
+			saving = false;
+			failed = false;
+			constructor(scope, specs, secrets = []) {
+				this.scope = scope;
+				this.specs = new Map(specs.map((spec) => [spec.field, spec]));
+				this.secretSpecs = new Map(secrets.map((spec) => [spec.field, spec]));
+				scope.subscribe(() => {
+					this.publish();
+				});
+			}
+			bind(project) {
+				const store = (0, _deepseek_ai_dsh_client_runtime_client.createSnapshotStore)(project());
+				this.listeners.add(() => {
+					store.set(project());
+				});
+				return store;
+			}
+			shell() {
+				const snapshot = this.scope.getSnapshot();
+				const plan = this.plan();
+				return {
+					available: snapshot.status === "ready",
+					writable: snapshot.writable,
+					dirty: plan.length > 0,
+					invalid: plan.some((item) => item.run === void 0),
+					saving: this.saving,
+					failed: this.failed
+				};
+			}
+			field(field) {
+				const staged = this.staged.get(field);
+				if (this.secretSpecs.has(field)) return {
+					text: staged?.text ?? "",
+					overridden: false,
+					invalid: false
+				};
+				const spec = this.spec(field);
+				if (staged === void 0) return {
+					text: spec.format(this.sectionValue(field)),
+					overridden: this.stored(field),
+					invalid: false
+				};
+				const write = staged.clear ? { kind: "clear" } : spec.parse(staged.text);
+				return {
+					text: staged.text,
+					overridden: write?.kind === "set",
+					invalid: write === void 0
+				};
+			}
+			actions() {
+				return {
+					edit: (field, text) => {
+						this.stage(field, {
+							text,
+							clear: false
+						});
+					},
+					resetField: (field) => {
+						this.stage(field, {
+							text: this.spec(field).format(this.baseValue(field)),
+							clear: true
+						});
+					},
+					save: () => {
+						this.save();
+					},
+					discard: () => {
+						if (this.staged.size === 0 && !this.failed) return;
+						this.staged.clear();
+						this.failed = false;
+						this.publish();
+					}
+				};
+			}
+			async save() {
+				const plan = this.plan();
+				const writes = plan.flatMap((item) => item.run === void 0 ? [] : [item.run]);
+				if (plan.length === 0 || this.saving || writes.length !== plan.length) return;
+				this.saving = true;
+				this.failed = false;
+				this.publish();
+				let landed = true;
+				for (const write of writes) landed = await write() && landed;
+				if (landed) this.staged.clear();
+				this.saving = false;
+				this.failed = !landed;
+				this.publish();
+			}
+			plan() {
+				const plan = [];
+				for (const [field, staged] of this.staged) {
+					const secret = this.secretSpecs.get(field);
+					if (secret !== void 0) {
+						const value = staged.text.trim();
+						if (value !== "") plan.push({
+							field,
+							run: () => secret.write(value)
+						});
+						continue;
+					}
+					const spec = this.spec(field);
+					if (staged.clear) {
+						if (this.stored(field)) plan.push({
+							field,
+							run: () => this.clear(field)
+						});
+						continue;
+					}
+					if (staged.text === spec.format(this.sectionValue(field))) continue;
+					const write = spec.parse(staged.text);
+					if (write === void 0) plan.push({
+						field,
+						run: void 0
+					});
+					else if (write.kind === "clear") plan.push({
+						field,
+						run: () => this.clear(field)
+					});
+					else plan.push({
+						field,
+						run: () => this.store(field, write.value)
+					});
+				}
+				return plan;
+			}
+			async clear(field) {
+				await this.scope.unset(field);
+				return !this.stored(field);
+			}
+			async store(field, value) {
+				await this.scope.set(field, value);
+				return this.userLayer()?.[field] === value;
+			}
+			stage(field, edit) {
+				this.staged.set(field, edit);
+				this.failed = false;
+				this.publish();
+			}
+			spec(field) {
+				const spec = this.specs.get(field);
+				if (spec === void 0) throw new Error(`plugin card has no field ${field}`);
+				return spec;
+			}
+			snapshotOf() {
+				return this.scope.getSnapshot();
+			}
+			sectionValue(field) {
+				return this.snapshotOf().value?.[field];
+			}
+			baseValue(field) {
+				return this.snapshotOf().base?.[field];
+			}
+			userLayer() {
+				return this.snapshotOf().user;
+			}
+			stored(field) {
+				const user = this.userLayer();
+				return user !== void 0 && Object.hasOwn(user, field);
+			}
+			publish() {
+				for (const listener of this.listeners) listener();
+			}
+		};
+		const CARD_STYLES = `
+.ase-card {
+  list-style: none;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 12px;
+  background: var(--dsw-alias-bg-layer-3);
+  transition: border-color .16s, background .16s;
+}
+.ase-card:hover { border-color: var(--dsw-alias-label-dimmed); }
+.ase-cardOpen {
+  background: var(--dsw-alias-bg-layer-2);
+  border-color: var(--dsw-alias-label-dimmed);
+}
+.ase-header {
+  width: 100%;
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+.ase-header:focus-visible { outline: 2px solid var(--dsw-alias-brand-primary); outline-offset: -2px; }
+.ase-headText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ase-name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--dsw-alias-label-primary);
+}
+.ase-description {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-tertiary);
+}
+.ase-chevron {
+  flex: none;
+  color: var(--dsw-alias-label-tertiary);
+  transition: transform .16s;
+}
+.ase-chevronOpen { transform: rotate(180deg); }
+.ase-body {
+  border-top: 1px solid var(--dsw-alias-border-l2);
+  margin: 0 16px;
+  padding-bottom: 8px;
+}
+.ase-readOnly {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-tertiary);
+}
+.ase-pending {
+  flex: none;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 17px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--dsw-alias-bg-module-platform);
+  color: var(--dsw-alias-label-secondary);
+}
+.ase-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--dsw-alias-border-l2);
+}
+.ase-failed {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-error);
+}
+.ase-discard,
+.ase-save {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.ase-discard {
+  border-color: var(--dsw-alias-border-l2);
+  background: none;
+  color: var(--dsw-alias-label-secondary);
+}
+.ase-discard:hover:not(:disabled) {
+  color: var(--dsw-alias-label-primary);
+  border-color: var(--dsw-alias-label-dimmed);
+}
+.ase-save {
+  background: var(--dsw-alias-label-primary);
+  color: var(--dsw-alias-bg-layer-3);
+}
+.ase-discard:disabled,
+.ase-save:disabled { opacity: 0.4; cursor: default; }
+.ase-discard:focus-visible,
+.ase-save:focus-visible { outline: 2px solid var(--dsw-alias-brand-primary); outline-offset: 1px; }
+
+.ase-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 0;
+}
+.ase-field + .ase-field { border-top: 1px solid var(--dsw-alias-border-l2); }
+.ase-head { display: flex; align-items: center; gap: 8px; }
+.ase-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-primary);
+}
+.ase-badges { display: inline-flex; align-items: center; gap: 8px; }
+.ase-badge {
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 17px;
+  white-space: nowrap;
+  font-weight: 500;
+  background: var(--dsw-alias-bg-module-platform);
+  color: var(--dsw-alias-label-secondary);
+}
+.ase-badgeMuted {
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 17px;
+  white-space: nowrap;
+  color: var(--dsw-alias-label-tertiary);
+}
+.ase-reset {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+.ase-reset:hover:not(:disabled) { color: var(--dsw-alias-label-primary); }
+.ase-reset:disabled { cursor: default; }
+.ase-input {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-3);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-primary);
+}
+.ase-input:focus-visible { outline: none; border-color: var(--dsw-alias-brand-primary); }
+.ase-input:disabled { color: var(--dsw-alias-label-tertiary); cursor: default; }
+.ase-inputInvalid { border-color: var(--dsw-alias-label-error); }
+.ase-invalid {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-error);
+}
+.ase-hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-tertiary);
+}
+`;
+		/** Inject the card styles once. */
+		const STYLE_TAG_ID = "dsh-web-search-anysearch-styles";
+		function ensureCardStyles() {
+			if (typeof document === "undefined") return;
+			if (document.getElementById(STYLE_TAG_ID) !== null) return;
+			const style = document.createElement("style");
+			style.id = STYLE_TAG_ID;
+			style.textContent = CARD_STYLES;
+			document.head.appendChild(style);
+		}
+		/** `clsx`-free class join. */
+		function clsx(...parts) {
+			return parts.filter(Boolean).join(" ");
+		}
+		/** Bridges the `web-search-anysearch` scope and the credentials domain onto the card. */
+		var AnySearchCardController = class {
+			scope;
+			api;
+			form;
+			store;
+			credential = {
+				ref: DEFAULT_API_KEY_REF,
+				configured: false,
+				writable: true
+			};
+			constructor(scope, api) {
+				this.scope = scope;
+				this.api = api;
+				this.form = new CardForm(scope, [textField("baseURL"), numberField("maxResults")], [{
+					field: API_KEY_FIELD,
+					write: (text) => this.writeKey(text)
+				}]);
+				this.store = this.form.bind(() => this.projection());
+				scope.subscribe(() => {
+					this.readCredential();
+				});
+				this.readCredential();
+			}
+			projection() {
+				return {
+					...this.form.shell(),
+					baseURL: this.form.field("baseURL"),
+					maxResults: this.form.field("maxResults"),
+					apiKey: this.form.field(API_KEY_FIELD),
+					apiKeyConfigured: this.credential.configured,
+					apiKeyWritable: this.credential.writable
+				};
+			}
+			/** Build the face the card's slot registration injects. */
+			inject() {
+				return {
+					hooks: { anysearchCard: this.store },
+					...this.form.actions()
+				};
+			}
+			/**
+			* Ask the credentials domain about the reference the section currently names.
+			* The answer is stored with the reference it describes, so a stale response
+			* for a changed reference is dropped.
+			*/
+			async readCredential() {
+				const ref = refOf(this.scope.getSnapshot());
+				if (ref !== this.credential.ref) {
+					this.credential = {
+						ref,
+						configured: false,
+						writable: true
+					};
+					this.store.set(this.projection());
+				}
+				let response;
+				try {
+					response = await this.api.credentials.describe({ refs: [ref] });
+				} catch {
+					return;
+				}
+				if (!response.result.ok || ref !== refOf(this.scope.getSnapshot())) return;
+				const view = response.result.value.credentials[ref];
+				const next = {
+					ref,
+					configured: view?.configured ?? false,
+					writable: view?.writable ?? true
+				};
+				if (next.configured === this.credential.configured && next.writable === this.credential.writable) return;
+				this.credential = next;
+				this.store.set(this.projection());
+			}
+			/** Write the staged key, then re-read whether the Host now holds one. */
+			async writeKey(value) {
+				try {
+					await this.api.credentials.set({
+						ref: refOf(this.scope.getSnapshot()),
+						value
+					});
+				} catch {}
+				await this.readCredential();
+				return this.credential.configured;
+			}
+		};
+		/** The credential reference the section names, or the provider's default. */
+		function refOf(snapshot) {
+			const declared = snapshot.value?.apiKeyEnv;
+			return declared !== void 0 && declared.length > 0 ? declared : DEFAULT_API_KEY_REF;
+		}
+		/** One labelled text field control, matching the built-in `ValueField`. */
+		function ValueField(props) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: "ase-field",
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						className: "ase-head",
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("label", {
+							className: "ase-label",
+							htmlFor: props.id,
+							children: props.label
+						}), props.overridden ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+							className: "ase-badges",
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: "ase-badge",
+								children: "已覆盖"
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: "ase-reset",
+								disabled: props.disabled,
+								onClick: props.onReset,
+								children: "重置"
+							})]
+						}) : null]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+						id: props.id,
+						className: props.invalid ? "ase-input ase-inputInvalid" : "ase-input",
+						type: "text",
+						inputMode: props.numeric === true ? "numeric" : void 0,
+						"aria-invalid": props.invalid || void 0,
+						value: props.text,
+						placeholder: props.placeholder ?? "",
+						disabled: props.disabled,
+						onChange: (event) => {
+							props.onEdit(event.target.value);
+						}
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						className: props.invalid ? "ase-invalid" : "ase-hint",
+						children: props.invalid ? "请输入有效的数字" : props.hint
+					})
+				]
+			});
+		}
+		/** Write-only credential control, matching the built-in `SecretField`. */
+		function SecretField(props) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: "ase-field",
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						className: "ase-head",
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("label", {
+							className: "ase-label",
+							htmlFor: props.id,
+							children: props.label
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: "ase-badges",
+							children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: props.configured ? "ase-badge" : "ase-badgeMuted",
+								children: props.configured ? "已配置" : "未配置"
+							})
+						})]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+						id: props.id,
+						className: "ase-input",
+						type: "password",
+						autoComplete: "off",
+						value: props.text,
+						disabled: props.disabled,
+						onChange: (event) => {
+							props.onEdit(event.target.value);
+						}
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+						className: "ase-hint",
+						children: props.hint
+					})
+				]
+			});
+		}
+		/**
+		* The card component. The slot dispatcher injects the face: `hooks` arrive as
+		* the `useAnysearchCard` selector hook, and the action callbacks pass through.
+		*/
+		function AnySearchCard(props) {
+			const [open, setOpen] = (0, react.useState)(false);
+			const state = props.useAnysearchCard((snapshot) => snapshot);
+			if (!state.available) return null;
+			const title = "外接网页搜索";
+			const blocked = !state.dirty || state.invalid || state.saving;
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("li", {
+				className: clsx("ase-card", open && "ase-cardOpen"),
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+					type: "button",
+					className: "ase-header",
+					"aria-expanded": open,
+					"aria-label": `${open ? "收起" : "展开"}: ${title}`,
+					onClick: () => {
+						setOpen(!open);
+					},
+					children: [
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+							className: "ase-headText",
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: "ase-name",
+								children: title
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: "ase-description",
+								children: "使用 AnySearch API（api.anysearch.com）的网页搜索提供者"
+							})]
+						}),
+						state.dirty ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: "ase-pending",
+							children: "未保存更改"
+						}) : null,
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, { className: clsx("ase-chevron", open && "ase-chevronOpen") })
+					]
+				}), open ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					className: "ase-body",
+					children: [
+						!state.writable ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+							className: "ase-readOnly",
+							role: "status",
+							children: "当前设置文档为只读"
+						}) : null,
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)(SecretField, {
+							id: "plugin-config-anysearch-key",
+							label: "API Key",
+							hint: state.apiKeyConfigured ? "已配置，输入新 Key 以更换" : "粘贴 ANYSEARCH_API_KEY，留空则使用匿名免费层",
+							text: state.apiKey.text,
+							disabled: !state.apiKeyWritable,
+							configured: state.apiKeyConfigured,
+							onEdit: (text) => {
+								props.edit(API_KEY_FIELD, text);
+							}
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ValueField, {
+							id: "plugin-config-anysearch-base-url",
+							label: "Base URL",
+							hint: "AnySearch API 地址，/v1/search 自动拼接",
+							text: state.baseURL.text,
+							overridden: state.baseURL.overridden,
+							invalid: state.baseURL.invalid,
+							disabled: !state.writable,
+							placeholder: "https://api.anysearch.com",
+							onEdit: (text) => {
+								props.edit("baseURL", text);
+							},
+							onReset: () => {
+								props.resetField("baseURL");
+							}
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ValueField, {
+							id: "plugin-config-anysearch-max-results",
+							label: "默认结果数",
+							hint: "每次搜索默认返回的结果数量，可留空",
+							text: state.maxResults.text,
+							overridden: state.maxResults.overridden,
+							invalid: state.maxResults.invalid,
+							disabled: !state.writable,
+							numeric: true,
+							onEdit: (text) => {
+								props.edit("maxResults", text);
+							},
+							onReset: () => {
+								props.resetField("maxResults");
+							}
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+							className: "ase-footer",
+							children: [
+								state.failed ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
+									className: "ase-failed",
+									role: "status",
+									children: "保存失败，请重试"
+								}) : null,
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: "ase-discard",
+									disabled: !state.dirty || state.saving,
+									onClick: props.discard,
+									children: "放弃"
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: "ase-save",
+									disabled: blocked,
+									onClick: props.save,
+									children: state.saving ? "保存中…" : "保存"
+								})
+							]
+						})
+					]
+				}) : null]
+			});
+		}
+		/**
+		* Register the AnySearch card into the plugin-configuration section. Called by
+		* the webui client entry so this package's SlotMap/declare-module augmentations
+		* share one apply.
+		* @param ctx - browser plugin context (needs slots + settingsScope + connection).
+		*/
+		function registerAnySearchCard(ctx) {
+			ensureCardStyles();
+			const handle = ctx.get("connection");
+			if (handle === void 0) return;
+			const controller = new AnySearchCardController(ctx.settingsScope.bind({ namespace: NS$2 }), handle.api);
+			ctx.slots.inject("settings.plugin.item", () => ctx.slots.register({
+				name: "settings.plugin.item",
+				key: NS$2,
+				inject: () => controller.inject()
+			}, AnySearchCard));
 		}
 		//#endregion
 		//#region src/client/markdown/activity-bus.ts
@@ -282179,9 +285200,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: "dts__summary",
 				children: [
-					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: "dts__summary-title",
-						children: "🔧 工具调用总结"
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutline14, {
+							size: 13,
+							"aria-hidden": true
+						}), " 工具调用总结"]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: "dts__summary-line",
@@ -282334,10 +285358,25 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						children: [
 							"第 ",
 							turn,
-							" 轮 · 🧠 ",
-							reasoning.length,
-							" · 🔧 ",
-							toolNodes.length
+							" 轮",
+							mode === "reasoning" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+								" · ",
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconThinkOutline14, {
+									size: 14,
+									"aria-hidden": true
+								}),
+								" ",
+								reasoning.length
+							] }),
+							mode === "tools" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+								" · ",
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutline14, {
+									size: 14,
+									"aria-hidden": true
+								}),
+								" ",
+								toolNodes.length
+							] })
 						]
 					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
@@ -282352,58 +285391,39 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					children: [
 						mode !== "tools" && reasoning.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: "dts__modal-panel",
-							children: [
-								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
-									className: "dts__modal-panel-head",
-									children: [
-										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "🧠 思考过程" }),
-										reasoningRunning && elapsed !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-											className: "dts__modal-panel-live",
-											children: ["思考中 · ", formatDuration(elapsed)]
-										}),
-										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-											className: "dts__modal-panel-count",
-											children: reasoning.length
-										})
-									]
-								}),
-								reasoning.length > 1 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("nav", {
-									className: "dts__reasoning-nav",
-									"aria-label": "思考条目导航",
-									children: reasoning.map((_, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-										type: "button",
-										className: "dts__reasoning-nav-item",
-										"data-active": activeIndex === index || void 0,
-										title: `跳到第 ${index + 1} 条思考`,
-										onClick: () => {
-											jumpTo(index);
-										},
-										children: index + 1
-									}, index))
-								}),
-								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ReasoningGroups, {
-									items: reasoning,
-									activeIndex,
-									jumpToCategory: jumpTo
-								})
-							]
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
+								className: "dts__modal-panel-head",
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+									className: "dts__modal-panel-title",
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconThinkOutline14, {
+										size: 14,
+										"aria-hidden": true
+									}), " 思考过程"]
+								}), reasoningRunning && elapsed !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+									className: "dts__modal-panel-live",
+									children: ["思考中 · ", formatDuration(elapsed)]
+								})]
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ReasoningGroups, {
+								items: reasoning,
+								activeIndex,
+								jumpToCategory: jumpTo
+							})]
 						}),
 						mode !== "reasoning" && toolNodes.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: "dts__modal-panel",
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("header", {
 									className: "dts__modal-panel-head",
-									children: [
-										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "🔧 工具调用" }),
-										toolsRunning && toolsElapsed !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-											className: "dts__modal-panel-live",
-											children: ["进行中 · ", formatDuration(toolsElapsed)]
-										}),
-										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-											className: "dts__modal-panel-count",
-											children: toolNodes.length
-										})
-									]
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+										className: "dts__modal-panel-title",
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutline14, {
+											size: 14,
+											"aria-hidden": true
+										}), " 工具调用"]
+									}), toolsRunning && toolsElapsed !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+										className: "dts__modal-panel-live",
+										children: ["进行中 · ", formatDuration(toolsElapsed)]
+									})]
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(DrawerToolSummary, {
 									stats,
@@ -282908,11 +285928,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 10px 12px;
-  background: var(--dsw-alias-bg-layer-2, rgba(127,127,127,.05));
+  padding: 0;
+  background: none;
 }
 
 .dts__summary-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
   font-weight: 600;
   color: var(--dsw-alias-label-primary);
@@ -283213,11 +286236,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   gap: 4px;
   max-height: 320px;
   overflow-y: auto;
-  margin: 0 8px 6px 24px;
-  padding: 6px 8px;
-  border-left: 2px solid var(--dsw-alias-border-base, rgba(127,127,127,.25));
-  background: var(--dsw-alias-bg-layer-2, rgba(127,127,127,.04));
-  border-radius: 0 6px 6px 0;
+  margin: 2px 0 6px 24px;
+  padding: 2px 0 2px 10px;
+  border-left: 1px solid var(--dsw-alias-border-base, rgba(127,127,127,.18));
+  background: none;
+  border-radius: 0;
 }
 
 .dts__row-args,
@@ -283442,6 +286465,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 }
 
 .dts__modal-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 13px;
   font-weight: 600;
   color: var(--dsw-alias-label-primary);
@@ -283469,6 +286495,26 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   min-height: 0;
   overflow-y: auto;
   padding: 14px 16px 24px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--dsw-alias-scrollbar-bg-l2, rgba(127,127,127,.4)) transparent;
+}
+
+.dts__modal-scroll::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.dts__modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dts__modal-scroll::-webkit-scrollbar-thumb {
+  background: var(--dsw-alias-scrollbar-bg-l2, rgba(127,127,127,.4));
+  border-radius: 2px;
+}
+
+.dts__modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--dsw-alias-scrollbar-hover-l2, rgba(127,127,127,.6));
 }
 
 /* ---- separate panels: thinking vs tools ---- */
@@ -283476,14 +286522,16 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border: 1px solid var(--dsw-alias-border-base, rgba(127,127,127,.22));
-  border-radius: 10px;
-  background: var(--dsw-alias-bg-layer-2, rgba(127,127,127,.04));
-  padding: 12px 12px 14px;
+  border: none;
+  border-radius: 0;
+  background: none;
+  padding: 0;
 }
 
 .dts__modal-panel + .dts__modal-panel {
-  margin-top: 18px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--dsw-alias-border-base, rgba(127,127,127,.16));
 }
 
 .dts__modal-panel-head {
@@ -283493,6 +286541,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   font-size: 13px;
   font-weight: 600;
   color: var(--dsw-alias-label-primary);
+}
+
+.dts__modal-panel-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .dts__modal-panel-count {
@@ -283527,15 +286581,16 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 .dts__reasoning-nav-item {
   flex: none;
   margin: 0;
-  border: 1px solid var(--dsw-alias-border-base, rgba(127,127,127,.25));
+  border: 1px solid transparent;
   border-radius: 8px;
-  padding: 1px 9px;
-  background: var(--dsw-alias-bg-layer-1, rgba(127,127,127,.06));
+  padding: 1px 8px;
+  background: none;
   color: var(--dsw-alias-label-secondary);
   cursor: pointer;
   font-size: 11px;
   line-height: 20px;
   min-width: 24px;
+  text-align: center;
 }
 
 .dts__reasoning-nav-item:hover {
@@ -283566,15 +286621,15 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
-  gap: 4px;
-  border-radius: 999px;
-  padding: 2px 12px;
-  background: var(--dsw-alias-bg-layer-2, rgba(127,127,127,.12));
-  border: 1px solid var(--dsw-alias-border-base, rgba(127,127,127,.25));
+  gap: 6px;
+  border-radius: 0;
+  padding: 0;
+  background: none;
+  border: none;
   color: var(--dsw-alias-label-primary);
   font-size: 12px;
   font-weight: 600;
-  line-height: 22px;
+  line-height: 20px;
 }
 
 .dts__modal-reasoning-item {
@@ -283605,10 +286660,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  background: var(--dsw-alias-interactive-bg-hover, rgba(127,127,127,.1));
+  background: none;
   color: var(--dsw-alias-label-tertiary);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
   line-height: 20px;
   margin-top: 2px;
 }
@@ -283681,6 +286737,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   color: var(--dsw-alias-label-tertiary);
   font-size: 12px;
 }
+
+/* ── 移动端：活动弹窗全屏、对话流内下载卡片不设最小宽 ─────────── */
+@media (max-width: 767.98px) {
+  .dts__modal{width:100vw;max-width:100vw;max-height:100vh;max-height:100dvh;border-radius:0;top:0;left:0;transform:none}
+  .dts__download-card{min-width:0}
+}
 `;
 		/** Inject the stylesheet once. */
 		function injectStyles$2() {
@@ -283688,7 +286750,6 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			if (document.getElementById("dsh-tool-summary-styles") !== null) return;
 			const style = document.createElement("style");
 			style.id = "dsh-tool-summary-styles";
-			style.dataset.plugin = "@dsh-external/dsh-webui";
 			style.textContent = CSS$2;
 			document.head.appendChild(style);
 		}
@@ -284087,9 +287148,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										role: "switch",
 										"aria-checked": setTarget,
 										"aria-label": "设定目标提示词",
-										className: clsx(css$2.switch, setTarget && css$2.switchOn),
+										className: clsx$1(css$2.switch, setTarget && css$2.switchOn),
 										onClick: toggleTarget,
-										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx(css$2.knob, setTarget && css$2.knobOn) })
+										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx$1(css$2.knob, setTarget && css$2.knobOn) })
 									})]
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -284102,9 +287163,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										role: "switch",
 										"aria-checked": verifyWithBrowser,
 										"aria-label": "使用 AI 浏览器验证",
-										className: clsx(css$2.switch, verifyWithBrowser && css$2.switchOn),
+										className: clsx$1(css$2.switch, verifyWithBrowser && css$2.switchOn),
 										onClick: toggleVerify,
-										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx(css$2.knob, verifyWithBrowser && css$2.knobOn) })
+										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx$1(css$2.knob, verifyWithBrowser && css$2.knobOn) })
 									})]
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -284117,9 +287178,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										role: "switch",
 										"aria-checked": injectMemory,
 										"aria-label": "优化时注入工作区记忆",
-										className: clsx(css$2.switch, injectMemory && css$2.switchOn),
+										className: clsx$1(css$2.switch, injectMemory && css$2.switchOn),
 										onClick: toggleMemory,
-										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx(css$2.knob, injectMemory && css$2.knobOn) })
+										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx$1(css$2.knob, injectMemory && css$2.knobOn) })
 									})]
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -284153,7 +287214,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 													role: "radio",
 													"aria-checked": lengthMode === mode,
 													"aria-label": mode === "short" ? "短（约原文一半）" : mode === "medium" ? "中（约等长）" : "长（约1.5-2倍）",
-													className: clsx(css$2.lenNode, lengthMode === mode && css$2.lenNodeOn),
+													className: clsx$1(css$2.lenNode, lengthMode === mode && css$2.lenNodeOn),
 													style: { left: `${index / 2 * 100}%` },
 													onClick: (event) => {
 														event.stopPropagation();
@@ -284171,7 +287232,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							]
 						}),
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: clsx(css$2.status, statusClass),
+							className: clsx$1(css$2.status, statusClass),
 							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 								className: css$2.statusText,
 								children: [phase === "optimizing" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconLoadingOutline16, { className: css$2.busy }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: phase === "idle" ? "调整选项后点击生成" : detail })]
@@ -284215,7 +287276,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						const directory = models.directoryFor(sessionId);
 						return {
 							available: sessions.subagentAddress(sessionId) === void 0,
-							directory: directory.store
+							directory: directory.store,
+							sessionId
 						};
 					}
 				}, PromptOptimizeButton));
@@ -285410,13 +288472,13 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 			if (text.trim() === "") return null;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 				type: "button",
-				className: [css$7.shotBtn, busy ? css$7.shotBtnBusy : ""].filter(Boolean).join(" "),
+				className: [css$8.shotBtn, busy ? css$8.shotBtnBusy : ""].filter(Boolean).join(" "),
 				"aria-label": "截图为图片",
 				disabled: busy,
 				onClick: onShot,
 				children: busy ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(SpinnerIcon, {}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(CameraIcon, {})
 			}), open && (result !== null || error !== null) && (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-				className: css$7.shotPopup,
+				className: css$8.shotPopup,
 				style: {
 					left: "50%",
 					top: "50%",
@@ -285425,47 +288487,47 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 				role: "dialog",
 				"aria-label": "截图预览",
 				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					className: css$7.shotPopupHead,
+					className: css$8.shotPopupHead,
 					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: result !== null ? "截图预览" : "截图失败" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
-						className: css$7.shotAction,
+						className: css$8.shotAction,
 						onClick: () => {
 							setOpen(false);
 						},
 						children: "✕"
 					})]
 				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					className: css$7.shotPopupBody,
+					className: css$8.shotPopupBody,
 					children: [
 						busy && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$7.shotPath,
+							className: css$8.shotPath,
 							children: "正在渲染…"
 						}),
 						error !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: css$7.shotError,
+							className: css$8.shotError,
 							children: error
 						}),
 						result !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("img", {
-								className: css$7.shotImg,
+								className: css$8.shotImg,
 								src: result.imageUrl,
 								alt: "截图预览"
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: css$7.shotPath,
+								className: css$8.shotPath,
 								children: result.path
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: css$7.shotActions,
+								className: css$8.shotActions,
 								children: [
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: css$7.shotAction,
+										className: css$8.shotAction,
 										onClick: copyPath,
 										children: "复制路径"
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("a", {
-										className: css$7.shotPrimary,
+										className: css$8.shotPrimary,
 										href: result.imageUrl,
 										download: true,
 										target: "_blank",
@@ -285474,7 +288536,7 @@ body.${BODY_CLASS}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-ch
 									}),
 									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: css$7.shotAction,
+										className: css$8.shotAction,
 										onClick: () => {
 											setOpen(false);
 										},
@@ -326436,7 +329498,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					}
 				}, ProviderBadge));
 			});
-			applyModelSeats(ctx);
+			if (on("modelSeats")) applyModelSeats(ctx);
 			injectStyles$2();
 			mountActivityDrawer();
 			ctx.slots.inject("conversation.chat.node", () => ctx.slots.register({
@@ -326466,7 +329528,9 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			apply$1(ctx);
 			applyBrowserClient(ctx);
 			applyMemoryClient(ctx);
-			applyProviderHub(ctx);
+			if (on("providerHub")) applyProviderHub(ctx);
+			if (on("vision")) applyImageGallery(ctx);
+			if (on("webSearch")) registerAnySearchCard(ctx);
 			applyPromptOptimize(ctx);
 			applySidebarFloatSetting(ctx);
 			ctx.effect(() => applySidebarFloat(ctx), "webui: sidebar float");

@@ -30,6 +30,7 @@ export const WEBUI_MODULE_KEYS = [
     'ctrlEnter', // 输入框 Ctrl+Enter 换行
     'sessionMotion', // 会话切换柔和过渡
     'sessionPin', // 会话置顶 / 归档 / 右键菜单
+    'titleRename', // 对话区标题点击重命名
     'rewind', // 对话退回（文件回退 + 上下文分支）
     'screenshot', // 单条消息截图 / 会话长图
     'promptOptimize', // 提示词优化图标
