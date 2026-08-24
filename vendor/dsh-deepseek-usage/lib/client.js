@@ -11137,8 +11137,10 @@ window.__ModuleLoader__.load({
 				const value = node.nodeValue;
 				if (value === null || !pattern.test(value)) continue;
 				node.nodeValue = value.replace(pattern, (_match, prefix, raw) => {
-					if (lastRealHitRate !== null) return `${prefix}${lastRealHitRate}%`;
-					return `${prefix}${raw}%`;
+					// 只把原数字补成两位小数；不得用全局命中率覆盖每个会话
+					// 自己的值（否则所有会话清一色显示同一个总体命中率）。
+					const n = Number(raw);
+					return `${prefix}${Number.isFinite(n) ? n.toFixed(2) : raw}%`;
 				});
 			}
 		}

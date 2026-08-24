@@ -288842,7 +288842,9 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			border: "1px solid rgba(var(--edge-accent-rgb,255,245,0),.5)",
 			borderRadius: 10,
 			padding: "1px 8px",
-			maxWidth: "100%",
+			flex: "0 1 auto",
+			minWidth: 0,
+			maxWidth: "min(100%, 340px)",
 			overflow: "hidden",
 			textOverflow: "ellipsis",
 			whiteSpace: "nowrap"
