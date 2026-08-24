@@ -287633,8 +287633,8 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			} catch {}
 		}
 		/** 中心锚点 → 当前视口下的左上角坐标（shellWidth 为当前渲染宽度）。 */
-		function anchorToPos(anchor, shellWidth) {
-			return clampPos(Math.round(anchor.xc * window.innerWidth - shellWidth / 2), Math.round(anchor.yc * window.innerHeight - 15));
+		function anchorToPos(anchor, _shellWidth) {
+			return clampPos(Math.round(anchor.xc * window.innerWidth), Math.round(anchor.yc * window.innerHeight - 15));
 		}
 		const REST_KEY = "dsh.donePill.rest";
 		const LATE_KEY = "dsh.donePill.late";
@@ -289142,7 +289142,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			const [expandedGroups, setExpandedGroups] = (0, react.useState)(() => /* @__PURE__ */ new Set());
 			const hoverCloseTimer = (0, react.useRef)(null);
 			const keepOpenUntil = (0, react.useRef)(0);
-			const posRefTimer = (0, react.useRef)(null);
+			(0, react.useRef)(null);
 			const [hovered, setHovered] = (0, react.useState)(false);
 			const [hoveredRunning, setHoveredRunning] = (0, react.useState)(false);
 			const [fileHovered, setFileHovered] = (0, react.useState)(false);
@@ -289234,11 +289234,8 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					});
 				};
 				recenter();
-				const observer = new ResizeObserver(recenter);
-				observer.observe(el);
 				window.addEventListener("resize", recenter);
 				return () => {
-					observer.disconnect();
 					window.removeEventListener("resize", recenter);
 				};
 			}, []);
@@ -289430,9 +289427,9 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					setPos((current) => {
 						if (current !== null) {
 							const el = shellRef.current;
-							const w = el !== null ? el.getBoundingClientRect().width : 160;
+							el !== null && el.getBoundingClientRect().width;
 							const anchor = {
-								xc: clamp01((current.x + w / 2) / Math.max(1, window.innerWidth)),
+								xc: clamp01(current.x / Math.max(1, window.innerWidth)),
 								yc: clamp01((current.y + 15) / Math.max(1, window.innerHeight))
 							};
 							anchorRef.current = anchor;
@@ -289492,14 +289489,6 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				if (total > 0 && Math.round(total) !== shellWidthRef.current) {
 					shellWidthRef.current = Math.round(total);
 					setShellWidth(Math.round(total));
-				}
-				if (dragRef.current !== null) return;
-				if (!autoCenterRef.current && anchorRef.current !== null) {
-					if (posRefTimer.current !== null) window.clearTimeout(posRefTimer.current);
-					posRefTimer.current = window.setTimeout(() => {
-						posRefTimer.current = null;
-						applyAnchor();
-					}, 300);
 				}
 			});
 			if (!enabled) return null;
