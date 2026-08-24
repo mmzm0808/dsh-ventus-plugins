@@ -97,7 +97,7 @@ export function applyBrowser(ctx, config) {
             const chromePath = config.chromePath || resolveChromePath(DEFAULT_CHROME_CANDIDATES);
             const port = config.port || (await findFreePort(9222));
             const profileDir = path.join(dataRoot, 'profiles', 'default');
-            const runtime = launchChrome(chromePath, profileDir, port, config.headless);
+            const runtime = launchChrome(chromePath, profileDir, port, config.headless ? ['--headless=new'] : []);
             state.runtime = runtime;
             state.screenshotDir = config.screenshotDir || path.join(profileDir, 'screenshots');
             fs.mkdirSync(state.screenshotDir, { recursive: true });

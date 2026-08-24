@@ -7850,12 +7850,15 @@ async function dispatchKey(session, key, modifiers = []) {
 */
 const DEFAULT_CHROME_CANDIDATES = [
 	process.env.CHROME_PATH || "",
-	"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-	"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
 	"C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
 	"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+	"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+	"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+	"/usr/bin/microsoft-edge",
+	"/usr/bin/microsoft-edge-stable",
 	"/usr/bin/google-chrome",
 	"/usr/bin/chromium",
+	"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
 	"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 ].filter(Boolean);
 function resolveChromePath(candidates) {
@@ -7876,15 +7879,47 @@ function isPortFree(port) {
 	});
 }
 /**
-* 启动 Chrome。幂等由调用方保证（port/profile 检查）。
+* 预写 profile 的窗口位置为屏幕外：Edge/Chrome 启动时先按 profile 保存的
+* window placement 创建窗口，CDP 定位要等连接后才执行——这个间隙窗口会在
+* 桌面闪现。启动前直接改 Preferences 里的 placement，让第一帧就在屏幕外。
+*/
+function presetOffscreenPlacement(profileDir) {
+	try {
+		const prefsPath = path.join(profileDir, "Default", "Preferences");
+		let prefs = {};
+		if (fs.existsSync(prefsPath)) try {
+			prefs = JSON.parse(fs.readFileSync(prefsPath, "utf8"));
+		} catch {
+			prefs = {};
+		}
+		else fs.mkdirSync(path.dirname(prefsPath), { recursive: true });
+		prefs.browser = prefs.browser || {};
+		prefs.browser.window_placement = {
+			left: -32e3,
+			top: -32e3,
+			right: -29440,
+			bottom: -30560,
+			maximized: false,
+			work_area_left: 0,
+			work_area_top: 0,
+			work_area_right: 2560,
+			work_area_bottom: 1400
+		};
+		fs.writeFileSync(prefsPath, JSON.stringify(prefs));
+	} catch {}
+}
+/**
+* 启动 Chrome（有头渲染；默认定位屏幕外，由调用方决定何时贴到界面锚点）。
+* 幂等由调用方保证（port/profile 检查）。
 * @param chromePath Chrome 可执行文件路径
 * @param profileDir 独立用户数据目录（cookies/登录态持久化）
 * @param port CDP 端口（调用方先 findFreePort）
-* @param headless 无头模式
-* @param args 附加参数
+* @param args 附加参数（如 ['--app=about:blank']：无地址栏应用窗口，供内嵌贴合）
 */
-function launchChrome(chromePath, profileDir, port, headless = false, args = []) {
+function launchChrome(chromePath, profileDir, port, args = []) {
 	fs.mkdirSync(profileDir, { recursive: true });
+	presetOffscreenPlacement(profileDir);
+	const hasAppMode = args.some((a) => a.startsWith("--app="));
 	const flags = [
 		`--remote-debugging-port=${port}`,
 		`--remote-debugging-address=127.0.0.1`,
@@ -7893,9 +7928,11 @@ function launchChrome(chromePath, profileDir, port, headless = false, args = [])
 		"--no-first-run",
 		"--no-default-browser-check",
 		"--disable-features=Translate,MediaRouter",
-		...headless ? ["--headless=new", "--disable-gpu"] : [],
+		"--hide-crash-restore-bubble",
+		"--window-position=-32000,-32000",
+		"--disable-renderer-backgrounding",
 		...args,
-		"about:blank"
+		...hasAppMode ? [] : ["about:blank"]
 	];
 	const proc = spawn(chromePath, flags, {
 		stdio: "ignore",
@@ -8209,7 +8246,7 @@ function applyBrowser(ctx, config) {
 			const chromePath = config.chromePath || resolveChromePath(DEFAULT_CHROME_CANDIDATES);
 			const port = config.port || await findFreePort(9222);
 			const profileDir = path.join(dataRoot, "profiles", "default");
-			const runtime = launchChrome(chromePath, profileDir, port, config.headless);
+			const runtime = launchChrome(chromePath, profileDir, port, config.headless ? ["--headless=new"] : []);
 			state.runtime = runtime;
 			state.screenshotDir = config.screenshotDir || path.join(profileDir, "screenshots");
 			fs.mkdirSync(state.screenshotDir, { recursive: true });
@@ -27484,7 +27521,7 @@ async function captureHtml(html) {
 	const port = await findFreePort(9222);
 	const tmpDir = join(screenshotHome(), ".tmp", `shot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
 	await mkdir(tmpDir, { recursive: true });
-	const runtime = launchChrome(chromePath, tmpDir, port, true, ["--disable-gpu"]);
+	const runtime = launchChrome(chromePath, tmpDir, port, ["--headless=new", "--disable-gpu"]);
 	let conn = null;
 	try {
 		conn = new CdpConnection(await fetchBrowserWsUrl(port, 15e3));

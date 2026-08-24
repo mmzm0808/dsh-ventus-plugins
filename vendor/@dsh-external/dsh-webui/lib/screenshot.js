@@ -111,7 +111,7 @@ export async function captureHtml(html) {
     const port = await findFreePort(9222);
     const tmpDir = join(screenshotHome(), '.tmp', `shot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
     await mkdir(tmpDir, { recursive: true });
-    const runtime = launchChrome(chromePath, tmpDir, port, true, ['--disable-gpu']);
+    const runtime = launchChrome(chromePath, tmpDir, port, ['--headless=new', '--disable-gpu']);
     let conn = null;
     try {
         const wsUrl = await fetchBrowserWsUrl(port, 15000);
