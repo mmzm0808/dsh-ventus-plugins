@@ -25,7 +25,7 @@
 
 <table>
   <thead>
-    <tr><th style="width:24%">分类</th><th style="width:22%">子插件</th><th>说明</th></tr>
+    <tr><th style="width:48%">分类</th><th style="width:22%">子插件</th><th>说明</th></tr>
   </thead>
   <tbody>
     <tr><td>🎨 主题</td><td><code>dsh-theme-endfield</code></td><td>终末地工业编辑部风格主题：米纸底、墨字、信号黄强调、直角。等高线背景、ENDFIELD 水印、玻璃/纯色侧边栏表面（主题设置下拉框）、hero 贴底（可开关）</td></tr>
@@ -55,7 +55,7 @@
 
 <table>
   <thead>
-    <tr><th style="width:24%">分组</th><th style="width:22%">key</th><th>控制的功能</th></tr>
+    <tr><th style="width:40%">分组</th><th style="width:22%">key</th><th>控制的功能</th></tr>
   </thead>
   <tbody>
     <tr><td>对话体验</td><td><code>messageWidth</code></td><td>消息气泡宽度设置</td></tr>
@@ -136,16 +136,21 @@ dsh plugin --profile web add "<本仓库本地绝对路径>"
 
 ## 📖 使用
 
-| 功能 | 入口 |
-|---|---|
-| 用量悬浮球 | 右侧悬浮球：拖动可上下移动，左半屏自动吸附；点击展开面板 |
-| 用量面板 | 悬浮球点击 → 余额 / 消费 / Tokens / 分模型用量 / R0 / 趋势 / 登录 / 截图 |
-| 终末地主题 | 设置 → 外观 → 主题 → `dsh-theme-endfield`；主题设置卡内：等高线开关、水印开关、侧边栏表面（透明/玻璃/纯色+调色盘）、圆角/直角、hero 贴底 |
-| 右侧重栏 | 对话区右上角面板按钮：文件 / 终端 / Git / 浏览器标签 |
-| 搜索 | 输入框 `@` 或斜杠命令触发 ventus-search provider |
-| 桌宠 | 右下角虎鲸；右键菜单配置 |
-| 子代理进度 | 发起可多阶段拆分的子代理任务（AI 按 skill 约定输出 `progress-json`），悬停对话底部子代理条目查看分段进度条 |
-| 模组注入 | 设置 → `dsh-ventus-plugins` → 注入管理：拖入本地插件包即热加载 |
+<table>
+  <thead>
+    <tr><th style="width:64%">功能</th><th>入口</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>用量悬浮球</td><td>右侧悬浮球：拖动可上下移动，左半屏自动吸附；点击展开面板</td></tr>
+    <tr><td>用量面板</td><td>悬浮球点击 → 余额 / 消费 / Tokens / 分模型用量 / R0 / 趋势 / 登录 / 截图</td></tr>
+    <tr><td>终末地主题</td><td>设置 → 外观 → 主题 → <code>dsh-theme-endfield</code>；主题设置卡内：等高线开关、水印开关、侧边栏表面（透明/玻璃/纯色+调色盘）、圆角/直角、hero 贴底</td></tr>
+    <tr><td>右侧重栏</td><td>对话区右上角面板按钮：文件 / 终端 / Git / 浏览器标签</td></tr>
+    <tr><td>搜索</td><td>输入框 <code>@</code> 或斜杠命令触发 ventus-search provider</td></tr>
+    <tr><td>桌宠</td><td>右下角虎鲸；右键菜单配置</td></tr>
+    <tr><td>子代理进度</td><td>发起可多阶段拆分的子代理任务（AI 按 skill 约定输出 <code>progress-json</code>），悬停对话底部子代理条目查看分段进度条</td></tr>
+    <tr><td>模组注入</td><td>设置 → <code>dsh-ventus-plugins</code> → 注入管理：拖入本地插件包即热加载</td></tr>
+  </tbody>
+</table>
 
 ## 🔑 配置
 
