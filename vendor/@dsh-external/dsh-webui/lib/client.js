@@ -285347,6 +285347,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			});
 		}
 		/** The centered modal: two separate panels — thinking and tools. */
+		/** 跟随底部开关（模块作用域：DrawerPanel 重挂后不重置，用户上翻状态保持）。 */
+		let followBottom = true;
+		/** 跟随状态所属回合（换回合重置为跟随）。 */
+		let followTurn = null;
 		function DrawerPanel({ turn, data, store, openFile, inspectCall }) {
 			const reasoning = data?.reasoning ?? [];
 			const toolNodes = data?.tools ?? [];
@@ -285372,13 +285376,15 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				return earliest !== void 0 ? Math.max(0, now - earliest) : void 0;
 			}, [toolNodes, now]);
 			const scrollRef = (0, react.useRef)(null);
-			/** 是否跟随底部：用户上翻后停止自动置底，回到底部附近再恢复跟随。 */
-			const followRef = (0, react.useRef)(true);
+			if (followTurn !== turn) {
+				followTurn = turn;
+				followBottom = true;
+			}
 			(0, react.useEffect)(() => {
 				const el = scrollRef.current;
 				if (el === null) return;
 				const onScroll = () => {
-					followRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+					followBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
 				};
 				el.addEventListener("scroll", onScroll, { passive: true });
 				return () => {
@@ -285386,7 +285392,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				};
 			}, []);
 			(0, react.useEffect)(() => {
-				if (!anyRunning || !followRef.current) return;
+				if (!anyRunning || !followBottom) return;
 				const el = scrollRef.current;
 				if (el !== null) el.scrollTop = el.scrollHeight;
 			}, [
@@ -286854,7 +286860,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			lenNodeOn: "webui-po-len-node-on",
 			lenLabel: "webui-po-len-label",
 			stop: "webui-po-stop",
-			generate: "webui-po-generate"
+			generate: "webui-po-generate",
+			undo: "webui-po-undo"
 		};
 		const STYLE_ID$5 = "dsh-webui-prompt-optimize-styles";
 		const SHEET$4 = `
@@ -286895,6 +286902,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 .webui-po-generate{flex:none;height:30px;padding:0 18px;border:none;border-radius:9px;background:var(--dsw-alias-state-business-primary);color:#101110;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:filter .15s,opacity .15s}
 .webui-po-generate:hover:not(:disabled){filter:brightness(1.08)}
 .webui-po-generate:disabled{opacity:.5;cursor:default}
+.webui-po-undo{flex:none;height:30px;margin-right:8px;padding:0 14px;border:1px solid var(--dsw-alias-border-l2);border-radius:9px;background:transparent;color:var(--dsw-alias-label-secondary);font-size:12px;font-family:inherit;cursor:pointer;transition:color .15s,border-color .15s}
+.webui-po-undo:hover{color:var(--dsw-alias-label-primary);border-color:var(--dsw-alias-label-tertiary)}
 .webui-po-status-optimizing{color:var(--dsw-alias-state-business-primary)}
 .webui-po-status-done{color:var(--dsw-alias-state-success-primary)}
 .webui-po-status-error{color:var(--dsw-alias-state-error-primary)}
@@ -286957,6 +286966,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		const VERIFY_KEY = "dsh-webui:prompt-optimize:verify-browser";
 		/** 「优化时注入工作区记忆」开关的 localStorage 键。 */
 		const MEMORY_KEY = "dsh-webui:prompt-optimize:inject-memory";
+		/** 撤回栈层数：5 次优化 + 栈底原始版本。 */
+		const HISTORY_LIMIT = 6;
 		/** 从 localStorage 读开关状态；缺省值在首次（从未点过）时生效。 */
 		function readFlag(key, fallback) {
 			try {
@@ -286987,6 +286998,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [setTarget, setSetTarget] = (0, react.useState)(() => readFlag(TARGET_KEY, true));
 			const [verifyWithBrowser, setVerifyWithBrowser] = (0, react.useState)(() => readFlag(VERIFY_KEY, false));
 			const [injectMemory, setInjectMemory] = (0, react.useState)(() => readFlag(MEMORY_KEY, true));
+			/**
+			* 撤回栈：每次优化前把当前草稿压栈（最多 HISTORY_LIMIT 层）。
+			* 溢出时丢弃最老的中间版本但**永久保留栈底的原始输入**，所以连续退到底
+			* 一定回到原始版本，不会退成某个中间产物。
+			*/
+			const [history, setHistory] = (0, react.useState)([]);
 			const closeTimer = (0, react.useRef)(null);
 			const hoverLeaveTimer = (0, react.useRef)(null);
 			const abortRef = (0, react.useRef)(null);
@@ -287047,6 +287064,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const stop = () => {
 				abortRef.current?.abort();
 			};
+			/** 撤回一层：把草稿还原成上一版本（栈空即无按钮；退到底就是原始输入）。 */
+			const undo = () => {
+				if (busy || history.length === 0) return;
+				const previous = history[history.length - 1];
+				setHistory((prev) => prev.slice(0, -1));
+				inputActions.setDraft(previous);
+				finish("done", history.length === 1 ? "已回到原始输入" : "已撤回一版");
+			};
 			const current = state.current;
 			const modelName = state.groups.flatMap((group) => group.models).find((model) => model.id === current?.model)?.name ?? current?.model ?? "未选模型";
 			const optimize = async () => {
@@ -287061,6 +287086,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					return;
 				}
 				const original = input.draft;
+				setHistory((prev) => {
+					const next = [...prev, original];
+					if (next.length <= HISTORY_LIMIT) return next;
+					return [next[0], ...next.slice(next.length - 5)];
+				});
 				setPhase("optimizing");
 				setDetail("正在调用模型…");
 				const controller = new AbortController();
@@ -287302,14 +287332,20 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 								className: css$2.stop,
 								onClick: stop,
 								children: "停止"
-							}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+							}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [history.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: css$2.undo,
+								onClick: undo,
+								title: `撤回到上一版本（可退 ${history.length} 次，最早为原始输入）`,
+								children: `撤回 ${history.length}`
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
 								className: css$2.generate,
 								onClick: () => {
 									optimize();
 								},
 								children: "生成"
-							})]
+							})] })]
 						})
 					]
 				})]
