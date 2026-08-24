@@ -289142,6 +289142,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			const [expandedGroups, setExpandedGroups] = (0, react.useState)(() => /* @__PURE__ */ new Set());
 			const hoverCloseTimer = (0, react.useRef)(null);
 			const keepOpenUntil = (0, react.useRef)(0);
+			const posRefTimer = (0, react.useRef)(null);
 			const [hovered, setHovered] = (0, react.useState)(false);
 			const [hoveredRunning, setHoveredRunning] = (0, react.useState)(false);
 			const [fileHovered, setFileHovered] = (0, react.useState)(false);
@@ -289493,7 +289494,13 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					setShellWidth(Math.round(total));
 				}
 				if (dragRef.current !== null) return;
-				if (!autoCenterRef.current && anchorRef.current !== null) applyAnchor();
+				if (!autoCenterRef.current && anchorRef.current !== null) {
+					if (posRefTimer.current !== null) window.clearTimeout(posRefTimer.current);
+					posRefTimer.current = window.setTimeout(() => {
+						posRefTimer.current = null;
+						applyAnchor();
+					}, 300);
+				}
 			});
 			if (!enabled) return null;
 			const chars = displayText.split("");
