@@ -13,13 +13,26 @@
  *   2. 聚合 apply 用 loader 的 require 按子 id materialize 各子模块，
  *      依次调用其 apply——功能与多插件时代完全一致。
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { execSync } from 'node:child_process'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const VENDOR = join(ROOT, 'vendor')
 const OUT = join(ROOT, 'lib', 'client.js')
+
+/**
+ * 子插件白名单过滤（环境变量 VENTUS_ENTRY_FILTER，逗号分隔）：
+ * 最小包 / 选择性安装场景只内嵌白名单内的子插件；未设置时内嵌全部存在者。
+ * 缺失产物的子插件自动跳过（用户端重建时本机只有部分子插件）。
+ */
+const FILTER = new Set(
+  (process.env.VENTUS_ENTRY_FILTER ?? '')
+    .split(',')
+    .map(v => v.trim())
+    .filter(v => v !== ''),
+)
 
 /** 各子插件 client 入口与注册 id（与包 exports["./client"] 及 dsh.client 一致）。
  *  注意：@nanmicoder/dsh-agent-teams 的用户显式禁用（host 侧不挂载），其 client
@@ -41,6 +54,19 @@ const CLIENT_ENTRIES = [
 
 /** 子 bundle 注册 id 列表（聚合 apply 用 require(id) materialize）。 */
 const SUB_IDS = CLIENT_ENTRIES.map(([id]) => id)
+
+/** 实际内嵌条目：白名单过滤 + 跳过缺失产物。 */
+const RESOLVED_ENTRIES = CLIENT_ENTRIES.filter(([id, entry]) => {
+  if (FILTER.size > 0 && !FILTER.has(id)) {
+    console.log(`[build-client] skip ${id} (filtered)`)
+    return false
+  }
+  if (!existsSync(join(VENDOR, entry))) {
+    console.log(`[build-client] skip ${id} (missing ${entry})`)
+    return false
+  }
+  return true
+})
 
 /* 聚合插件声明子插件全部服务依赖的并集（短服务名——cordis 的 fiber.inject
    把声明的服务注入 ctx 属性，子插件 apply 用 ctx.slots/ctx.locale 等属性
@@ -68,18 +94,31 @@ function embed(text) {
     .replace(/\n\s*\/\/# sourceMappingURL=.*$/m, '\n')
 }
 
-const embedded = CLIENT_ENTRIES.map(([, entry]) => {
+const embedded = RESOLVED_ENTRIES.map(([, entry]) => {
   const text = readFileSync(join(VENDOR, entry), 'utf8')
   console.log(`[build-client] embed ${entry} (${text.length} chars)`)
   return embed(text)
 }).join('\n\n')
 
+const SUB_IDS_EMBEDDED = RESOLVED_ENTRIES.map(([id]) => id)
+
+// 本地提交 sha：STAMP_SHA 环境变量优先（用户端选择性更新后由 host 传入
+// 远程 sha）；否则取当前 git HEAD（开发构建路径，与 stamp-commit 一致）。
+const STAMP_SHA = process.env.STAMP_SHA
+  ?? (() => {
+    try { return execSync('git rev-parse HEAD', { cwd: ROOT }).toString().trim() } catch { return null }
+  })()
+
+const stampCode = STAMP_SHA === null ? '' : `/* dsh-ventus-plugins: local commit stamp */
+try { localStorage.setItem('dsh.ventus.localSha', ${JSON.stringify(STAMP_SHA)}) } catch {}
+`
+
 const bundle = `/**
  * dsh-ventus-plugins — 整合后的单一 client bundle（构建生成，勿手改）
- * 由 scripts/build-client.mjs 合并 ${SUB_IDS.length} 个子插件 client 生成。
+ * 由 scripts/build-client.mjs 合并 ${SUB_IDS_EMBEDDED.length} 个子插件 client 生成。
  * 子 bundle 原样内嵌注册进 __ModuleLoader__，聚合 apply 按 id materialize。
  */
-window.__ModuleLoader__.load({
+${stampCode}window.__ModuleLoader__.load({
   id: 'dsh-ventus-plugins',
   factory: (require) => {
     var module = { exports: {} };
@@ -91,7 +130,7 @@ ${embedded}
     exports.name = 'dsh-ventus-plugins';
     exports.inject = ${JSON.stringify(INJECT)};
     exports.apply = (ctx) => {
-      const ids = ${JSON.stringify(SUB_IDS)};
+      const ids = ${JSON.stringify(SUB_IDS_EMBEDDED)};
       for (const id of ids) {
         try {
           const mod = require(id);
@@ -107,4 +146,4 @@ ${embedded}
 `
 mkdirSync(dirname(OUT), { recursive: true })
 writeFileSync(OUT, bundle)
-console.log(`[build-client] wrote ${OUT} (${bundle.length} chars, ${SUB_IDS.length} sub-bundles)`)
+console.log(`[build-client] wrote ${OUT} (${bundle.length} chars, ${SUB_IDS_EMBEDDED.length} sub-bundles)`)
