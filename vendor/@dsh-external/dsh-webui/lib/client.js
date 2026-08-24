@@ -280985,7 +280985,12 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				className: "dsh-better-markdown__file-mention",
 				title: mention.title,
 				"aria-label": mention.label,
-				onClick: mention.open,
+				onClick: (event) => {
+					event.preventDefault();
+					event.stopPropagation();
+					if (window.__dbsOpenFileListener === true) window.dispatchEvent(new CustomEvent("dsh-better-sidebar:open-file", { detail: { path: node.code } }));
+					else mention.open();
+				},
 				children: node.code
 			}) });
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("code", { children: node.code });
