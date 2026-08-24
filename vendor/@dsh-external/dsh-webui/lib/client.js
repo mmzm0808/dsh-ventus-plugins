@@ -288585,7 +288585,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			position: "absolute",
 			...above ? {
 				top: "auto",
-				bottom: "calc(100% + 8px)"
+				bottom: "calc(100% + 4px)"
 			} : { top: "100%" },
 			left: shiftX,
 			width: `min(${DONE_PANEL_W}px, calc(100vw - 24px))`,
@@ -288611,7 +288611,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			position: "absolute",
 			...above ? {
 				top: "auto",
-				bottom: "calc(100% + 8px)"
+				bottom: "calc(100% + 4px)"
 			} : { top: "100%" },
 			left: shiftX,
 			width: `min(${RUN_PANEL_W}px, calc(100vw - 24px))`,
