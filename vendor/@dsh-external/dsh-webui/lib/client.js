@@ -283828,6 +283828,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		const TARGET_KEY = "dsh-webui:prompt-optimize:set-target";
 		/** 「使用 AI 浏览器验证」开关的 localStorage 键。 */
 		const VERIFY_KEY = "dsh-webui:prompt-optimize:verify-browser";
+		/** 「优化时注入工作区记忆」开关的 localStorage 键。 */
+		const MEMORY_KEY = "dsh-webui:prompt-optimize:inject-memory";
 		/** 从 localStorage 读开关状态；缺省值在首次（从未点过）时生效。 */
 		function readFlag(key, fallback) {
 			try {
@@ -283857,6 +283859,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [lengthMode, setLengthMode] = (0, react.useState)("medium");
 			const [setTarget, setSetTarget] = (0, react.useState)(() => readFlag(TARGET_KEY, true));
 			const [verifyWithBrowser, setVerifyWithBrowser] = (0, react.useState)(() => readFlag(VERIFY_KEY, false));
+			const [injectMemory, setInjectMemory] = (0, react.useState)(() => readFlag(MEMORY_KEY, true));
 			const closeTimer = (0, react.useRef)(null);
 			const hoverLeaveTimer = (0, react.useRef)(null);
 			const abortRef = (0, react.useRef)(null);
@@ -283906,6 +283909,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					return next;
 				});
 			};
+			const toggleMemory = () => {
+				setInjectMemory((prev) => {
+					const next = !prev;
+					writeFlag(MEMORY_KEY, next);
+					return next;
+				});
+			};
 			/** 紧急停止：中止正在进行的优化请求（fetch 中止 → host 侧随连接断开而 abort 模型调用）。 */
 			const stop = () => {
 				abortRef.current?.abort();
@@ -283931,7 +283941,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				let reader = null;
 				let wroteDraft = false;
 				try {
-					const memoryText = await fetchWorkspaceMemory();
+					const memoryText = injectMemory ? await fetchWorkspaceMemory() : "";
 					const response = await fetch("/api/webui-prompt-optimize", {
 						method: "POST",
 						headers: { "content-type": "application/json" },
@@ -284090,6 +284100,21 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										className: clsx(css$2.switch, verifyWithBrowser && css$2.switchOn),
 										onClick: toggleVerify,
 										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx(css$2.knob, verifyWithBrowser && css$2.knobOn) })
+									})]
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									className: css$2.option,
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: css$2.optionLabel,
+										children: "注入记忆"
+									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+										type: "button",
+										role: "switch",
+										"aria-checked": injectMemory,
+										"aria-label": "优化时注入工作区记忆",
+										className: clsx(css$2.switch, injectMemory && css$2.switchOn),
+										onClick: toggleMemory,
+										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx(css$2.knob, injectMemory && css$2.knobOn) })
 									})]
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
