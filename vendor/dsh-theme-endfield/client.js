@@ -65,6 +65,14 @@ function apply(ctx) {
         if (/menu|popover|dropdown|popper|dialog|listbox/i.test(cls)) return
         t.scrollLeft = 0
       }, true)
+      /* 用户输入标记：composer（textarea）聚焦时按 Enter（非 Shift+Enter
+         换行）视为用户发送，置位后下次任务开始才显示"任务开始"。 */
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' || e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) return
+        const el = document.activeElement
+        if (el === null || el.tagName !== 'TEXTAREA') return
+        thunderUserPending = true
+      }, true)
     }
 
     const RADIUS_KEY = 'dsh-theme-endfield-radius'
@@ -1442,6 +1450,10 @@ function apply(ctx) {
       destroyThunder()
       const el = document.createElement('div')
       el.setAttribute('data-endfield-thunder', '')
+      /* 插入前先置透明：CSS animation 在元素插入后的下一帧才启动，
+         首帧会以默认样式（opacity 1）显示一闪。inline opacity 0 让
+         首帧即透明，动画（fill both）随后接管淡入。 */
+      el.style.opacity = '0'
       // Pure decoration over content the user is already reading: never announced,
       // never hit-tested (pointer-events:none lives in the stylesheet).
       el.setAttribute('aria-hidden', 'true')
@@ -1507,6 +1519,8 @@ function apply(ctx) {
     let thunderWatchedId = null
     // null = nothing readable observed yet, so the next value is a baseline.
     let thunderLastRunning = null
+    let thunderUserPending = false   // 用户在 composer 回车后待显示的"任务开始"
+    let thunderDoneTimer = null      // 任务结束防抖（2s 确认真结束才显示）
     /** The running bit of one session face, or null when it cannot be read. */
     const thunderReadRunning = (face) => {
       try {
@@ -1587,6 +1601,10 @@ function apply(ctx) {
       }
       thunderWatchedId = id
       thunderLastRunning = thunderReadRunning(face)
+      /* 用户输入驱动标记：用户在 composer（textarea）按 Enter 发送后
+         置位，下次任务开始才显示"任务开始"——AI 自动任务（上下文
+         注入/后台轮询）不显示，避免频繁打扰。 */
+      thunderUserPending = false
       let unsub = null
       try {
         unsub = face.subscribe(() => {
@@ -1596,7 +1614,20 @@ function apply(ctx) {
           thunderLastRunning = next
           // First readable value is the baseline, not an edge — see the note above.
           if (prev === null) return
-          showThunder(next ? THUNDER_START : THUNDER_DONE)
+          if (next) {
+            if (thunderUserPending) {
+              thunderUserPending = false
+              showThunder(THUNDER_START)
+            }
+          } else {
+            // 任务结束防抖：子任务间隙的 false（随即又 true）不显示，
+            // 延迟 2s 确认所有任务真正结束后才显示"任务完成"。
+            if (thunderDoneTimer !== null && typeof clearTimeout === 'function') clearTimeout(thunderDoneTimer)
+            thunderDoneTimer = setTimeout(() => {
+              thunderDoneTimer = null
+              if (!thunderLastRunning && thunderWatchedId !== null) showThunder(THUNDER_DONE)
+            }, 2000)
+          }
         })
       } catch (e) {
         unsub = null
@@ -1607,6 +1638,9 @@ function apply(ctx) {
     const thunderStopWatch = () => {
       if (thunderRebindTimer !== null && typeof clearTimeout === 'function') clearTimeout(thunderRebindTimer)
       thunderRebindTimer = null
+      if (thunderDoneTimer !== null && typeof clearTimeout === 'function') clearTimeout(thunderDoneTimer)
+      thunderDoneTimer = null
+      thunderUserPending = false
       if (thunderUnsubList !== null) {
         try { thunderUnsubList() } catch (e) { /* already torn down */ }
         thunderUnsubList = null
