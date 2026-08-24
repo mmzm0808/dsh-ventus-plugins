@@ -30,7 +30,7 @@
   <tbody>
     <tr><td>🎨 主题</td><td><code>dsh-theme-endfield</code></td><td>终末地工业编辑部风格主题：米纸底、墨字、信号黄强调、直角。等高线背景、ENDFIELD 水印、玻璃/纯色侧边栏表面（主题设置下拉框）、hero 贴底（可开关）</td></tr>
     <tr><td>📊 用量监测</td><td><code>dsh-deepseek-usage</code></td><td>右侧悬浮球：实时余额、今日 R0 涨价倍率、模型命中率徽标；展开面板：累计/今日消费、请求数、Tokens、分模型用量、趋势图、登录/退出、截图</td></tr>
-    <tr><td>📈 用量与技能</td><td><code>dsh-usage-skill</code></td><td>Token 用量热力图（日/月/年）、多 Provider 余额卡、技能包管理面板（**侧边栏入口已按用户要求禁用**，仅保留组件导出与字典）</td></tr>
+    <tr><td>📈 用量与技能</td><td><code>dsh-usage-skill</code></td><td>Token 用量热力图（日/月/年）、多 Provider 余额卡、技能包管理面板（侧边栏入口已禁用，仅保留组件导出与字典）</td></tr>
     <tr><td>📁 右侧重栏</td><td><code>dsh-better-sidebar</code></td><td>VSCode 式右侧栏：文件树 / 编辑器（CodeMirror 多语言高亮）/ 终端 / Git / 浏览器，按会话隔离；文本编辑器底部信息栏（总字数 + 选中字数）</td></tr>
     <tr><td>🔍 搜索</td><td><code>dsh-ventus-search</code></td><td>Bing / 360 / Bilibili 多引擎搜索 + Readability 正文抓取，注册为 DSH 搜索 provider，带设置卡与总开关</td></tr>
     <tr><td>🐋 桌宠</td><td><code>dsh-ventus-whale</code></td><td>3D 虎鲸桌宠浮窗：拖拽 / 旋转 / 右键菜单，设置页配置大小、灵敏度、显示文字</td></tr>
@@ -43,7 +43,7 @@
   </tbody>
 </table>
 
-> `@nanmicoder/dsh-agent-teams`（多代理团队协作）已按用户要求保持**禁用**：
+> `@nanmicoder/dsh-agent-teams`（多代理团队协作）保持**禁用**：
 > 其 activity scanner 在历史日志异常后会反复全局扫描导致 UI 假死；
 > host 不挂载、client 不内嵌，行为与多插件时代完全一致。
 
@@ -248,7 +248,7 @@ node scripts/build-client.mjs
 | 问题 | 根因 | 修复 |
 |---|---|---|
 | usage 悬浮球变纯文本、无交互 | theme 的 insertCss 幂等清理用 `style[data-plugin=...]` 泛化选择器，误删 usage 的 `data-dsu-css` style | theme 清理改用专属标记 `data-endfield-css`；usage style 自带 `data-plugin=dsh-deepseek-usage` |
-| 侧边栏多出「用量/技能」按钮 | usage-skill 注册了 `sidebar.footer.action` 与官方技能按钮重复 | 按用户要求禁用该 slot 注册（字典保留） |
+| 侧边栏多出「用量/技能」按钮 | usage-skill 注册了 `sidebar.footer.action` 与官方技能按钮重复 | 该 slot 注册被禁用（字典保留） |
 | agent-teams 404 轮询风暴 | 用户禁用 agent-teams 后 client 仍被内嵌并轮询 state 路由 | 从 `CLIENT_ENTRIES` 移除 |
 | auto 权限项消失 | 聚合 patch 未迁移原插件的 `permission.presets.auto` 段 | 并入 `cordis.patch.yml` |
 | 三点菜单浮窗导致侧边栏收起 | pointInside 纯几何判断，portal 浮窗不在侧边栏矩形内 | `pointOverSidebarPopup`：elementFromPoint 命中 Radix popper / menu / dialog 时只保活不折叠、不展开 |
