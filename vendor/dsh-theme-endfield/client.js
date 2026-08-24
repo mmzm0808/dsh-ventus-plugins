@@ -2180,6 +2180,21 @@ function apply(ctx) {
       [data-dsu] {
         z-index: 60 !important;
       }
+      /* 对话区内的浮窗（后台任务下拉框/任务列表/工具提示等）提升到
+         玻璃层之上：对话区玻璃（backdrop-filter）创建 stacking
+         context，z 低的浮窗会被玻璃遮挡。9500 高于玻璃与内容。 */
+      [class$='_centerCol'] [role='dialog'],
+      [class$='_centerCol'] [role='listbox'],
+      [class$='_centerCol'] [role='menu'],
+      [class$='_centerCol'] [class*='popover'],
+      [class$='_centerCol'] [class*='dropdown'],
+      [class$='_centerCol'] [class*='Popover'],
+      [class$='_centerCol'] [class*='Dropdown'],
+      [class$='_centerCol'] [class*='job'],
+      [class$='_centerCol'] [class*='task'],
+      [class$='_centerCol'] [data-radix-popper-content-wrapper] {
+        z-index: 9500 !important;
+      }
       /* 对话区滚动容器禁止横向滚动：内容横向溢出时 PgUp/PgDn 的
          滚动会带动 scrollLeft，整体往左偏移。内层容器不在此禁
          （浮窗/工具栏/输入框等需要原生滚动），改由 JS 滚动监听
@@ -2326,6 +2341,16 @@ function apply(ctx) {
           color-mix(in srgb, #14171c 35%, transparent) !important;
         backdrop-filter: blur(24px) saturate(1.4);
         -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      }
+      /* 亮色表面玻璃：浅色底（主题浅 #e8e8e2 半透明）+ 顶部微暗渐变，
+         文字黑在浅底上清晰可读（暗色规则是深底白字，亮色不可复用）。 */
+      body.theme-endfield-surface-glass:not([data-ds-dark-theme]) [class$='_sidebarCol'] [class*='_root'] {
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.015) 30%, transparent 55%),
+          linear-gradient(90deg, rgba(0, 0, 0, 0.03), transparent 25%),
+          color-mix(in srgb, #e8e8e2 55%, transparent) !important;
+        backdrop-filter: blur(24px) saturate(1.15);
+        -webkit-backdrop-filter: blur(24px) saturate(1.15);
       }
       /* 右侧栏（详情列）玻璃：等高线已铺满视口宽，展开时磨砂透出花纹，
          与左侧栏一致的玻璃观感。 */
