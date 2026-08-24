@@ -278784,6 +278784,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			if (document.getElementById(marker) !== null) return;
 			const style = document.createElement("style");
 			style.id = marker;
+			style.dataset.plugin = "@dsh-external/dsh-webui";
 			style.textContent = [
 				".dsh-webui-field:focus{outline:none;border-color:var(--dsw-alias-brand-primary)}",
 				".dsh-webui-field::placeholder{color:var(--dsw-alias-label-dimmed,#c9cdd4)}",
@@ -283667,6 +283668,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			if (document.getElementById(STYLE_TAG_ID) !== null) return;
 			const style = document.createElement("style");
 			style.id = STYLE_TAG_ID;
+			style.dataset.plugin = "@dsh-external/dsh-webui";
 			style.textContent = CARD_STYLES;
 			document.head.appendChild(style);
 		}
@@ -286795,6 +286797,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			if (document.getElementById("dsh-tool-summary-styles") !== null) return;
 			const style = document.createElement("style");
 			style.id = "dsh-tool-summary-styles";
+			style.dataset.plugin = "@dsh-external/dsh-webui";
 			style.textContent = CSS$2;
 			document.head.appendChild(style);
 		}
@@ -289902,7 +289905,17 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 .dsp-archive-panel {
   margin-top: 4px;
   padding: 0 6px 6px;
-  border-top: 1px solid var(--dsw-alias-border-l1, rgba(255,255,255,.07));
+  /* 与工作区区分：整体压一档底色（layer-1 半透明叠加，深浅主题自适应）
+     + 上缘分界线；行本身仍沿用官方几何与 hover token。 */
+  background: color-mix(in srgb, var(--dsw-alias-bg-layer-1, rgba(255,255,255,.04)) 55%, transparent);
+  border-top: 1px solid var(--dsw-alias-border-l2, rgba(255,255,255,.12));
+  border-radius: 10px 10px 0 0;
+}
+/* 归档区标题/分组/会话行文字整体降一档（已归档的“非活跃”语义） */
+.dsp-archive-panel .dsp-archive-label,
+.dsp-archive-panel .dsp-archive-group-title,
+.dsp-archive-panel .dsp-archive-row-title {
+  color: var(--dsw-alias-label-secondary);
 }
 /* 可拖动分隔条：调整已归档区与工作区的高度占比 */
 .dsp-archive-handle {
@@ -292186,6 +292199,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			if (document.getElementById("dsh-done-pill-kf") !== null) return;
 			const style = document.createElement("style");
 			style.id = "dsh-done-pill-kf";
+			style.dataset.plugin = "@dsh-external/dsh-webui";
 			style.textContent = "@keyframes dpCharIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}.dsh-done-card:hover{background:rgba(var(--edge-accent-rgb,255,245,0),.18)!important}.dsh-done-group{transition:max-height .22s ease}";
 			document.head.appendChild(style);
 		}
