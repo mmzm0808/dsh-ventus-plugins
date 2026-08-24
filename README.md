@@ -25,7 +25,7 @@
 
 <table>
   <thead>
-    <tr><th style="width:48%">分类</th><th style="width:22%">子插件</th><th>说明</th></tr>
+    <tr><th width="48%">分类</th><th width="22%">子插件</th><th>说明</th></tr>
   </thead>
   <tbody>
     <tr><td>🎨 主题</td><td><code>dsh-theme-endfield</code></td><td>终末地工业编辑部风格主题：米纸底、墨字、信号黄强调、直角。等高线背景、ENDFIELD 水印、玻璃/纯色侧边栏表面（主题设置下拉框）、hero 贴底（可开关）</td></tr>
@@ -55,7 +55,7 @@
 
 <table>
   <thead>
-    <tr><th style="width:40%">分组</th><th style="width:22%">key</th><th>控制的功能</th></tr>
+    <tr><th width="40%">分组</th><th width="22%">key</th><th>控制的功能</th></tr>
   </thead>
   <tbody>
     <tr><td>对话体验</td><td><code>messageWidth</code></td><td>消息气泡宽度设置</td></tr>
@@ -138,7 +138,7 @@ dsh plugin --profile web add "<本仓库本地绝对路径>"
 
 <table>
   <thead>
-    <tr><th style="width:64%">功能</th><th>入口</th></tr>
+    <tr><th width="64%">功能</th><th>入口</th></tr>
   </thead>
   <tbody>
     <tr><td>用量悬浮球</td><td>右侧悬浮球：拖动可上下移动，左半屏自动吸附；点击展开面板</td></tr>
