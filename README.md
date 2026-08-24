@@ -49,9 +49,9 @@
 
 ## 🧩 功能模块 key 一览
 
-> 参考 [statem-li/dsh-webui](https://github.com/statem-li/dsh-webui) 的模块开关体系——**代码中真实存在**：
-> `src/modules.ts` 的 `WEBUI_MODULE_KEYS` 定义全部 key，host/client 两端按同一份语义裁剪
-> （`isModuleEnabled`：缺省 = 启用，只有显式 `false` 才关闭）。本整合包沿用同一约定。
+> 整合包内置统一的模块开关：**缺省启用，显式关闭才停用**。host 与 client
+> 两侧按同一份语义裁剪，逐项开关即可按需启用或停用具体功能（如对话
+> 胶囊、会话置顶、提示词优化等），无需改动配置结构。
 
 <table>
   <thead>
