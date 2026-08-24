@@ -271982,6 +271982,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		*/
 		/** 整合模型选择持久化 key（'' = 跟随当前模型，否则 `provider::model`）。 */
 		const CONSOLIDATE_MODEL_KEY = "dsh-webui.consolidate-model";
+		/** 精简整合开关持久化 key（勾选后整合结果更短更密）。 */
+		const CONSOLIDATE_COMPACT_KEY = "dsh-webui.consolidate-compact";
 		/** 分割标签输入（逗号/空格/中文逗号）。 */
 		function splitTags(raw) {
 			return raw.split(/[,，\s]+/).map((tag) => tag.trim()).filter(Boolean).slice(0, 8);
@@ -272114,6 +272116,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [addScope, setAddScope] = (0, react.useState)("global");
 			const [addProject, setAddProject] = (0, react.useState)("");
 			const [consolidating, setConsolidating] = (0, react.useState)(false);
+			const consolidateAbortRef = (0, react.useRef)(null);
+			const [compactConsolidate, setCompactConsolidate] = (0, react.useState)(() => {
+				try {
+					return localStorage.getItem(CONSOLIDATE_COMPACT_KEY) !== "0";
+				} catch {
+					return true;
+				}
+			});
 			const [consolidateModel, setConsolidateModel] = (0, react.useState)(() => {
 				try {
 					return localStorage.getItem(CONSOLIDATE_MODEL_KEY) ?? "";
@@ -272142,8 +272152,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				if (consolidating) return;
 				setConsolidating(true);
 				setError("");
+				const controller = new AbortController();
+				consolidateAbortRef.current = controller;
 				try {
-					const body = { scope: "all" };
+					const body = {
+						scope: "all",
+						compact: compactConsolidate
+					};
 					const sep = consolidateModel.indexOf("::");
 					if (consolidateModel !== "" && sep > 0) {
 						body.provider = consolidateModel.slice(0, sep);
@@ -272152,7 +272167,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					const response = await fetch("/api/dsh-memory/consolidate", {
 						method: "POST",
 						headers: { "content-type": "application/json" },
-						body: JSON.stringify(body)
+						body: JSON.stringify(body),
+						signal: controller.signal
 					});
 					const payload = await response.json();
 					if (!response.ok || payload.ok !== true) throw new Error(payload.error ?? `HTTP ${response.status}`);
@@ -272160,10 +272176,16 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					setUndoAt(typeof payload.at === "string" ? payload.at : null);
 					await load();
 				} catch (failure) {
-					setError(failure instanceof Error ? failure.message : String(failure));
+					if (controller.signal.aborted) setError("已停止整合");
+					else setError(failure instanceof Error ? failure.message : String(failure));
 				} finally {
+					if (consolidateAbortRef.current === controller) consolidateAbortRef.current = null;
 					setConsolidating(false);
 				}
+			};
+			/** 停止整合：中止请求（host 收到连接断开后取消模型调用）。 */
+			const stopConsolidate = () => {
+				consolidateAbortRef.current?.abort();
 			};
 			/** 撤回最近一次整合（host 内存快照恢复；DSH 重启前有效）。 */
 			const undoConsolidate = async () => {
@@ -272732,6 +272754,22 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										}, `${option.provider}::${option.model}`))]
 									})]
 								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+									className: css$6.check,
+									style: { marginLeft: "auto" },
+									title: "精简整合：勾选后合并结果更短更密，条目不臃肿",
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+										type: "checkbox",
+										checked: compactConsolidate,
+										onChange: (event) => {
+											const next = event.currentTarget.checked;
+											setCompactConsolidate(next);
+											try {
+												localStorage.setItem(CONSOLIDATE_COMPACT_KEY, next ? "1" : "0");
+											} catch {}
+										}
+									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "精简整合" })]
+								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "ghost",
 									size: "sm",
@@ -272741,6 +272779,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 									},
 									title: "调用模型整合工作区记忆（去重、精简、合并相似条目）；可在左侧选择整合模型",
 									children: consolidating ? "整合中…" : "整合记忆"
+								}),
+								consolidating && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+									variant: "outline",
+									size: "sm",
+									onClick: stopConsolidate,
+									title: "停止当前整合（模型调用立即取消）",
+									children: "停止"
 								}),
 								undoAt !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
 									variant: "outline",
@@ -290467,11 +290512,16 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				localStorage.setItem(key, value ? "1" : "0");
 			} catch {}
 		}
+		/** 官方工作区树容器：含 projectRow 的 role="tree"（平铺列表/搜索结果树不含）。 */
+		function findWorkspaceTree() {
+			for (const tree of document.querySelectorAll("[role=\"tree\"]")) if (tree.querySelector("[class*=\"projectRow\"]") !== null) return tree;
+			return null;
+		}
 		/** 注入面板容器（幂等）：官方工作区树容器之后。 */
 		function ensurePanel() {
 			let panel = document.querySelector(`.${PANEL_CLASS}`);
 			if (panel !== null) return panel;
-			const host = document.querySelector("[data-role=\"tree\"]") ?? document.querySelector("[class*=\"workspaceSidebar\"], [class*=\"sidebarTree\"]");
+			const host = findWorkspaceTree() ?? document.querySelector("[class*=\"workspaceSidebar\"], [class*=\"sidebarTree\"]");
 			if (host === null) return null;
 			panel = document.createElement("div");
 			panel.className = PANEL_CLASS;

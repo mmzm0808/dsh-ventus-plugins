@@ -9857,9 +9857,14 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/consolidate") {
+			const body = await readBody$7(req);
+			const abort = new AbortController();
+			req.on("close", () => {
+				abort.abort();
+			});
 			json$5(res, 200, {
 				ok: true,
-				...await consolidateMemory(ctx, store, await readBody$7(req)),
+				...await consolidateMemory(ctx, store, body, abort.signal),
 				undoable: true,
 				at: consolidateUndo?.at ?? null
 			});
@@ -10204,7 +10209,7 @@ function requireString$1(value, name) {
 * 写回（合并保留 keep 条目并更新内容、删除被合并条目、新增补充条目）。
 * 返回操作摘要。
 */
-async function consolidateMemory(ctx, store, body) {
+async function consolidateMemory(ctx, store, body, signal) {
 	const llm = ctx.get("llm");
 	if (llm === void 0) throw new Error("llm 服务不可用");
 	let provider = typeof body.provider === "string" ? body.provider.trim() : "";
@@ -10238,7 +10243,8 @@ async function consolidateMemory(ctx, store, body) {
 		"- Each merged entry must keep the MOST IMPORTANT existing id (keepId); mark ids to remove in removeIds.",
 		"- Output ONLY JSON: {\"merges\":[{\"keepId\":\"...\",\"removeIds\":[\"...\"],\"content\":\"merged text\"}],\"additions\":[{\"content\":\"...\",\"scope\":\"global|project\",\"projectHash\":null}]}.",
 		"- additions are optional new consolidated entries that fit no existing id; scope/projectHash: use \"global\" with null unless the source entries were project-scoped (then keep \"project\" and a projectHash from the source).",
-		"- Do NOT invent facts. Preserve pinned entries (never remove a pinned id)."
+		"- Do NOT invent facts. Preserve pinned entries (never remove a pinned id).",
+		...body.compact === true ? ["- COMPACT MODE: keep merged entries short and dense; drop redundant phrasing while keeping key facts."] : []
 	].join("\n");
 	let output = "";
 	let finishFailure = "";
@@ -10258,6 +10264,7 @@ async function consolidateMemory(ctx, store, body) {
 			})],
 			system,
 			maxTokens: 16384,
+			signal,
 			...provider.toLowerCase().includes("deepseek") ? { reasoningEffort: ReasoningEffortId("off") } : {}
 		})) if (chunk.type === "text-delta") output += chunk.text;
 		else if (chunk.type === "finish" && (chunk.reason.kind === "error" || chunk.reason.kind === "aborted")) finishFailure = chunk.reason.kind === "error" ? chunk.reason.failure?.message ?? "模型调用失败" : "模型调用被中止";

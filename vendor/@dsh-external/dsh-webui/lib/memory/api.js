@@ -145,7 +145,10 @@ async function handle(ctx, store, config, req, res) {
         // ── 整合记忆：调模型去重/精简/合并相似条目 ───────────────────────
         if (method === 'POST' && rest === '/consolidate') {
             const body = await readBody(req);
-            const summary = await consolidateMemory(ctx, store, body);
+            // client 断开（停止按钮中止 fetch）时取消模型调用
+            const abort = new AbortController();
+            req.on('close', () => { abort.abort(); });
+            const summary = await consolidateMemory(ctx, store, body, abort.signal);
             json(res, 200, { ok: true, ...summary, undoable: true, at: consolidateUndo?.at ?? null });
             return;
         }
@@ -525,7 +528,7 @@ export { mergeTags };
  * 写回（合并保留 keep 条目并更新内容、删除被合并条目、新增补充条目）。
  * 返回操作摘要。
  */
-async function consolidateMemory(ctx, store, body) {
+async function consolidateMemory(ctx, store, body, signal) {
     const llm = ctx.get('llm');
     if (llm === undefined)
         throw new Error('llm 服务不可用');
@@ -565,6 +568,7 @@ async function consolidateMemory(ctx, store, body) {
         '- Output ONLY JSON: {"merges":[{"keepId":"...","removeIds":["..."],"content":"merged text"}],"additions":[{"content":"...","scope":"global|project","projectHash":null}]}.',
         '- additions are optional new consolidated entries that fit no existing id; scope/projectHash: use "global" with null unless the source entries were project-scoped (then keep "project" and a projectHash from the source).',
         '- Do NOT invent facts. Preserve pinned entries (never remove a pinned id).',
+        ...(body.compact === true ? ['- COMPACT MODE: keep merged entries short and dense; drop redundant phrasing while keeping key facts.'] : []),
     ].join('\n');
     let output = '';
     let finishFailure = '';
@@ -578,6 +582,7 @@ async function consolidateMemory(ctx, store, body) {
                 })],
             system,
             maxTokens: 16_384,
+            signal,
             // JSON 整合不需要思考链：deepseek 系默认关思考，防止思考占满 maxTokens
             // 导致 text 为空（「模型未返回有效 JSON（输出：）」）。
             ...(provider.toLowerCase().includes('deepseek') ? { reasoningEffort: ReasoningEffortId('off') } : {}),
