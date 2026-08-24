@@ -2340,206 +2340,206 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var sidebar_module_css_default = {
-			"gitLogHash": "yL8ocG_gitLogHash",
-			"editorBinary": "yL8ocG_editorBinary",
-			"editorTreeToggleActive": "yL8ocG_editorTreeToggleActive",
-			"terminalDepsActions": "yL8ocG_terminalDepsActions",
-			"terminalBanner": "yL8ocG_terminalBanner",
-			"gitDiffFile": "yL8ocG_gitDiffFile",
-			"terminalBannerUrl": "yL8ocG_terminalBannerUrl",
-			"iconButton": "yL8ocG_iconButton",
-			"dropUp": "yL8ocG_dropUp",
-			"tabBar": "yL8ocG_tabBar",
-			"editorBanner": "yL8ocG_editorBanner",
-			"editorModeActive": "yL8ocG_editorModeActive",
-			"editorImageWrap": "yL8ocG_editorImageWrap",
-			"divider": "yL8ocG_divider",
-			"editorMd": "yL8ocG_editorMd",
-			"editorBinaryNotice": "yL8ocG_editorBinaryNotice",
-			"browserBlockedButton": "yL8ocG_browserBlockedButton",
-			"gitName": "yL8ocG_gitName",
-			"sandboxStatusOn": "yL8ocG_sandboxStatusOn",
-			"gitRowSelected": "yL8ocG_gitRowSelected",
-			"mermaidModalStage": "yL8ocG_mermaidModalStage",
-			"browserBar": "yL8ocG_browserBar",
-			"explorerDir": "yL8ocG_explorerDir",
-			"editorPdfFrameBlocked": "yL8ocG_editorPdfFrameBlocked",
-			"bottomPanel": "yL8ocG_bottomPanel",
-			"mermaidCode": "yL8ocG_mermaidCode",
-			"gitDiffTabTitle": "yL8ocG_gitDiffTabTitle",
-			"gitLogRef": "yL8ocG_gitLogRef",
-			"panelHidden": "yL8ocG_panelHidden",
-			"editorPdfFrame": "yL8ocG_editorPdfFrame",
-			"explorerRow": "yL8ocG_explorerRow",
-			"explorerSelected": "yL8ocG_explorerSelected",
-			"gitDiffFileOld": "yL8ocG_gitDiffFileOld",
-			"terminalDepsBanner": "yL8ocG_terminalDepsBanner",
-			"gitSection": "yL8ocG_gitSection",
-			"tabActive": "yL8ocG_tabActive",
-			"browserBlockedActions": "yL8ocG_browserBlockedActions",
-			"editorBody": "yL8ocG_editorBody",
-			"browserMessage": "yL8ocG_browserMessage",
-			"tabClose": "yL8ocG_tabClose",
-			"editorTreeResize": "yL8ocG_editorTreeResize",
-			"browserStart": "yL8ocG_browserStart",
-			"editorCm": "yL8ocG_editorCm",
-			"terminal": "yL8ocG_terminal",
-			"explorerRoot": "yL8ocG_explorerRoot",
-			"tabList": "yL8ocG_tabList",
-			"tabBadge": "yL8ocG_tabBadge",
-			"panelResize": "yL8ocG_panelResize",
-			"paneTabHidden": "yL8ocG_paneTabHidden",
-			"paneContent": "yL8ocG_paneContent",
-			"explorerCopied": "yL8ocG_explorerCopied",
-			"dirtyDot": "yL8ocG_dirtyDot",
-			"editorTreePanel": "yL8ocG_editorTreePanel",
 			"terminalRepairCommand": "yL8ocG_terminalRepairCommand",
-			"producedChip": "yL8ocG_producedChip",
-			"editorDocxZoomRange": "yL8ocG_editorDocxZoomRange",
-			"browserBlockedTitle": "yL8ocG_browserBlockedTitle",
-			"editorPdfToolbar": "yL8ocG_editorPdfToolbar",
-			"tabBarDrop": "yL8ocG_tabBarDrop",
-			"explorerBroken": "yL8ocG_explorerBroken",
-			"editorInfoBar": "yL8ocG_editorInfoBar",
-			"terminalWrap": "yL8ocG_terminalWrap",
+			"gitCommitInput": "yL8ocG_gitCommitInput",
+			"gitDiff": "yL8ocG_gitDiff",
 			"explorerEmpty": "yL8ocG_explorerEmpty",
-			"dropOverlay": "yL8ocG_dropOverlay",
-			"pane": "yL8ocG_pane",
-			"gitRow": "yL8ocG_gitRow",
+			"gitDiffTabHeader": "yL8ocG_gitDiffTabHeader",
+			"editorError": "yL8ocG_editorError",
+			"cornerHandle": "yL8ocG_cornerHandle",
 			"gitConfirmDesc": "yL8ocG_gitConfirmDesc",
-			"gitLogLine1": "yL8ocG_gitLogLine1",
-			"editorModeToggle": "yL8ocG_editorModeToggle",
-			"mermaidMarkdown": "yL8ocG_mermaidMarkdown",
-			"mermaidWrap": "yL8ocG_mermaidWrap",
-			"editorStatusError": "yL8ocG_editorStatusError",
-			"sandboxStatus": "yL8ocG_sandboxStatus",
-			"tabBoundaryError": "yL8ocG_tabBoundaryError",
-			"editorTreeDock": "yL8ocG_editorTreeDock",
-			"editorSearchInput": "yL8ocG_editorSearchInput",
+			"editorMain": "yL8ocG_editorMain",
+			"editorInfoBar": "yL8ocG_editorInfoBar",
+			"pane": "yL8ocG_pane",
+			"gitDiffExpand": "yL8ocG_gitDiffExpand",
+			"paneCard": "yL8ocG_paneCard",
+			"tabBar": "yL8ocG_tabBar",
+			"workbench": "yL8ocG_workbench",
+			"dropCenter": "yL8ocG_dropCenter",
+			"gitDiffTabTitle": "yL8ocG_gitDiffTabTitle",
+			"dropOverlay": "yL8ocG_dropOverlay",
+			"gitLogHash": "yL8ocG_gitLogHash",
+			"editorSearchResult": "yL8ocG_editorSearchResult",
+			"split": "yL8ocG_split",
 			"terminalDepsNote": "yL8ocG_terminalDepsNote",
-			"sandboxStatusOff": "yL8ocG_sandboxStatusOff",
-			"gitLogRow": "yL8ocG_gitLogRow",
-			"editorPathInput": "yL8ocG_editorPathInput",
-			"mermaidModalButton": "yL8ocG_mermaidModalButton",
-			"editorTreePanelFull": "yL8ocG_editorTreePanelFull",
+			"gitRowSelected": "yL8ocG_gitRowSelected",
+			"bottomResize": "yL8ocG_bottomResize",
+			"mermaidModal": "yL8ocG_mermaidModal",
+			"tab": "yL8ocG_tab",
+			"paneDrop": "yL8ocG_paneDrop",
+			"gitSection": "yL8ocG_gitSection",
+			"editorImage": "yL8ocG_editorImage",
+			"gitDiffHunkSection": "yL8ocG_gitDiffHunkSection",
+			"editorModeToggle": "yL8ocG_editorModeToggle",
+			"editorStatusError": "yL8ocG_editorStatusError",
+			"editorTreeDock": "yL8ocG_editorTreeDock",
+			"terminalWrap": "yL8ocG_terminalWrap",
+			"editorImageWrap": "yL8ocG_editorImageWrap",
+			"mermaidModalHint": "yL8ocG_mermaidModalHint",
+			"explorerHidden": "yL8ocG_explorerHidden",
+			"gitCommitButton": "yL8ocG_gitCommitButton",
 			"editorPlaceholder": "yL8ocG_editorPlaceholder",
-			"sandboxStatusText": "yL8ocG_sandboxStatusText",
-			"dropDown": "yL8ocG_dropDown",
-			"editorPdfDragShield": "yL8ocG_editorPdfDragShield",
-			"editor": "yL8ocG_editor",
-			"editorPdf": "yL8ocG_editorPdf",
+			"explorerName": "yL8ocG_explorerName",
+			"gitDiffFile": "yL8ocG_gitDiffFile",
+			"gitDiffDel": "yL8ocG_gitDiffDel",
+			"bottomClose": "yL8ocG_bottomClose",
+			"panelResize": "yL8ocG_panelResize",
+			"editorTitle": "yL8ocG_editorTitle",
+			"dirtyDot": "yL8ocG_dirtyDot",
+			"editorTreeSearch": "yL8ocG_editorTreeSearch",
+			"editorHtml": "yL8ocG_editorHtml",
+			"mermaidModalStage": "yL8ocG_mermaidModalStage",
+			"gitRowMain": "yL8ocG_gitRowMain",
+			"sandboxStatusOn": "yL8ocG_sandboxStatusOn",
+			"boundaryError": "yL8ocG_boundaryError",
+			"gitDiffMetaText": "yL8ocG_gitDiffMetaText",
+			"editorPdfDragShieldActive": "yL8ocG_editorPdfDragShieldActive",
+			"gitDiffHunk": "yL8ocG_gitDiffHunk",
+			"gitCommit": "yL8ocG_gitCommit",
+			"browserBlocked": "yL8ocG_browserBlocked",
 			"paneEmptyCards": "yL8ocG_paneEmptyCards",
 			"editorHeader": "yL8ocG_editorHeader",
-			"orphanedType": "yL8ocG_orphanedType",
-			"selectionPopup": "yL8ocG_selectionPopup",
-			"gitDiffTabHeader": "yL8ocG_gitDiffTabHeader",
-			"explorerRef": "yL8ocG_explorerRef",
-			"gitDiffFileTag": "yL8ocG_gitDiffFileTag",
-			"workbench": "yL8ocG_workbench",
-			"dsh-row-in": "yL8ocG_dsh-row-in",
-			"gitCommit": "yL8ocG_gitCommit",
-			"explorerBody": "yL8ocG_explorerBody",
-			"gitLogLine2": "yL8ocG_gitLogLine2",
-			"dropLeft": "yL8ocG_dropLeft",
-			"editorError": "yL8ocG_editorError",
-			"terminalDepsHint": "yL8ocG_terminalDepsHint",
-			"editorSearchResult": "yL8ocG_editorSearchResult",
-			"git": "yL8ocG_git",
-			"gitLogMeta": "yL8ocG_gitLogMeta",
-			"tabTitle": "yL8ocG_tabTitle",
-			"gitEmpty": "yL8ocG_gitEmpty",
-			"bottomResizeActive": "yL8ocG_bottomResizeActive",
-			"explorerSymlink": "yL8ocG_explorerSymlink",
-			"gitDiffCode": "yL8ocG_gitDiffCode",
-			"mermaidModal": "yL8ocG_mermaidModal",
-			"gitLogMore": "yL8ocG_gitLogMore",
-			"splitRow": "yL8ocG_splitRow",
-			"panel": "yL8ocG_panel",
-			"gitSectionHeader": "yL8ocG_gitSectionHeader",
-			"editorTreeSearch": "yL8ocG_editorTreeSearch",
-			"browser": "yL8ocG_browser",
-			"gitBadge": "yL8ocG_gitBadge",
+			"editorPathInput": "yL8ocG_editorPathInput",
+			"gitDiffHunkHeader": "yL8ocG_gitDiffHunkHeader",
+			"gitBranchSelect": "yL8ocG_gitBranchSelect",
+			"explorer": "yL8ocG_explorer",
+			"explorerRow": "yL8ocG_explorerRow",
 			"editorDownloadLink": "yL8ocG_editorDownloadLink",
-			"splitChild": "yL8ocG_splitChild",
-			"explorerHeader": "yL8ocG_explorerHeader",
-			"paneDrop": "yL8ocG_paneDrop",
-			"editorPdfStage": "yL8ocG_editorPdfStage",
-			"producedLabel": "yL8ocG_producedLabel",
-			"paneCard": "yL8ocG_paneCard",
-			"editorHtml": "yL8ocG_editorHtml",
-			"gitHeader": "yL8ocG_gitHeader",
-			"producedRow": "yL8ocG_producedRow",
-			"gitLogSubject": "yL8ocG_gitLogSubject",
-			"editorPptxButton": "yL8ocG_editorPptxButton",
-			"terminalDepsCommandRow": "yL8ocG_terminalDepsCommandRow",
-			"explorerError": "yL8ocG_explorerError",
-			"tab": "yL8ocG_tab",
-			"explorerHidden": "yL8ocG_explorerHidden",
-			"splitCol": "yL8ocG_splitCol",
-			"mermaidCopy": "yL8ocG_mermaidCopy",
-			"gitDiffNum": "yL8ocG_gitDiffNum",
-			"boundaryError": "yL8ocG_boundaryError",
-			"gitPlaceholder": "yL8ocG_gitPlaceholder",
-			"browserBlocked": "yL8ocG_browserBlocked",
-			"gitDiffExpand": "yL8ocG_gitDiffExpand",
-			"explorerName": "yL8ocG_explorerName",
-			"gitDiffFilePath": "yL8ocG_gitDiffFilePath",
-			"gitDiff": "yL8ocG_gitDiff",
-			"browserFrame": "yL8ocG_browserFrame",
-			"gitDiffMeta": "yL8ocG_gitDiffMeta",
-			"gitDiffMetaText": "yL8ocG_gitDiffMetaText",
-			"editorMain": "yL8ocG_editorMain",
-			"mermaidInfo": "yL8ocG_mermaidInfo",
-			"gitDiffLine": "yL8ocG_gitDiffLine",
-			"editorImage": "yL8ocG_editorImage",
-			"split": "yL8ocG_split",
-			"dividerCol": "yL8ocG_dividerCol",
-			"sandboxDot": "yL8ocG_sandboxDot",
 			"toggleCluster": "yL8ocG_toggleCluster",
+			"explorerDir": "yL8ocG_explorerDir",
+			"gitDiffNum": "yL8ocG_gitDiffNum",
+			"dropLeft": "yL8ocG_dropLeft",
+			"bottomResizeActive": "yL8ocG_bottomResizeActive",
+			"sandboxStatus": "yL8ocG_sandboxStatus",
+			"browserInput": "yL8ocG_browserInput",
+			"terminalBanner": "yL8ocG_terminalBanner",
+			"panelHidden": "yL8ocG_panelHidden",
+			"editorBody": "yL8ocG_editorBody",
+			"gitBadge": "yL8ocG_gitBadge",
+			"paneContent": "yL8ocG_paneContent",
+			"tabTitle": "yL8ocG_tabTitle",
+			"tabBoundaryError": "yL8ocG_tabBoundaryError",
+			"explorerSymlink": "yL8ocG_explorerSymlink",
+			"gitRow": "yL8ocG_gitRow",
+			"gitDiffCode": "yL8ocG_gitDiffCode",
+			"gitLogRef": "yL8ocG_gitLogRef",
+			"editorPdfStage": "yL8ocG_editorPdfStage",
+			"gitError": "yL8ocG_gitError",
+			"editorPdf": "yL8ocG_editorPdf",
+			"gitDiffFilePath": "yL8ocG_gitDiffFilePath",
+			"browserBar": "yL8ocG_browserBar",
+			"explorerSelected": "yL8ocG_explorerSelected",
+			"browserStart": "yL8ocG_browserStart",
+			"dividerCol": "yL8ocG_dividerCol",
+			"tabList": "yL8ocG_tabList",
+			"terminalDepsActions": "yL8ocG_terminalDepsActions",
+			"dividerActive": "yL8ocG_dividerActive",
+			"terminalDepsHint": "yL8ocG_terminalDepsHint",
+			"editorPdfFrameBlocked": "yL8ocG_editorPdfFrameBlocked",
+			"splitCol": "yL8ocG_splitCol",
+			"iconButton": "yL8ocG_iconButton",
+			"explorerRef": "yL8ocG_explorerRef",
+			"gitLogRow": "yL8ocG_gitLogRow",
+			"gitName": "yL8ocG_gitName",
+			"terminalDepsBanner": "yL8ocG_terminalDepsBanner",
+			"mermaidInfo": "yL8ocG_mermaidInfo",
+			"editorModeActive": "yL8ocG_editorModeActive",
+			"explorerHeader": "yL8ocG_explorerHeader",
+			"gitSectionHeader": "yL8ocG_gitSectionHeader",
+			"producedChip": "yL8ocG_producedChip",
+			"editorCm": "yL8ocG_editorCm",
+			"editorPptxButton": "yL8ocG_editorPptxButton",
+			"mermaidCopy": "yL8ocG_mermaidCopy",
+			"tabClose": "yL8ocG_tabClose",
+			"terminalDepsCommandRow": "yL8ocG_terminalDepsCommandRow",
+			"explorerBroken": "yL8ocG_explorerBroken",
+			"editorTreePanel": "yL8ocG_editorTreePanel",
+			"panelBody": "yL8ocG_panelBody",
+			"gitEmpty": "yL8ocG_gitEmpty",
+			"editorPdfDragShield": "yL8ocG_editorPdfDragShield",
+			"tabActive": "yL8ocG_tabActive",
+			"sandboxDot": "yL8ocG_sandboxDot",
+			"dsh-row-in": "yL8ocG_dsh-row-in",
+			"mermaidWrap": "yL8ocG_mermaidWrap",
+			"editorStatus": "yL8ocG_editorStatus",
+			"editorPdfFrame": "yL8ocG_editorPdfFrame",
+			"producedLabel": "yL8ocG_producedLabel",
+			"explorerError": "yL8ocG_explorerError",
+			"gitHeader": "yL8ocG_gitHeader",
+			"divider": "yL8ocG_divider",
+			"tabBarPlus": "yL8ocG_tabBarPlus",
+			"explorerBody": "yL8ocG_explorerBody",
+			"gitLogMeta": "yL8ocG_gitLogMeta",
+			"explorerCopied": "yL8ocG_explorerCopied",
+			"tabBadge": "yL8ocG_tabBadge",
+			"paneTabHidden": "yL8ocG_paneTabHidden",
+			"panel": "yL8ocG_panel",
+			"editor": "yL8ocG_editor",
+			"splitChild": "yL8ocG_splitChild",
+			"editorSearchInput": "yL8ocG_editorSearchInput",
+			"orphanedType": "yL8ocG_orphanedType",
+			"sandboxAction": "yL8ocG_sandboxAction",
+			"paneTab": "yL8ocG_paneTab",
+			"bottomPanel": "yL8ocG_bottomPanel",
+			"tabBarDrop": "yL8ocG_tabBarDrop",
+			"explorerRoot": "yL8ocG_explorerRoot",
+			"editorTreeResize": "yL8ocG_editorTreeResize",
+			"editorBinary": "yL8ocG_editorBinary",
+			"sandboxStatusText": "yL8ocG_sandboxStatusText",
+			"editorBinaryNotice": "yL8ocG_editorBinaryNotice",
+			"browser": "yL8ocG_browser",
 			"editorSearchHint": "yL8ocG_editorSearchHint",
 			"browserBlockedDesc": "yL8ocG_browserBlockedDesc",
-			"editorPdfDragShieldActive": "yL8ocG_editorPdfDragShieldActive",
-			"mermaidHeader": "yL8ocG_mermaidHeader",
-			"explorer": "yL8ocG_explorer",
-			"gitRowMain": "yL8ocG_gitRowMain",
-			"panelResizeActive": "yL8ocG_panelResizeActive",
-			"terminalRetry": "yL8ocG_terminalRetry",
-			"browserInput": "yL8ocG_browserInput",
-			"gitDiffAdd": "yL8ocG_gitDiffAdd",
+			"browserBlockedTitle": "yL8ocG_browserBlockedTitle",
 			"mermaidModalToolbar": "yL8ocG_mermaidModalToolbar",
-			"dividerRow": "yL8ocG_dividerRow",
-			"paneTab": "yL8ocG_paneTab",
-			"editorModeButton": "yL8ocG_editorModeButton",
-			"terminalDepsTitle": "yL8ocG_terminalDepsTitle",
-			"gitBranchSelect": "yL8ocG_gitBranchSelect",
-			"gitDiffHunkSection": "yL8ocG_gitDiffHunkSection",
-			"dividerActive": "yL8ocG_dividerActive",
-			"panelBody": "yL8ocG_panelBody",
+			"mermaidModalButton": "yL8ocG_mermaidModalButton",
 			"bottomPanelHidden": "yL8ocG_bottomPanelHidden",
-			"tabBarPlus": "yL8ocG_tabBarPlus",
-			"mermaidError": "yL8ocG_mermaidError",
-			"gitError": "yL8ocG_gitError",
-			"gitDiffHunkHeader": "yL8ocG_gitDiffHunkHeader",
-			"editorStatus": "yL8ocG_editorStatus",
-			"toggleButton": "yL8ocG_toggleButton",
+			"selectionPopup": "yL8ocG_selectionPopup",
+			"editorPdfToolbar": "yL8ocG_editorPdfToolbar",
+			"splitRow": "yL8ocG_splitRow",
+			"terminalBannerUrl": "yL8ocG_terminalBannerUrl",
+			"terminalRetry": "yL8ocG_terminalRetry",
+			"editorTreeToggleActive": "yL8ocG_editorTreeToggleActive",
+			"editorModeButton": "yL8ocG_editorModeButton",
+			"mermaidMarkdown": "yL8ocG_mermaidMarkdown",
 			"gitLink": "yL8ocG_gitLink",
+			"terminalDepsTitle": "yL8ocG_terminalDepsTitle",
+			"mermaidCode": "yL8ocG_mermaidCode",
+			"gitDiffFileTag": "yL8ocG_gitDiffFileTag",
+			"sandboxStatusOff": "yL8ocG_sandboxStatusOff",
+			"git": "yL8ocG_git",
+			"dropDown": "yL8ocG_dropDown",
 			"gitDiffCtx": "yL8ocG_gitDiffCtx",
-			"mermaidModalHint": "yL8ocG_mermaidModalHint",
-			"gitCommitButton": "yL8ocG_gitCommitButton",
-			"sandboxAction": "yL8ocG_sandboxAction",
-			"dropRight": "yL8ocG_dropRight",
-			"bottomResize": "yL8ocG_bottomResize",
-			"gitCommitInput": "yL8ocG_gitCommitInput",
-			"dropCenter": "yL8ocG_dropCenter",
-			"gitDiffHunk": "yL8ocG_gitDiffHunk",
-			"bottomClose": "yL8ocG_bottomClose",
-			"editorTitle": "yL8ocG_editorTitle",
-			"cornerHandle": "yL8ocG_cornerHandle",
-			"editorCmHidden": "yL8ocG_editorCmHidden",
-			"mermaidBody": "yL8ocG_mermaidBody",
+			"editorMd": "yL8ocG_editorMd",
+			"gitDiffAdd": "yL8ocG_gitDiffAdd",
+			"gitDiffMeta": "yL8ocG_gitDiffMeta",
+			"gitLogLine2": "yL8ocG_gitLogLine2",
+			"gitLogMore": "yL8ocG_gitLogMore",
+			"producedRow": "yL8ocG_producedRow",
 			"producedMore": "yL8ocG_producedMore",
-			"gitDiffDel": "yL8ocG_gitDiffDel",
-			"gitDiffTab": "yL8ocG_gitDiffTab"
+			"panelResizeActive": "yL8ocG_panelResizeActive",
+			"browserBlockedActions": "yL8ocG_browserBlockedActions",
+			"mermaidBody": "yL8ocG_mermaidBody",
+			"terminal": "yL8ocG_terminal",
+			"dropUp": "yL8ocG_dropUp",
+			"gitPlaceholder": "yL8ocG_gitPlaceholder",
+			"gitDiffTab": "yL8ocG_gitDiffTab",
+			"browserBlockedButton": "yL8ocG_browserBlockedButton",
+			"editorCmHidden": "yL8ocG_editorCmHidden",
+			"browserFrame": "yL8ocG_browserFrame",
+			"browserMessage": "yL8ocG_browserMessage",
+			"gitDiffFileOld": "yL8ocG_gitDiffFileOld",
+			"gitLogLine1": "yL8ocG_gitLogLine1",
+			"mermaidHeader": "yL8ocG_mermaidHeader",
+			"dividerRow": "yL8ocG_dividerRow",
+			"toggleButton": "yL8ocG_toggleButton",
+			"gitLogSubject": "yL8ocG_gitLogSubject",
+			"dropRight": "yL8ocG_dropRight",
+			"editorTreePanelFull": "yL8ocG_editorTreePanelFull",
+			"mermaidError": "yL8ocG_mermaidError",
+			"gitDiffLine": "yL8ocG_gitDiffLine",
+			"editorDocxZoomRange": "yL8ocG_editorDocxZoomRange",
+			"editorBanner": "yL8ocG_editorBanner"
 		};
 		//#endregion
 		//#region src/client/intercept.tsx
@@ -5395,57 +5395,57 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var SubagentView_module_css_default = {
-			"subagentTitle": "pMEqhG_subagentTitle",
-			"subagentNode": "pMEqhG_subagentNode",
+			"jobsRowMain": "pMEqhG_jobsRowMain",
+			"jobsPaneHeader": "pMEqhG_jobsPaneHeader",
+			"jobsPaneLabel": "pMEqhG_jobsPaneLabel",
+			"subagentChildren": "pMEqhG_subagentChildren",
+			"jobsContent": "pMEqhG_jobsContent",
+			"subagentHeader": "pMEqhG_subagentHeader",
+			"jobsKillArmed": "pMEqhG_jobsKillArmed",
 			"subagentRefresh": "pMEqhG_subagentRefresh",
-			"subagentBody": "pMEqhG_subagentBody",
+			"subagentLiveArgs": "pMEqhG_subagentLiveArgs",
 			"subagentError": "pMEqhG_subagentError",
+			"jobsPaneStatus": "pMEqhG_jobsPaneStatus",
+			"jobsDot": "pMEqhG_jobsDot",
+			"subagentEmptyHint": "pMEqhG_subagentEmptyHint",
+			"subagentSecondary": "pMEqhG_subagentSecondary",
 			"jobsLabel": "pMEqhG_jobsLabel",
-			"subagentDot": "pMEqhG_subagentDot",
-			"subagentErrorRetry": "pMEqhG_subagentErrorRetry",
-			"jobsRow": "pMEqhG_jobsRow",
-			"subagentEmpty": "pMEqhG_subagentEmpty",
+			"jobsCount": "pMEqhG_jobsCount",
+			"subagentRowLoading": "pMEqhG_subagentRowLoading",
+			"subagentLiveTool": "pMEqhG_subagentLiveTool",
+			"subagentRowActive": "pMEqhG_subagentRowActive",
+			"subagentLiveText": "pMEqhG_subagentLiveText",
+			"jobsList": "pMEqhG_jobsList",
+			"jobsHeader": "pMEqhG_jobsHeader",
+			"jobsLabelLine": "pMEqhG_jobsLabelLine",
+			"jobsKind": "pMEqhG_jobsKind",
+			"jobsSecondary": "pMEqhG_jobsSecondary",
+			"jobsKill": "pMEqhG_jobsKill",
+			"subagentContent": "pMEqhG_subagentContent",
 			"jobsPaneDot": "pMEqhG_jobsPaneDot",
 			"jobsPaneClose": "pMEqhG_jobsPaneClose",
-			"subagentRowLoading": "pMEqhG_subagentRowLoading",
-			"subagentCount": "pMEqhG_subagentCount",
-			"jobsPaneHint": "pMEqhG_jobsPaneHint",
-			"subagentRowActive": "pMEqhG_subagentRowActive",
-			"subagentLiveArgs": "pMEqhG_subagentLiveArgs",
-			"jobsPaneError": "pMEqhG_jobsPaneError",
-			"jobsPane": "pMEqhG_jobsPane",
-			"jobsRowSettled": "pMEqhG_jobsRowSettled",
-			"jobsPaneHeader": "pMEqhG_jobsPaneHeader",
-			"subagentHeader": "pMEqhG_subagentHeader",
-			"subagentContent": "pMEqhG_subagentContent",
-			"subagentLiveTool": "pMEqhG_subagentLiveTool",
-			"jobsKillError": "pMEqhG_jobsKillError",
-			"jobsDot": "pMEqhG_jobsDot",
-			"jobsRowMain": "pMEqhG_jobsRowMain",
 			"jobsRowSelected": "pMEqhG_jobsRowSelected",
-			"jobs": "pMEqhG_jobs",
-			"jobsContent": "pMEqhG_jobsContent",
-			"subagent": "pMEqhG_subagent",
-			"subagentEmptyHint": "pMEqhG_subagentEmptyHint",
-			"jobsList": "pMEqhG_jobsList",
-			"jobsLabelLine": "pMEqhG_jobsLabelLine",
+			"jobsRow": "pMEqhG_jobsRow",
+			"subagentDot": "pMEqhG_subagentDot",
+			"jobsPaneHint": "pMEqhG_jobsPaneHint",
 			"subagentLive": "pMEqhG_subagentLive",
-			"subagentRow": "pMEqhG_subagentRow",
-			"jobsSecondary": "pMEqhG_jobsSecondary",
-			"jobsHeader": "pMEqhG_jobsHeader",
-			"subagentLiveText": "pMEqhG_subagentLiveText",
-			"jobsKind": "pMEqhG_jobsKind",
-			"jobsKillArmed": "pMEqhG_jobsKillArmed",
-			"jobsPaneLabel": "pMEqhG_jobsPaneLabel",
-			"jobsPaneStatus": "pMEqhG_jobsPaneStatus",
+			"jobsPaneError": "pMEqhG_jobsPaneError",
 			"subagentLabel": "pMEqhG_subagentLabel",
-			"subagentRowDisabled": "pMEqhG_subagentRowDisabled",
-			"jobsTitle": "pMEqhG_jobsTitle",
-			"subagentSecondary": "pMEqhG_subagentSecondary",
-			"jobsCount": "pMEqhG_jobsCount",
-			"jobsKill": "pMEqhG_jobsKill",
 			"jobsPanePre": "pMEqhG_jobsPanePre",
-			"subagentChildren": "pMEqhG_subagentChildren"
+			"subagentNode": "pMEqhG_subagentNode",
+			"jobsKillError": "pMEqhG_jobsKillError",
+			"jobsTitle": "pMEqhG_jobsTitle",
+			"subagentBody": "pMEqhG_subagentBody",
+			"jobsPane": "pMEqhG_jobsPane",
+			"subagentTitle": "pMEqhG_subagentTitle",
+			"subagentRow": "pMEqhG_subagentRow",
+			"subagentErrorRetry": "pMEqhG_subagentErrorRetry",
+			"jobs": "pMEqhG_jobs",
+			"subagentCount": "pMEqhG_subagentCount",
+			"subagent": "pMEqhG_subagent",
+			"subagentRowDisabled": "pMEqhG_subagentRowDisabled",
+			"subagentEmpty": "pMEqhG_subagentEmpty",
+			"jobsRowSettled": "pMEqhG_jobsRowSettled"
 		};
 		//#endregion
 		//#region src/client/SubagentView.tsx
@@ -8606,26 +8606,125 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
+		//#region src/client/choice-popup.ts
+		let currentCleanup = null;
+		/** 关闭当前浮窗（若有）。 */
+		function closeChoicePopup() {
+			if (currentCleanup !== null) {
+				const cleanup = currentCleanup;
+				currentCleanup = null;
+				cleanup();
+			}
+		}
+		/** 在 (x, y) 处弹出双按钮选择浮窗。 */
+		function showChoicePopup(x, y, actions) {
+			closeChoicePopup();
+			const overlay = document.createElement("div");
+			overlay.setAttribute("data-dbs-choice-overlay", "1");
+			overlay.style.cssText = "position:fixed;inset:0;z-index:99998;background:transparent;";
+			const card = document.createElement("div");
+			card.setAttribute("data-dbs-choice-card", "1");
+			card.style.cssText = [
+				"position:fixed",
+				"z-index:99999",
+				"display:flex",
+				"flex-direction:column",
+				"gap:4px",
+				"min-width:148px",
+				"padding:6px",
+				"border-radius:10px",
+				"background:var(--dsw-alias-bg-layer-2, #1b1f27)",
+				"border:1px solid var(--dsw-alias-border-l2, rgba(255,255,255,0.12))",
+				"box-shadow:0 12px 32px rgba(0,0,0,0.45)",
+				"font-family:var(--dsw-alias-font-family, system-ui, sans-serif)"
+			].join(";");
+			const btnStyle = [
+				"border:none",
+				"border-radius:7px",
+				"padding:7px 12px",
+				"font-size:13px",
+				"text-align:left",
+				"cursor:pointer",
+				"color:var(--dsw-alias-label-primary, #e6e9f0)",
+				"background:transparent"
+			].join(";");
+			const btnHover = [
+				"border:none",
+				"border-radius:7px",
+				"padding:7px 12px",
+				"font-size:13px",
+				"text-align:left",
+				"cursor:pointer",
+				"color:var(--dsw-alias-label-primary, #e6e9f0)",
+				"background:var(--dsw-alias-bg-layer-1, rgba(255,255,255,0.08))"
+			].join(";");
+			const buttons = [];
+			for (const action of actions) {
+				const button = document.createElement("button");
+				button.type = "button";
+				button.textContent = action.label;
+				button.style.cssText = btnStyle;
+				button.addEventListener("mouseenter", () => {
+					button.style.cssText = btnHover;
+				});
+				button.addEventListener("mouseleave", () => {
+					button.style.cssText = btnStyle;
+				});
+				button.addEventListener("click", (event) => {
+					event.stopPropagation();
+					closeChoicePopup();
+					action.onPick();
+				});
+				card.appendChild(button);
+				buttons.push(button);
+			}
+			const dispose = () => {
+				overlay.remove();
+				card.remove();
+				window.removeEventListener("keydown", onKeydown);
+			};
+			const onKeydown = (event) => {
+				if (event.key === "Escape") closeChoicePopup();
+			};
+			overlay.addEventListener("mousedown", () => {
+				closeChoicePopup();
+			});
+			window.addEventListener("keydown", onKeydown);
+			document.body.appendChild(overlay);
+			document.body.appendChild(card);
+			const margin = 10;
+			const rect = card.getBoundingClientRect();
+			let left = x + margin;
+			let top = y + margin;
+			if (left + rect.width > window.innerWidth - margin) left = Math.max(margin, x - rect.width - margin);
+			if (top + rect.height > window.innerHeight - margin) top = Math.max(margin, y - rect.height - margin);
+			card.style.left = `${left}px`;
+			card.style.top = `${top}px`;
+			buttons[0]?.focus();
+			currentCleanup = dispose;
+		}
+		//#endregion
 		//#region src/client/link-intercept.ts
 		/**
 		* Chat/GUI external-link interception: clicking an http(s) link that points
-		* OUTSIDE the GUI (chat messages, tool rows, prose mentions) opens the
-		* sidebar instead of a new browser tab. Gated by the caller through
-		* `takeoverEnabled(url)` — the `browserInterceptLinks` master, the URL's
-		* protocol flag (`browserInterceptHttp` / `browserInterceptHttps`) and the
-		* target tab's enable switch — and a Ctrl/Cmd/Shift/Alt-modified click
-		* always bypasses the takeover so the user can still force a real browser
-		* tab.
+		* OUTSIDE the GUI (chat messages, tool rows, prose mentions) shows a
+		* two-button choice (new tab / sidebar) instead of silently redirecting
+		* into the sidebar — the silent takeover was reported as "点不动". Gated by
+		* the caller through `takeoverEnabled(url)` — the `browserInterceptLinks`
+		* master, the URL's protocol flag (`browserInterceptHttp` /
+		* `browserInterceptHttps`) and the target tab's enable switch — and a
+		* Ctrl/Cmd/Shift/Alt-modified click always bypasses the takeover so the
+		* user can still force a real browser tab.
 		*
 		* Only the GUI's OWN document is watched — links inside the browser tab's
 		* sandboxed iframe live in another document and never bubble here (and
 		* their clicks must keep working inside the sidebar).
 		*/
-		/** The pure decision: the URL to open in the sidebar, or null to let the
-		*  click fall through. Extracted so the policy is unit-testable without a
-		*  DOM. `anchorHref` must be the ABSOLUTE href (`<a>.href` already is).
-		*  The protocol/same-origin policy lives HERE; the prefs gates (master +
-		*  protocol flags + target enablement) live in the caller's
+		/** The pure decision: the URL to route through the choice popup, or null to
+		*  let the click fall through. Extracted so the policy is unit-testable
+		*  without a DOM. `anchorHref` must be the ABSOLUTE href (`<a>.href` already
+		*  is). The protocol/same-origin policy lives HERE; the prefs gates (master
+		*  + protocol flags + target enablement) live in the caller's
 		*  `takeoverEnabled(url)` callback. */
 		function shouldInterceptLink(anchorHref, selfOrigin) {
 			let url;
@@ -8646,7 +8745,8 @@ window.__ModuleLoader__.load({
 		}
 		/**
 		* Register the document-level click capture that funnels external links
-		* into the sidebar. Returns the disposer (HMR-safe).
+		* into a two-button choice (new tab / sidebar). Returns the disposer
+		* (HMR-safe).
 		*/
 		function registerLinkInterception(opts) {
 			const onClick = (event) => {
@@ -8660,7 +8760,19 @@ window.__ModuleLoader__.load({
 				if (url === null) return;
 				if (!opts.takeoverEnabled(new URL(url))) return;
 				event.preventDefault();
-				opts.openInSidebar(url);
+				event.stopPropagation();
+				const rect = anchor.getBoundingClientRect();
+				showChoicePopup(rect.left, rect.bottom, [{
+					label: "新标签页打开",
+					onPick: () => {
+						window.open(url, "_blank", "noopener");
+					}
+				}, {
+					label: "侧边栏打开",
+					onPick: () => {
+						opts.openInSidebar(url);
+					}
+				}]);
 			};
 			document.addEventListener("click", onClick, true);
 			return () => {
@@ -8712,6 +8824,62 @@ window.__ModuleLoader__.load({
 			return () => {
 				document.removeEventListener("keydown", onKey, true);
 				document.removeEventListener("keyup", onKey, true);
+			};
+		}
+		//#endregion
+		//#region src/client/produced-intercept.ts
+		/**
+		* produced-intercept — 回合结束产物 chips 的点击拦截。
+		*
+		* 官方 ui-deliverables 把一轮的产出文件渲染为 `[data-produced-files-row]`
+		* 内的 chips（title 为完整路径，点击走官方 openFile，常表现为「点不动」）。
+		* 本模块在 document capture 阶段拦截点击：先删掉默认行为，弹双按钮
+		* 「侧边栏编辑器打开 / 系统打开」，由用户显式选择。
+		*
+		* 产物是本地文件（文本类），第一动作永远是侧边栏编辑器；「系统打开」
+		* 走 webui 的 file-explorer open-in-explorer 路由（整合包内可用）。
+		*/
+		/** 提取路径的 basename（同时兼容 / 与 \ 分隔）。 */
+		function basenameOf(path) {
+			const normalized = path.replace(/\\/g, "/");
+			return normalized.slice(normalized.lastIndexOf("/") + 1);
+		}
+		/**
+		* Register the document-level click capture for produced-file chips.
+		* Returns the disposer (HMR-safe).
+		*/
+		function registerProducedInterception(opts) {
+			const onClick = (event) => {
+				if (event.defaultPrevented) return;
+				if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+				const target = event.target;
+				if (target === null || typeof target.closest !== "function") return;
+				const chip = target.closest("[data-produced-files-row] button[title]");
+				if (chip === null) return;
+				const path = chip.getAttribute("title") ?? "";
+				if (path === "") return;
+				event.preventDefault();
+				event.stopPropagation();
+				const rect = chip.getBoundingClientRect();
+				showChoicePopup(rect.left, rect.bottom, [{
+					label: "侧边栏编辑器打开",
+					onPick: () => {
+						opts.openInEditor(path);
+					}
+				}, {
+					label: "系统打开",
+					onPick: () => {
+						fetch("/api/file-explorer/open-in-explorer", {
+							method: "POST",
+							headers: { "content-type": "application/json" },
+							body: JSON.stringify({ path })
+						}).catch(() => {});
+					}
+				}]);
+			};
+			document.addEventListener("click", onClick, true);
+			return () => {
+				document.removeEventListener("click", onClick, true);
 			};
 		}
 		//#endregion
@@ -8934,67 +9102,67 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var SideCardSection_module_css_default = {
-			"cardDesc": "IBFzUa_cardDesc",
-			"rowText": "IBFzUa_rowText",
-			"cardTop": "IBFzUa_cardTop",
-			"control": "IBFzUa_control",
-			"pluginList": "IBFzUa_pluginList",
-			"versionBadgeTag": "IBFzUa_versionBadgeTag",
-			"suffix": "IBFzUa_suffix",
-			"switch": "IBFzUa_switch",
 			"switchTrack": "IBFzUa_switchTrack",
-			"cardCheck": "IBFzUa_cardCheck",
-			"switchThumb": "IBFzUa_switchThumb",
-			"popupRows": "IBFzUa_popupRows",
-			"desc": "IBFzUa_desc",
-			"done": "IBFzUa_done",
-			"pluginModal": "IBFzUa_pluginModal",
-			"typedInputNumber": "IBFzUa_typedInputNumber",
-			"cardTitle": "IBFzUa_cardTitle",
-			"selectOption": "IBFzUa_selectOption",
-			"versionBadgeName": "IBFzUa_versionBadgeName",
-			"error": "IBFzUa_error",
-			"cardGear": "IBFzUa_cardGear",
-			"count": "IBFzUa_count",
-			"rowGear": "IBFzUa_rowGear",
-			"row": "IBFzUa_row",
-			"cardWithGear": "IBFzUa_cardWithGear",
-			"pluginEntry": "IBFzUa_pluginEntry",
-			"popupRow": "IBFzUa_popupRow",
-			"pluginGroupHeading": "IBFzUa_pluginGroupHeading",
-			"card": "IBFzUa_card",
-			"typedInput": "IBFzUa_typedInput",
-			"section": "IBFzUa_section",
-			"selectOptionIcon": "IBFzUa_selectOptionIcon",
-			"addCard": "IBFzUa_addCard",
-			"pluginEntryHead": "IBFzUa_pluginEntryHead",
-			"pluginGroup": "IBFzUa_pluginGroup",
-			"cardOn": "IBFzUa_cardOn",
-			"group": "IBFzUa_group",
-			"groupHeading": "IBFzUa_groupHeading",
-			"intro": "IBFzUa_intro",
-			"cardIconChip": "IBFzUa_cardIconChip",
-			"title": "IBFzUa_title",
-			"selectAnchorIcon": "IBFzUa_selectAnchorIcon",
-			"pluginName": "IBFzUa_pluginName",
-			"pluginEntries": "IBFzUa_pluginEntries",
-			"cardMain": "IBFzUa_cardMain",
-			"popupDialog": "IBFzUa_popupDialog",
-			"selectAnchorText": "IBFzUa_selectAnchorText",
-			"switchInput": "IBFzUa_switchInput",
-			"selectOptionText": "IBFzUa_selectOptionText",
-			"pluginSearch": "IBFzUa_pluginSearch",
-			"versionBadge": "IBFzUa_versionBadge",
-			"pluginEmpty": "IBFzUa_pluginEmpty",
-			"grid": "IBFzUa_grid",
-			"percentInput": "IBFzUa_percentInput",
-			"pluginEntryActions": "IBFzUa_pluginEntryActions",
-			"pluginJumpBtn": "IBFzUa_pluginJumpBtn",
-			"pluginDesc": "IBFzUa_pluginDesc",
-			"pluginTopicBtn": "IBFzUa_pluginTopicBtn",
-			"pluginInstall": "IBFzUa_pluginInstall",
 			"pluginCopyBtn": "IBFzUa_pluginCopyBtn",
-			"selectAnchor": "IBFzUa_selectAnchor"
+			"desc": "IBFzUa_desc",
+			"selectAnchor": "IBFzUa_selectAnchor",
+			"section": "IBFzUa_section",
+			"cardGear": "IBFzUa_cardGear",
+			"cardTop": "IBFzUa_cardTop",
+			"typedInputNumber": "IBFzUa_typedInputNumber",
+			"groupHeading": "IBFzUa_groupHeading",
+			"addCard": "IBFzUa_addCard",
+			"versionBadgeName": "IBFzUa_versionBadgeName",
+			"pluginDesc": "IBFzUa_pluginDesc",
+			"versionBadge": "IBFzUa_versionBadge",
+			"cardMain": "IBFzUa_cardMain",
+			"cardOn": "IBFzUa_cardOn",
+			"switch": "IBFzUa_switch",
+			"done": "IBFzUa_done",
+			"typedInput": "IBFzUa_typedInput",
+			"pluginEntry": "IBFzUa_pluginEntry",
+			"pluginGroup": "IBFzUa_pluginGroup",
+			"selectAnchorIcon": "IBFzUa_selectAnchorIcon",
+			"cardIconChip": "IBFzUa_cardIconChip",
+			"switchInput": "IBFzUa_switchInput",
+			"error": "IBFzUa_error",
+			"rowText": "IBFzUa_rowText",
+			"grid": "IBFzUa_grid",
+			"pluginEntryHead": "IBFzUa_pluginEntryHead",
+			"cardWithGear": "IBFzUa_cardWithGear",
+			"switchThumb": "IBFzUa_switchThumb",
+			"card": "IBFzUa_card",
+			"row": "IBFzUa_row",
+			"control": "IBFzUa_control",
+			"popupRow": "IBFzUa_popupRow",
+			"versionBadgeTag": "IBFzUa_versionBadgeTag",
+			"group": "IBFzUa_group",
+			"cardCheck": "IBFzUa_cardCheck",
+			"title": "IBFzUa_title",
+			"pluginTopicBtn": "IBFzUa_pluginTopicBtn",
+			"popupRows": "IBFzUa_popupRows",
+			"selectAnchorText": "IBFzUa_selectAnchorText",
+			"pluginName": "IBFzUa_pluginName",
+			"pluginList": "IBFzUa_pluginList",
+			"pluginEntryActions": "IBFzUa_pluginEntryActions",
+			"intro": "IBFzUa_intro",
+			"percentInput": "IBFzUa_percentInput",
+			"pluginSearch": "IBFzUa_pluginSearch",
+			"pluginJumpBtn": "IBFzUa_pluginJumpBtn",
+			"selectOptionText": "IBFzUa_selectOptionText",
+			"suffix": "IBFzUa_suffix",
+			"selectOption": "IBFzUa_selectOption",
+			"pluginInstall": "IBFzUa_pluginInstall",
+			"selectOptionIcon": "IBFzUa_selectOptionIcon",
+			"pluginEntries": "IBFzUa_pluginEntries",
+			"pluginEmpty": "IBFzUa_pluginEmpty",
+			"popupDialog": "IBFzUa_popupDialog",
+			"rowGear": "IBFzUa_rowGear",
+			"cardDesc": "IBFzUa_cardDesc",
+			"count": "IBFzUa_count",
+			"pluginGroupHeading": "IBFzUa_pluginGroupHeading",
+			"cardTitle": "IBFzUa_cardTitle",
+			"pluginModal": "IBFzUa_pluginModal"
 		};
 		//#endregion
 		//#region src/client/add-plugin-modal.tsx
@@ -10321,6 +10489,20 @@ window.__ModuleLoader__.load({
 						return;
 					}
 				}, "dsh-better-sidebar: link interception");
+				ctx.effect(() => {
+					try {
+						return registerProducedInterception({ openInEditor: (path) => {
+							ctx.betterSidebar?.openTab({
+								type: "editor",
+								path,
+								title: basenameOf(path)
+							});
+						} });
+					} catch (error) {
+						fail("produced interception", error);
+						return;
+					}
+				}, "dsh-better-sidebar: produced-file interception");
 				ctx.effect(() => {
 					try {
 						return registerImeGuard();
