@@ -290695,8 +290695,8 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				if (document.querySelector(`.${PANEL_CLASS}`) === null) {
 					const fresh = ensurePanel();
 					if (fresh !== null) wireHeader(fresh);
+					render();
 				}
-				render();
 			});
 			observer.observe(document.body, {
 				childList: true,
