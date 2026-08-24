@@ -47,51 +47,34 @@
 > 其 activity scanner 在历史日志异常后会反复全局扫描导致 UI 假死；
 > host 不挂载、client 不内嵌，行为与多插件时代完全一致。
 
-## 🧩 功能模块 key 一览
+## 🧩 功能开关结构
 
-> 整合包内置统一的模块开关：**缺省启用，显式关闭才停用**。host 与 client
-> 两侧按同一份语义裁剪，逐项开关即可按需启用或停用具体功能（如对话
-> 胶囊、会话置顶、提示词优化等），无需改动配置结构。
+整合包对外是一个插件，内部保留 11 个子插件各自的设置与开关。开关分两层：
 
-<table>
-  <thead>
-    <tr><th width="24%">分组</th><th width="22%">key</th><th>控制的功能</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>对话体验</td><td><code>messageWidth</code></td><td>消息气泡宽度设置</td></tr>
-    <tr><td></td><td><code>doneSound</code></td><td>回合结束提示音 + 完成卡片</td></tr>
-    <tr><td></td><td><code>donePill</code></td><td>对话完成胶囊 + 记录面板</td></tr>
-    <tr><td></td><td><code>approvalNotify</code></td><td>审批等待 toast 提醒</td></tr>
-    <tr><td></td><td><code>ctrlEnter</code></td><td>输入框 Ctrl+Enter 换行</td></tr>
-    <tr><td></td><td><code>sessionMotion</code></td><td>会话切换柔和过渡</td></tr>
-    <tr><td></td><td><code>sessionPin</code></td><td>会话置顶 / 归档 / 右键菜单</td></tr>
-    <tr><td></td><td><code>rewind</code></td><td>对话退回（文件回退 + 上下文分支）</td></tr>
-    <tr><td></td><td><code>screenshot</code></td><td>单条消息截图 / 会话长图</td></tr>
-    <tr><td></td><td><code>promptOptimize</code></td><td>提示词优化图标</td></tr>
-    <tr><td></td><td><code>zhThinking</code></td><td>中文思考开关</td></tr>
-    <tr><td></td><td><code>peakValley</code></td><td>DeepSeek 峰谷时刻卡片</td></tr>
-    <tr><td></td><td><code>chatStats</code></td><td>会话统计条</td></tr>
-    <tr><td></td><td><code>toolSummary</code></td><td>工具调用聚合 + 活动抽屉</td></tr>
-    <tr><td>模型与供应商</td><td><code>reasoningSync</code></td><td>`webui_sync_reasoning` 推理等级补全工具</td></tr>
-    <tr><td></td><td><code>modelSeats</code></td><td>模型座位接管 + 推理等级弹出</td></tr>
-    <tr><td></td><td><code>providerHub</code></td><td>供应商管理设置页</td></tr>
-    <tr><td></td><td><code>vision</code></td><td>辅助视觉 + 生图 + 生视频 + 生图画廊</td></tr>
-    <tr><td></td><td><code>webSearch</code></td><td>AnySearch 网页搜索</td></tr>
-    <tr><td></td><td><code>mail</code></td><td>邮箱验证码</td></tr>
-    <tr><td>技能</td><td><code>skills</code></td><td>技能 slash 两级导航源 + 技能开关路由</td></tr>
-    <tr><td>AI 浏览器</td><td><code>browser</code></td><td>浏览器工具 + dock UI + 设置开关</td></tr>
-    <tr><td>自动化与计划</td><td><code>automation</code></td><td>自动化任务 + 真实执行引擎</td></tr>
-    <tr><td></td><td><code>planweave</code></td><td>PlanWeave 计划项目</td></tr>
-    <tr><td>记忆</td><td><code>memory</code></td><td>记忆引擎 + Memory Dream</td></tr>
-    <tr><td>用量与统计</td><td><code>usage</code></td><td>用量工作台</td></tr>
-    <tr><td>文件与工作区</td><td><code>fileExplorer</code></td><td>文件浏览器</td></tr>
-    <tr><td></td><td><code>dirPicker</code></td><td>工作区目录选择器</td></tr>
-    <tr><td>外观与壳</td><td><code>appearance</code></td><td>玻璃质感主题</td></tr>
-    <tr><td></td><td><code>sidebarFloat</code></td><td>悬浮侧边栏</td></tr>
-    <tr><td></td><td><code>updater</code></td><td>壳管理更新</td></tr>
-    <tr><td></td><td><code>proxy</code></td><td>网络代理</td></tr>
-  </tbody>
-</table>
+**第一层 · 子插件级**（设置 → Ventus 插件 / 对应设置卡）
+
+| 子插件 | 开关位置 | 关掉后的效果 |
+|---|---|---|
+| `dsh-theme-endfield` | 主题设置卡「启用主题」 | 恢复官方外观，等高线/水印/雷霆大字一并停用 |
+| `dsh-deepseek-usage` | Ventus 设置卡「启用用量监测」 | 悬浮球与用量面板隐藏，停止后台轮询 |
+| `dsh-ventus-search` | Ventus 搜索卡总开关 | 搜索与抓取 provider 立即不可用 |
+| `dsh-ventus-whale` | 桌宠设置卡 | 3D 桌宠不挂载 |
+| `dsh-ventus-progress` | 进度设置卡 | 子代理进度条不渲染 |
+| `dsh-better-sidebar` | 右侧栏设置卡 | 右侧重栏（文件/终端/Git/浏览器）不挂载 |
+| `@dsh-external/dsh-webui` | 见第二层 | 逐项裁剪工具链功能 |
+
+**第二层 · webui 工具链细分**（缺省启用，显式关闭才停用；host 与 client 同一份语义）
+
+| 分组 | 可关闭的功能 |
+|---|---|
+| 对话体验 | 消息宽度、完成提示音、完成胶囊、审批提醒、Ctrl+Enter、会话切换过渡、置顶归档、对话退回、消息截图、提示词优化、中文思考、峰谷卡片、统计条、工具聚合 |
+| 模型与供应商 | 推理等级同步、模型座位、供应商管理、辅助视觉/生图、AnySearch、邮箱验证码 |
+| 技能与浏览器 | 技能导航、AI 浏览器 |
+| 自动化与记忆 | 自动化任务、PlanWeave、记忆引擎 |
+| 用量与文件 | 用量工作台、文件浏览器、目录选择器 |
+| 外观与系统 | 玻璃质感、悬浮侧边栏、壳更新、网络代理 |
+
+> 单独安装某个子插件时，它自己的开关照旧可用；整合安装则统一从上面两层入口管理。
 
 ### 各功能能力明细
 
