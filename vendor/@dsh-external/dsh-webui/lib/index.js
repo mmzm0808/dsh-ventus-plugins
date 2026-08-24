@@ -7019,7 +7019,7 @@ Service.init;
 * - HTTP API：GET /api/zh-thinking → { enabled }；POST { enabled } → 更新
 */
 const INSTRUCTION = "重要:你的全部内部思考过程(reasoning/thinking)必须使用中文书写,与用户当前使用的语言保持一致。仅代码、标识符、文件名、专有名词、技术术语可以保留英文。";
-function readBody$7(req) {
+function readBody$8(req) {
 	return new Promise((resolve) => {
 		let data = "";
 		req.on("data", (chunk) => {
@@ -7060,7 +7060,7 @@ function applyZhThinking(ctx) {
 		handler: async (req, res) => {
 			try {
 				if (req.method === "POST") {
-					const body = await readBody$7(req);
+					const body = await readBody$8(req);
 					if (body && typeof body.enabled === "boolean" && scope !== void 0) await scope.update({ enabled: body.enabled });
 				}
 				const payload = JSON.stringify({
@@ -9810,7 +9810,7 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/inject-state") {
-			const body = await readBody$6(req);
+			const body = await readBody$7(req);
 			const sessionId = requireString$1(body.sessionId, "sessionId");
 			const enabled = body.enabled !== false;
 			await store.setInjectEnabled(sessionId, enabled);
@@ -9821,7 +9821,7 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/pin") {
-			const body = await readBody$6(req);
+			const body = await readBody$7(req);
 			const entryId = requireString$1(body.entryId, "entryId");
 			const pinned = body.pinned !== false;
 			const entry = await store.patchEntry(entryId, { pinned });
@@ -9833,7 +9833,7 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/update") {
-			const body = await readBody$6(req);
+			const body = await readBody$7(req);
 			const entryId = requireString$1(body.entryId, "entryId");
 			const patch = {};
 			if (typeof body.content === "string" && body.content.trim() !== "") patch.content = body.content.trim();
@@ -9859,7 +9859,7 @@ async function handle$6(ctx, store, config, req, res) {
 		if (method === "POST" && rest === "/consolidate") {
 			json$5(res, 200, {
 				ok: true,
-				...await consolidateMemory(ctx, store, await readBody$6(req)),
+				...await consolidateMemory(ctx, store, await readBody$7(req)),
 				undoable: true,
 				at: consolidateUndo?.at ?? null
 			});
@@ -9924,7 +9924,7 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/move") {
-			const body = await readBody$6(req);
+			const body = await readBody$7(req);
 			const entryId = requireString$1(body.entryId, "entryId");
 			const existing = await store.getEntry(entryId);
 			if (existing === void 0) throw new Error(`记忆不存在：${entryId}`);
@@ -9965,7 +9965,7 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/delete") {
-			const entryId = requireString$1((await readBody$6(req)).entryId, "entryId");
+			const entryId = requireString$1((await readBody$7(req)).entryId, "entryId");
 			const existing = await store.getEntry(entryId);
 			if (existing === void 0) {
 				json$5(res, 200, {
@@ -9993,7 +9993,7 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/meta") {
-			const body = await readBody$6(req);
+			const body = await readBody$7(req);
 			const hash = requireString$1(body.projectHash, "projectHash");
 			const meta = await store.readProjectMeta(hash);
 			const next = {
@@ -10013,7 +10013,7 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/delete-project") {
-			const projectHash = requireString$1((await readBody$6(req)).projectHash, "projectHash");
+			const projectHash = requireString$1((await readBody$7(req)).projectHash, "projectHash");
 			const removed = await store.mutateEntries((entries) => {
 				const targets = entries.filter((entry) => entry.scope === "project" && entry.projectHash === projectHash);
 				for (const target of targets) entries.splice(entries.indexOf(target), 1);
@@ -10034,7 +10034,7 @@ async function handle$6(ctx, store, config, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/remember") {
-			const body = await readBody$6(req);
+			const body = await readBody$7(req);
 			const content = typeof body.content === "string" ? body.content.trim() : "";
 			if (content === "") throw new Error("content 不能为空");
 			const scope = body.scope === "global" ? "global" : "project";
@@ -10168,7 +10168,7 @@ function json$5(res, status, value) {
 	});
 	res.end(body);
 }
-function readBody$6(req) {
+function readBody$7(req) {
 	return new Promise((resolvePromise, reject) => {
 		const chunks = [];
 		let size = 0;
@@ -11274,7 +11274,7 @@ async function handle$5(ctx, req, res) {
 	}
 	let body;
 	try {
-		body = await readBody$5(req);
+		body = await readBody$6(req);
 	} catch (error) {
 		json$4(res, 400, {
 			ok: false,
@@ -11440,7 +11440,7 @@ function json$4(res, status, value) {
 	});
 	res.end(body);
 }
-function readBody$5(req) {
+function readBody$6(req) {
 	return new Promise((resolvePromise, reject) => {
 		const chunks = [];
 		let size = 0;
@@ -11484,7 +11484,7 @@ function readBody$5(req) {
 * 负责，这里只管设置项。
 */
 /** 读取请求体 JSON（最多几 KB 的布尔开关，够用）。 */
-function readBody$4(req) {
+function readBody$5(req) {
 	return new Promise((resolve) => {
 		let data = "";
 		req.on("data", (chunk) => {
@@ -11523,7 +11523,7 @@ function applySidebarFloat(ctx) {
 		handler: async (req, res) => {
 			try {
 				if (req.method === "POST") {
-					const body = await readBody$4(req);
+					const body = await readBody$5(req);
 					if (body && typeof body.fixed === "boolean" && scope !== void 0) await scope.update({ fixed: body.fixed });
 				}
 				const payload = JSON.stringify({
@@ -11754,7 +11754,7 @@ function json$3(res, status, value) {
 	});
 	res.end(body);
 }
-function readBody$3(req) {
+function readBody$4(req) {
 	return new Promise((resolvePromise, reject) => {
 		const chunks = [];
 		let size = 0;
@@ -11796,7 +11796,7 @@ async function handle$4(ctx, req, res) {
 		}
 		const matchSkill = /^\/skills\/([^/]+)$/.exec(rest);
 		if (method === "PUT" && matchSkill !== null) {
-			const enabled = (await readBody$3(req)).enabled;
+			const enabled = (await readBody$4(req)).enabled;
 			if (typeof enabled !== "boolean") throw new Error("enabled must be a boolean");
 			const name = decodeURIComponent(matchSkill[1]);
 			if (!await setSkillEnabled(name, enabled)) throw new Error(`skill ${JSON.stringify(name)} not found`);
@@ -11809,7 +11809,7 @@ async function handle$4(ctx, req, res) {
 		}
 		const matchBundle = /^\/bundles\/([^/]+)$/.exec(rest);
 		if (method === "PUT" && matchBundle !== null) {
-			const enabled = (await readBody$3(req)).enabled;
+			const enabled = (await readBody$4(req)).enabled;
 			if (typeof enabled !== "boolean") throw new Error("enabled must be a boolean");
 			const id = decodeURIComponent(matchBundle[1]);
 			const handled = await setBundleEnabled(id, enabled);
@@ -27564,7 +27564,7 @@ function json$2(res, status, value) {
 	});
 	res.end(JSON.stringify(value));
 }
-function readBody$2(req) {
+function readBody$3(req) {
 	return new Promise((resolvePromise, reject) => {
 		const chunks = [];
 		let size = 0;
@@ -27601,7 +27601,7 @@ async function handle$2(ctx, req, res) {
 	}
 	let body;
 	try {
-		body = await readBody$2(req);
+		body = await readBody$3(req);
 	} catch (error) {
 		json$2(res, 400, {
 			ok: false,
@@ -28194,7 +28194,7 @@ function json$1(res, status, value) {
 	});
 	res.end(JSON.stringify(value));
 }
-function readBody$1(req) {
+function readBody$2(req) {
 	return new Promise((resolvePromise, reject) => {
 		const chunks = [];
 		let size = 0;
@@ -28314,7 +28314,7 @@ async function handle$1(ctx, req, res) {
 			return;
 		}
 		if (method === "POST" && rest === "/restore") {
-			const body = await readBody$1(req);
+			const body = await readBody$2(req);
 			const sessionId = requireString(body.sessionId, "sessionId");
 			const seqRaw = body.seq;
 			if (typeof seqRaw !== "number" || !Number.isSafeInteger(seqRaw) || seqRaw < 0) {
@@ -30669,11 +30669,175 @@ function applyPerfBench(ctx) {
 		});
 	});
 }
+//#endregion
+//#region src/modules.ts
 /**
-* 判定某模块是否启用：缺省 = 启用，只有显式 false 关闭。
+* webui — 功能模块清单与开关解析（host / client 两端共用）。
+*
+* dsh-webui 是全家桶插件，但并非所有用户都需要全部能力。本模块定义一份
+* 统一的功能模块 key 清单，两端按同一份语义裁剪：
+*
+*  - host 半身（src/index.ts）：为 false 的模块不装配（工具 / provider /
+*    HTTP API / settings 命名空间都不注册）。
+*  - client 半身（src/client/index.ts）：为 false 的模块不注册 UI 槽位
+*    （设置卡、面板入口、shadow、样式注入等）。
+*
+* 配置通道：
+*  - host：settings 命名空间 `webui-modules`（settings.yaml 持久化），
+*    经 GET/POST `/api/webui-modules` 暴露给浏览器端。改动后**重启 DSH 生效**
+*    （host 模块在插件加载时一次性装配，不做运行时卸载）。
+*  - client：启动时同步读 localStorage 缓存（`dsh-webui.modules`）立即生效；
+*    后台 fetch `/api/webui-modules` 校正缓存，下次刷新对齐服务端配置。
+*
+* 语义：**缺省 = 启用**；只有显式 `false` 才关闭（`isModuleEnabled`）。
+* 这样 localStorage / settings 里只需要存「被关掉的那几项」，升级新增模块时
+* 老配置自动保持启用。
 */
-function isModuleEnabled(modules, key) {
-	return modules[key] !== false;
+/** 全部可开关的功能模块 key（与 README「功能总览」分组对应）。 */
+const WEBUI_MODULE_KEYS = [
+	"messageWidth",
+	"doneSound",
+	"donePill",
+	"approvalNotify",
+	"ctrlEnter",
+	"sessionMotion",
+	"sessionPin",
+	"titleRename",
+	"rewind",
+	"screenshot",
+	"promptOptimize",
+	"zhThinking",
+	"peakValley",
+	"chatStats",
+	"toolSummary",
+	"reasoningSync",
+	"modelSeats",
+	"providerHub",
+	"vision",
+	"webSearch",
+	"mail",
+	"skills",
+	"browser",
+	"automation",
+	"planweave",
+	"memory",
+	"usage",
+	"fileExplorer",
+	"dirPicker",
+	"appearance",
+	"sidebarFloat",
+	"updater",
+	"proxy"
+];
+const KEY_SET = new Set(WEBUI_MODULE_KEYS);
+/**
+* 从任意来源（settings 值 / localStorage JSON / API body）提取合法的部分
+* 覆盖表：丢弃未知 key 与非布尔值，绝不抛错。
+*/
+function normalizeModules(input) {
+	const out = {};
+	if (input === null || typeof input !== "object") return out;
+	for (const [key, value] of Object.entries(input)) {
+		if (!KEY_SET.has(key)) continue;
+		if (typeof value === "boolean") out[key] = value;
+	}
+	return out;
+}
+//#endregion
+//#region src/modules-host.ts
+/**
+* webui — 功能模块开关（host 半身）。
+*
+* settings 命名空间 `webui-modules`（settings.yaml 持久化）+ HTTP API：
+*
+*   GET  /api/webui-modules → { ok, modules }（全量布尔表，client 校正缓存用）
+*   POST { modules: { <key>: boolean, ... } } → 部分覆盖合并写入
+*
+* applyModulesHost 返回**本次启动解析出的全量布尔表**，src/index.ts 据此
+* 跳过对应模块的装配（工具 / provider / HTTP API / settings 命名空间都不
+* 注册）。改动持久化后需重启 DSH 生效——host 模块在插件加载时一次性装配，
+* 不做运行时卸载。
+*/
+/** settings.yaml 命名空间。 */
+const WEBUI_MODULES_NAMESPACE = "webui-modules";
+/** HTTP 路由。 */
+const WEBUI_MODULES_API = "/api/webui-modules";
+/** settings schema：每个模块一个布尔字段，默认 true。 */
+const MODULES_SCHEMA = Schema$1.object(Object.fromEntries(WEBUI_MODULE_KEYS.map((key) => [key, Schema$1.boolean().default(true)])));
+function readBody$1(req) {
+	return new Promise((resolve) => {
+		let data = "";
+		req.on("data", (chunk) => {
+			data += chunk;
+		});
+		req.on("end", () => {
+			try {
+				resolve(JSON.parse(data || "{}"));
+			} catch {
+				resolve(null);
+			}
+		});
+		req.on("error", () => resolve(null));
+	});
+}
+/**
+* 注册模块开关命名空间 + API，返回本次启动生效的全量模块布尔表。
+* settings 命名空间重复注册（插件加载两次）时降级为只读默认值。
+*/
+function applyModulesHost(ctx) {
+	let scope;
+	try {
+		scope = ctx.settings.register(WEBUI_MODULES_NAMESPACE, MODULES_SCHEMA);
+	} catch (error) {
+		console.log("[webui-modules] settings namespace already registered:", error?.message ?? error);
+	}
+	const readOverrides = () => {
+		if (scope === void 0) return {};
+		try {
+			return normalizeModules(scope.get());
+		} catch {
+			return {};
+		}
+	};
+	const resolveAll = (overrides) => {
+		const out = {};
+		for (const key of WEBUI_MODULE_KEYS) out[key] = overrides[key] !== false;
+		return out;
+	};
+	ctx.effect(() => ctx.webServer.register({
+		kind: "exact",
+		path: WEBUI_MODULES_API,
+		handler: async (req, res) => {
+			try {
+				if (req.method === "POST" && scope !== void 0) {
+					const patch = normalizeModules((await readBody$1(req))?.modules);
+					if (Object.keys(patch).length > 0) {
+						const merged = {
+							...readOverrides(),
+							...patch
+						};
+						await scope.update(MODULES_SCHEMA(merged));
+					}
+				}
+				const payload = JSON.stringify({
+					ok: true,
+					modules: resolveAll(readOverrides())
+				});
+				res.writeHead(200, {
+					"content-type": "application/json",
+					"cache-control": "no-store"
+				});
+				res.end(payload);
+			} catch (error) {
+				res.writeHead(500, { "content-type": "application/json" });
+				res.end(JSON.stringify({
+					ok: false,
+					error: String(error?.message ?? error)
+				}));
+			}
+		}
+	}));
+	return resolveAll(readOverrides());
 }
 //#endregion
 //#region src/file-explorer.ts
@@ -31058,6 +31222,7 @@ const PROVIDER_REASONING_TEMPLATES = {
 * @param config - 组合配置（默认空对象，各能力自带默认值）。
 */
 async function apply(ctx, config = {}) {
+	const modules = applyModulesHost(ctx);
 	ctx.tools.register(defineTool({
 		name: "webui_sync_reasoning",
 		description: "为 settings 里 llm-pi-ai 各供应商中缺失 reasoningEfforts（推理等级）的模型，按内置供应商级模板自动补全，免去手工编辑 settings.yaml。已有配置或未收录供应商不受影响。",
@@ -31187,11 +31352,11 @@ async function apply(ctx, config = {}) {
 	});
 	applyPromptOptimize(ctx);
 	applySidebarFloat(ctx);
-	if (isModuleEnabled({}, "fileExplorer")) applyFileExplorer(ctx);
-	if (isModuleEnabled({}, "screenshot")) applyScreenshot(ctx);
-	if (isModuleEnabled({}, "rewind")) applyRewind(ctx);
-	if (isModuleEnabled({}, "donePill")) applyDonePill(ctx);
-	if (isModuleEnabled({}, "vision")) applyVisionHelper(ctx, config.visionHelper ?? {});
+	if (modules.fileExplorer) applyFileExplorer(ctx);
+	if (modules.screenshot) applyScreenshot(ctx);
+	if (modules.rewind) applyRewind(ctx);
+	if (modules.donePill) applyDonePill(ctx);
+	if (modules.vision) applyVisionHelper(ctx, config.visionHelper ?? {});
 	applyPerfBench(ctx);
 }
 //#endregion

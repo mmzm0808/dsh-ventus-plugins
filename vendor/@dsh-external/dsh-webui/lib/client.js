@@ -329900,6 +329900,21 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				}, ProviderBadge));
 			});
 			if (on("modelSeats")) applyModelSeats(ctx);
+			ctx.effect(() => {
+				if (typeof document === "undefined") return () => {};
+				const style = document.createElement("style");
+				style.id = "dsh-webui-context-meter-fix";
+				style.dataset.plugin = "@dsh-external/dsh-webui";
+				style.textContent = [
+					"[class*=\"_figures\"], [class*=\"_percent\"], [class*=\"_headline\"], [class*=\"_row\"] dd {",
+					"  background: transparent !important;",
+					"}"
+				].join("\n");
+				document.head.appendChild(style);
+				return () => {
+					style.remove();
+				};
+			}, "webui: context meter data background fix");
 			injectStyles$2();
 			mountActivityDrawer();
 			ctx.slots.inject("conversation.chat.node", () => ctx.slots.register({
