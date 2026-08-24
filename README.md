@@ -67,7 +67,7 @@
 
 | 分组 | 可关闭的功能 |
 |---|---|
-| 对话体验 | 消息宽度、完成提示音、完成胶囊、审批提醒、Ctrl+Enter、会话切换过渡、置顶归档、对话退回、消息截图、提示词优化、中文思考、峰谷卡片、统计条、工具聚合 |
+| 对话体验 | 消息宽度、完成提示音、完成胶囊、审批提醒、Ctrl+Enter、会话切换过渡、置顶归档、标题点击重命名、对话退回、消息截图、提示词优化、中文思考、峰谷卡片、统计条、工具聚合 |
 | 模型与供应商 | 推理等级同步、模型座位、供应商管理、辅助视觉/生图、AnySearch、邮箱验证码 |
 | 技能与浏览器 | 技能导航、AI 浏览器 |
 | 自动化与记忆 | 自动化任务、PlanWeave、记忆引擎 |
@@ -85,13 +85,14 @@
 | **rewind 对话退回** | 消息文件快照、上下文分支回退（`/api/webui-rewind` 路由） |
 | **sessionMotion** | 会话切换时的柔和过渡动画（opacity/transform 过渡，reduced-motion 降级） |
 | **sessionPin** | 会话置顶 / 归档 / 右键上下文菜单（持久化存储） |
+| **titleRename** | 对话区标题点击重命名（点击即全选进入编辑，Enter 提交 / Esc 取消） |
 | **donePill 完成胶囊** | 回合结束「对话完成」胶囊 + 记录面板（`/api/webui-done-pill`） |
 | **memory 记忆引擎** | 侧边栏记忆面板、注入开关、Memory Dream（模型整理：合并/精炼/剪枝/提升长期） |
 | **tool-summary** | 工具调用聚合 chip + 活动抽屉（点击展开完整调用列表） |
 | **ventus-progress** | 子代理任务分段进度条（`progress-json` 协议 + skill 引导） |
 | **theme-endfield** | 终末地主题：等高线背景、ENDFIELD 水印、玻璃/纯色表面、hero 贴底、雷霆大字（任务开始/完成大字 + 入场动画） |
-| **deepseek-usage** | 悬浮球余额 / R0 / 命中率、开放平台数据轮询 |
-| **better-sidebar** | 右侧 VSCode 式重栏：文件树/编辑器/终端/Git/浏览器 |
+| **deepseek-usage** | 悬浮球余额 / R0 / 命中率、开放平台数据轮询；**缓存命中率按会话真实两位小数**（host 下发真值 + 官方文本配对，杜绝恒 .00 伪精度）；**Ventus 设置页更新入口**：安装确认 → 顶层多选安装/更新弹窗（仅更新勾选项） |
+| **better-sidebar** | 右侧 VSCode 式重栏：文件树/编辑器/终端/Git/浏览器；**外部链接与产物点击弹双按钮**（新标签页/侧边栏、侧边栏编辑器/系统打开），修复静默吞点击 |
 | **ventus-search** | 多引擎搜索 + Readability 抓取 |
 | **ventus-whale** | 3D 虎鲸桌宠 |
 | **super-injector** | 运行时插件注入 + 热重载 |
@@ -208,6 +209,8 @@ export function apply(ctx) {
 
 - 子插件**自带 name/inject/Config**，`ctx.plugin` 挂载时按原插件语义解析——配置、服务依赖、持久化与多插件时代完全一致
 - `subConfigs` 只覆盖需要显式值的插件（如 `dsh-ua-relay` 的 targets）
+- **容错动态加载**：子插件产物缺失（最小安装 / 选择性更新只装了一部分）时打印 warning 并跳过，
+  其余照常挂载——包形态可从「最小」平滑升级到「完整」
 
 ### client 合并（lib/client.js + scripts/build-client.mjs）
 
@@ -216,6 +219,13 @@ DSH 按包加载 `/plugins/<id>/client.js`，bundle 契约是 `window.__ModuleLo
 
 1. 把每个子 bundle 的 `load` 调用**原样内嵌**进聚合 factory——执行时子 factory 注册进 loader（与多插件时代等价）；
 2. 聚合 `apply` 用 loader 的 `require(id)` 按子 id materialize，依次调用其 `apply`。
+
+**选择性构建**（最小包 / 用户端更新场景）：
+
+- `VENTUS_ENTRY_FILTER=dsh-deepseek-usage`：只内嵌白名单内的子插件（min 分支构建用）；
+- 缺失产物的子插件自动跳过（用户端选择性更新后重建时本机只有部分子插件）；
+- `STAMP_SHA=<sha>`：直接内嵌指定提交 sha 的版本戳（用户端更新后写入远程 sha），
+  不设时取当前 git HEAD（开发构建路径，与 stamp-commit.mjs 等效）。
 
 **关键点**（踩坑记录）：
 
@@ -246,6 +256,22 @@ node scripts/build-client.mjs
 # 4. 浏览器刷新即生效（client HMR）；manifest/patch 变更需重启
 ```
 
+### min 分支维护
+
+`min` 分支是同一插件的最小形态（只含用量监测），安装命令
+`dsh plugin --profile web add github:mmzm0808/dsh-ventus-plugins#min`。
+更新 `min` 分支内容（通常只在 usage 产物变化时）：
+
+```sh
+git checkout min
+# 同步本机 usage 产物（构建后）到 vendor/dsh-deepseek-usage/
+cp -r ../dsh-deepseek-usage/lib/* vendor/dsh-deepseek-usage/lib/
+# 只内嵌 usage 重建聚合 bundle（stamp 自动取 min 分支 HEAD）
+VENTUS_ENTRY_FILTER=dsh-deepseek-usage node scripts/build-client.mjs
+git add -A && git commit -m "sync: usage 产物" && git push origin min
+git checkout master
+```
+
 ### 验证矩阵
 
 - `node --check lib/client.js`：合并 bundle 语法（多 bundle 平铺冲突检测）
@@ -268,6 +294,9 @@ node scripts/build-client.mjs
 | tool-summary 抽屉点击后内容变纯文本 | `dsh-tool-summary-styles` 等无主 `<style>` 启动早期被按插件清理逻辑误删 | 全部运行时 style 注入批量带 `data-plugin=@dsh-external/dsh-webui`（10 处） |
 | ventus-progress skill 未安装 | 整合 vendor 缺 skills 目录 + DSH_HOME 未注入 | vendor 补齐 skills；installSkill 加 `~/.dsh` fallback |
 | 页面被 Edge 标记为英语 | 官方 index.html 声明 `lang="en"` | usage apply 运行时改回 `zh-CN` |
+| 底栏缓存命中恒 .00 伪精度 | 由官方取整值反解区间中值，中值常落在整数 | host 按会话真实 token 分量算命中率（真两位小数），client 按官方文本配对注入（v4，配不上保留官方值） |
+| 外部链接点击无反应（点不动） | 点击被静默吞进侧边栏，无任何反馈 | 链接点击弹双按钮（新标签页 / 侧边栏），产物 chips 弹「侧边栏编辑器 / 系统打开」 |
+| 标题点击重命名未生效 | 官方标题是 crumbs 导航的 disabled 按钮，slot 文本节点选择器匹配不到 | 锚定 `[data-conversation-scroll]` 前兄弟 + pointerdown 矩形命中（disabled 按钮不派发 click） |
 
 ## 📜 License
 
