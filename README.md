@@ -55,7 +55,7 @@
 
 <table>
   <thead>
-    <tr><th width="40%">分组</th><th width="22%">key</th><th>控制的功能</th></tr>
+    <tr><th width="24%">分组</th><th width="22%">key</th><th>控制的功能</th></tr>
   </thead>
   <tbody>
     <tr><td>对话体验</td><td><code>messageWidth</code></td><td>消息气泡宽度设置</td></tr>
@@ -138,7 +138,7 @@ dsh plugin --profile web add "<本仓库本地绝对路径>"
 
 <table>
   <thead>
-    <tr><th width="64%">功能</th><th>入口</th></tr>
+    <tr><th width="16%">功能</th><th>入口</th></tr>
   </thead>
   <tbody>
     <tr><td>用量悬浮球</td><td>右侧悬浮球：拖动可上下移动，左半屏自动吸附；点击展开面板</td></tr>
