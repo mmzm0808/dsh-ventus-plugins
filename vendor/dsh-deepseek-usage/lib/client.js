@@ -11125,24 +11125,11 @@ window.__ModuleLoader__.load({
 			} catch {}
 			window.dispatchEvent(new CustomEvent(VENTUS_PREFS_EVENT, { detail: prefs }));
 		}
-		function patchCacheHitText(root) {
-			const pattern = /(缓存命中\s*)(\d+(?:\.\d+)?)%/u;
-			const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-			const textNodes = [];
-			while (walker.nextNode()) {
-				const node = walker.currentNode;
-				if (node.nodeType === Node.TEXT_NODE) textNodes.push(node);
-			}
-			for (const node of textNodes) {
-				const value = node.nodeValue;
-				if (value === null || !pattern.test(value)) continue;
-				node.nodeValue = value.replace(pattern, (_match, prefix, raw) => {
-					// 只把原数字补成两位小数；不得用全局命中率覆盖每个会话
-					// 自己的值（否则所有会话清一色显示同一个总体命中率）。
-					const n = Number(raw);
-					return `${prefix}${Number.isFinite(n) ? n.toFixed(2) : raw}%`;
-				});
-			}
+		function patchCacheHitText(_root) {
+			/* 官方输入框下方「缓存命中 x%」只提供各会话自己的整数命中率。
+			   曾用今日该模型总体命中率（两位小数）覆盖所有会话 → 清一色
+			   同一值；补 .00 → 全是 xx.00 无信息量。故不再改写，保留官方
+			原样数字。usage 面板内的真实命中率仍显示两位小数。 */
 		}
 		function applyFluidWidth(enabled) {
 			const root = document.querySelector("[data-conversation-scroll]")?.parentElement;
