@@ -291239,6 +291239,30 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		}
 		const REST_KEY = "dsh.donePill.rest";
 		const LATE_KEY = "dsh.donePill.late";
+		/** 已收起的提醒（按本地日期 + 提醒类型），当天不再显示，次日自动恢复。 */
+		const DISMISSED_KEY = "dsh.donePill.reminderDismissed";
+		/** 本地日期键（YYYY-MM-DD，本地时区）。 */
+		function dateKey(d) {
+			const pad = (n) => String(n).padStart(2, "0");
+			return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+		}
+		function readDismissed() {
+			try {
+				const raw = localStorage.getItem(DISMISSED_KEY);
+				if (raw === null) return {};
+				const parsed = JSON.parse(raw);
+				const out = {};
+				for (const [day, kinds] of Object.entries(parsed)) if (Array.isArray(kinds)) out[day] = kinds.filter((k) => k === "late" || k === "rest");
+				return out;
+			} catch {
+				return {};
+			}
+		}
+		function writeDismissed(next) {
+			try {
+				localStorage.setItem(DISMISSED_KEY, JSON.stringify(next));
+			} catch {}
+		}
 		function createReminderStore(key, defaults) {
 			let value = { ...defaults };
 			try {
@@ -292795,8 +292819,23 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				const d = /* @__PURE__ */ new Date();
 				return d.getHours() * 60 + d.getMinutes();
 			})();
-			const lateActive = lateConfig.enabled && inTimeRange(nowMinutes, lateConfig);
-			const restActive = !lateActive && restConfig.enabled && inTimeRange(nowMinutes, restConfig);
+			const [dismissed, setDismissed] = (0, react.useState)(() => readDismissed());
+			const dismissedToday = dismissed[dateKey(/* @__PURE__ */ new Date())] ?? [];
+			const dismissReminder = (kind) => {
+				setDismissed((prev) => {
+					const day = dateKey(/* @__PURE__ */ new Date());
+					const today = prev[day] ?? [];
+					if (today.includes(kind)) return prev;
+					const next = {
+						...prev,
+						[day]: [...today, kind]
+					};
+					writeDismissed(next);
+					return next;
+				});
+			};
+			const lateActive = lateConfig.enabled && inTimeRange(nowMinutes, lateConfig) && !dismissedToday.includes("late");
+			const restActive = !lateActive && restConfig.enabled && inTimeRange(nowMinutes, restConfig) && !dismissedToday.includes("rest");
 			const reminderActive = lateActive || restActive;
 			const anchorRef = (0, react.useRef)(loadAnchor());
 			const autoCenterRef = (0, react.useRef)(anchorRef.current === null);
@@ -293123,9 +293162,24 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 						className: "dsh-done-pill-shell",
 						style: pillShellStyle(unreadCount, shellWidth),
 						children: [
-							reminderLabel !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
-								style: reminderBadgeStyle,
-								title: reminderLabel,
+							reminderLabel !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+								type: "button",
+								style: {
+									...reminderBadgeStyle,
+									border: "none",
+									background: "transparent",
+									cursor: "pointer",
+									borderRadius: 6
+								},
+								title: "点击收起这条提醒（明天自动恢复）",
+								"aria-label": `${reminderLabel}；点击收起`,
+								onPointerDown: (event) => {
+									event.stopPropagation();
+								},
+								onClick: (event) => {
+									event.stopPropagation();
+									dismissReminder(lateActive ? "late" : "rest");
+								},
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(LineIcon, {
 									kind: reminderIcon,
 									size: Math.max(10, Math.round(13 * appearance.scale))
