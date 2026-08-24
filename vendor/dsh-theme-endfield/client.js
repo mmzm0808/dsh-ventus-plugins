@@ -2802,13 +2802,9 @@ function apply(ctx) {
       [class$='_searchResultRow'][class*='selected'] {
         background: rgba(var(--edge-accent-rgb), 0.22) !important;
       }
-      [class$='_projectRow']:hover *,
-      [class$='_sessionRow']:hover *,
-      [class$='_sessionRow'][class*='selected'] *,
-      [class$='_searchResultRow']:hover *,
-      [class$='_searchResultRow'][class*='selected'] * {
-        color: #000 !important;
-      }
+      /* 会话/项目/搜索结果行 hover 与 selected 只亮化背景（半透明信号黄），
+         文字颜色保持不变：暗色下保留白字、亮色下保留官方深色文字，
+         不再强制变黑。 */
       /* ---------- Light mode: workspace folder / icon buttons ink ---------- */
       body:not([data-ds-dark-theme]) .YDXeBa_folder,
       body:not([data-ds-dark-theme]) .YDXeBa_folderActive,
