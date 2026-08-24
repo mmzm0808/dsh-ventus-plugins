@@ -2195,6 +2195,12 @@ function apply(ctx) {
       [class$='_centerCol'] [data-radix-popper-content-wrapper] {
         z-index: 9500 !important;
       }
+      /* 侧边栏图标按钮统一圆形：主题直角化规则（border-radius:0）
+         作用于 iconButton，排序/分组等图标按钮变成方形直角；悬停
+         高亮是圆而按钮本身是方形，不一致。 */
+      [class$='_sidebarCol'] [class*='iconButton'] {
+        border-radius: 50% !important;
+      }
       /* 对话区滚动容器禁止横向滚动：内容横向溢出时 PgUp/PgDn 的
          滚动会带动 scrollLeft，整体往左偏移。内层容器不在此禁
          （浮窗/工具栏/输入框等需要原生滚动），改由 JS 滚动监听

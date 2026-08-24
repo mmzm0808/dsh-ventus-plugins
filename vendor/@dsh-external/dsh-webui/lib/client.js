@@ -289495,7 +289495,6 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					if (dragRef.current === null) setHovered(true);
 				},
 				onMouseLeave: () => {
-					setHovered(false);
 					setHoveredRunning(false);
 					setFileHovered(false);
 				},
@@ -289763,15 +289762,15 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 												})]
 											}, item.id);
 										}),
-										group.length > 1 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+										group.length > 1 && !folded && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 											type: "button",
 											style: toggleGroupStyle,
-											"aria-label": folded ? "展开该会话的全部通知" : "收起该会话的通知",
+											"aria-label": "收起该会话的通知",
 											onClick: (event) => {
 												event.stopPropagation();
 												toggleGroup(top.sessionId);
 											},
-											children: folded ? `展开全部 ${group.length} 条` : "收起"
+											children: "收起"
 										})
 									]
 								}, top.sessionId);
