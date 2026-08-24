@@ -2561,7 +2561,7 @@ function apply(ctx) {
               align-items: center;
               justify-content: center;
               pointer-events: none;
-              background: rgba(16, 17, 16, 0.55);
+              background: transparent;
               animation: endfield-thunder-plate 3000ms linear 1 both;
             }
             [data-endfield-thunder-word] {
