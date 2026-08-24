@@ -2394,7 +2394,7 @@ function apply(ctx) {
          用户反馈回归）。输入框（composerSeat）豁免 blur——官方输入框是
          「透明文字 + 字形背衬层」设计，任何 blur 都会让文字黑掉。 */
       body.theme-endfield-surface-glass [class$='_centerCol'] [class$='_viewArea'],
-      body.theme-endfield-surface-glass [class$='_centerCol'] [class$='_header'] {
+      body.theme-endfield-surface-glass [class$='_centerCol'] > [class$='_header'] {
         background: color-mix(in srgb, var(--dsw-alias-bg-base, #101110) 50%, transparent) !important;
         backdrop-filter: blur(4px) saturate(1.15);
         -webkit-backdrop-filter: blur(4px) saturate(1.15);
@@ -2462,7 +2462,7 @@ function apply(ctx) {
          全屏时 blur 本来就不可见，禁用零视觉损失，关闭后自动恢复。 */
       body:has([role='dialog'][aria-modal='true'], [data-dsh-sidebar-window]) [class$='_sidebarCol'] [class*='_root'],
       body:has([role='dialog'][aria-modal='true'], [data-dsh-sidebar-window]) [class$='_centerCol'] [class$='_viewArea'],
-      body:has([role='dialog'][aria-modal='true'], [data-dsh-sidebar-window]) [class$='_centerCol'] [class$='_header'] {
+      body:has([role='dialog'][aria-modal='true'], [data-dsh-sidebar-window]) [class$='_centerCol'] > [class$='_header'] {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
       }
