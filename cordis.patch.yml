@@ -1,0 +1,34 @@
+# dsh-ventus-plugins bundle patch
+#
+# 聚合插件作为单一 bundle 挂载进 profile（bundles 列表 + 本 insert 行）。
+# 子插件由 lib/index.js 的 host 聚合逐个 ctx.plugin 挂载，配置在
+# lib/index.js 内保持原值；子插件的 client 全部内嵌在 lib/client.js。
+# 与多插件时代相比：插件列表只显示本聚合插件，功能与设置零变化。
+
+# --- 权限预设：auto-mode 的 Auto 权限项 ----------------------------------
+# 原 @nanmicoder/dsh-auto-mode 的 patch 包含「permission 预设」段——官方
+# 权限选择器的选项就来自 permission.presets。整合时若不迁移该段，选择器
+# 只剩官方默认三项（read-only / workspace-write / danger-full-access），
+# Auto 选项消失。presets 是整段替换（patch 契约），必须完整重述：
+# 官方默认 3 项 + auto 扩展项，与多插件时代 auto-mode 的 patch 完全一致。
+- id: permission
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      auto:
+        sandbox: workspace-write
+        approval: ask
+        name: Auto
+        description: Workspace-sandboxed execution with automatic semantic review and one-shot approval for wider access.
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+
+- insert:
+    - id: ventus-plugins
+      name: dsh-ventus-plugins
