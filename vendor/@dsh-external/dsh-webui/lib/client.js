@@ -288571,7 +288571,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			border: "none",
 			borderRadius: 0,
 			background: hovered ? "rgba(255,255,255,.14)" : "transparent",
-			color: "rgba(255,255,255,.74)",
+			color: "var(--dsw-alias-label-secondary, rgba(255,255,255,.74))",
 			cursor: "pointer"
 		});
 		/** shell 直接子项统一禁止收缩：宽度测量（子块求和）才不受受控宽度污染。 */
@@ -288657,7 +288657,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			borderRadius: 8,
 			border: "none",
 			background: "transparent",
-			color: "#e8e8ec",
+			color: "var(--dsw-alias-label-secondary, #e8e8ec)",
 			fontSize: 12,
 			lineHeight: "18px",
 			textAlign: "left",
@@ -288674,7 +288674,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		const runRowTimeStyle = {
 			flex: "none",
 			fontSize: 11,
-			color: "#9a9aa2",
+			color: "var(--dsw-alias-label-tertiary, #9a9aa2)",
 			fontVariantNumeric: "tabular-nums"
 		};
 		const headStyle = {
@@ -288687,11 +288687,11 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		const headTitleStyle = {
 			fontSize: 13,
 			fontWeight: 600,
-			color: "#f2f2f4"
+			color: "var(--dsw-alias-label-primary, #f2f2f4)"
 		};
 		const headMetaStyle = {
 			fontSize: 11,
-			color: "#9a9aa2"
+			color: "var(--dsw-alias-label-tertiary, #9a9aa2)"
 		};
 		const cardStyle = {
 			border: "none",
@@ -288724,14 +288724,14 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			whiteSpace: "nowrap",
 			fontSize: 13,
 			fontWeight: 500,
-			color: "#ffffff"
+			color: "var(--dsw-alias-label-primary, #ffffff)"
 		};
 		const metaStyle = {
 			flex: 1,
 			minWidth: 0,
 			textAlign: "right",
 			fontSize: 11,
-			color: "#9a9aa2",
+			color: "var(--dsw-alias-label-tertiary, #9a9aa2)",
 			whiteSpace: "nowrap"
 		};
 		const closeStyle = {
@@ -288741,7 +288741,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			borderRadius: 6,
 			border: "none",
 			background: "transparent",
-			color: "#9a9aa2",
+			color: "var(--dsw-alias-label-tertiary, #9a9aa2)",
 			fontSize: 13,
 			lineHeight: "20px",
 			cursor: "pointer"
@@ -288754,7 +288754,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			wordBreak: "break-word",
 			fontSize: 12,
 			lineHeight: "19px",
-			color: "#e8e8ec",
+			color: "var(--dsw-alias-label-secondary, #e8e8ec)",
 			borderTop: "1px dashed rgba(255,255,255,.14)",
 			paddingTop: 6
 		};
@@ -288767,7 +288767,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			padding: "18px 8px",
 			textAlign: "center",
 			fontSize: 12,
-			color: "#8a8a92"
+			color: "var(--dsw-alias-label-tertiary, #8a8a92)"
 		};
 		/** 通知组容器：同会话通知叠瓦堆叠。 */
 		const groupStyle = {
@@ -288814,7 +288814,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			borderRadius: 10,
 			border: "none",
 			background: "rgba(255,255,255,.1)",
-			color: "#d8d8dc",
+			color: "var(--dsw-alias-label-secondary, #d8d8dc)",
 			fontSize: 12,
 			cursor: "pointer"
 		};
@@ -288828,7 +288828,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			cursor: "pointer",
 			border: "1px solid rgba(255,255,255,.16)",
 			background: "transparent",
-			color: "#c9c9d1"
+			color: "var(--dsw-alias-label-secondary, #c9c9d1)"
 		};
 		/** 小标题圆角主题色框（具体发了什么）。 */
 		const titleChipStyle = {
@@ -289771,7 +289771,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 												event.stopPropagation();
 												toggleGroup(top.sessionId);
 											},
-											children: folded ? `叠瓦 · 展开全部 ${group.length} 条` : "收起"
+											children: folded ? `展开全部 ${group.length} 条` : "收起"
 										})
 									]
 								}, top.sessionId);
