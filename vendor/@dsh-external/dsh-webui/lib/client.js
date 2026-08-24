@@ -289898,38 +289898,56 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
   .dsp-menu, .dsp-rename-card { transition: none; }
 }
 
-/* ===== 已归档面板（工作区同构） ===== */
+/* ===== 已归档面板（与官方工作区完全同构） ===== */
 .dsp-archive-panel {
   margin-top: 4px;
-  padding: 2px 6px 6px;
+  padding: 0 6px 6px;
   border-top: 1px solid var(--dsw-alias-border-l1, rgba(255,255,255,.07));
 }
-.dsp-archive-header,
-.dsp-archive-group-header {
+/* 可拖动分隔条：调整已归档区与工作区的高度占比 */
+.dsp-archive-handle {
+  height: 4px;
+  margin: -2px -2px 2px;
+  border-radius: 2px;
+  cursor: row-resize;
+  background: transparent;
+  transition: background .12s ease;
+}
+.dsp-archive-handle:hover {
+  background: color-mix(in srgb, var(--edge-accent, var(--dsw-alias-state-business-primary)) 40%, transparent);
+}
+/* 标题行：同官方 projectRow 尺寸 */
+.dsp-archive-header {
   display: flex;
   align-items: center;
-  gap: 5px;
-  height: 26px;
-  padding: 0 6px;
-  border-radius: 6px;
+  gap: 6px;
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 8px;
   cursor: pointer;
   user-select: none;
-  font-size: 12px;
-  line-height: 20px;
-  color: var(--dsw-alias-label-secondary, rgba(255,255,255,.74));
+  color: var(--dsw-alias-label-primary);
 }
-.dsp-archive-header:hover,
-.dsp-archive-group-header:hover {
-  background: var(--dsw-alias-bg-layer-1, rgba(255,255,255,.05));
+.dsp-archive-header:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
 }
 .dsp-archive-label {
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .dsp-archive-chevron {
+  flex: none;
+  width: 16px;
+  height: 20px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  color: var(--dsw-alias-label-tertiary);
   transition: transform .18s ease;
-  color: var(--dsw-alias-label-tertiary, rgba(255,255,255,.45));
 }
 .dsp-archive-header.dsp-collapsed .dsp-archive-chevron,
 .dsp-archive-group-header.dsp-collapsed .dsp-archive-chevron {
@@ -289938,32 +289956,82 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 .dsp-archive-count {
   margin-left: auto;
   font-size: 11px;
-  color: var(--dsw-alias-label-tertiary, rgba(255,255,255,.45));
+  color: var(--dsw-alias-label-tertiary);
+}
+.dsp-archive-body {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 0;
+}
+/* 工作区分组：同官方 groupSection */
+.dsp-archive-group {
+  position: relative;
+}
+.dsp-archive-group + .dsp-archive-group {
+  margin-top: 4px;
+}
+.dsp-archive-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--dsw-alias-label-primary);
+}
+.dsp-archive-group-header:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+/* 工作区当前高亮（与官方 folderActive 同款：主题强调色淡底 + 左条） */
+.dsp-archive-group-header.dsp-active {
+  background: color-mix(in srgb, var(--edge-accent, var(--dsw-alias-state-business-primary)) 12%, transparent);
+  box-shadow: inset 2px 0 0 var(--edge-accent, var(--dsw-alias-state-business-primary));
 }
 .dsp-archive-group-title {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.dsp-archive-group {
-  margin-top: 2px;
+.dsp-archive-group-icon {
+  flex: none;
+  width: 16px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dsw-alias-label-tertiary);
 }
 .dsp-archive-group-list {
   display: flex;
   flex-direction: column;
+  margin-top: 2px;
 }
+/* 会话行：同官方 sessionRow */
 .dsp-archive-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 30px;
-  padding: 0 6px 0 18px;
-  border-radius: 6px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
   cursor: pointer;
   user-select: none;
+  color: var(--dsw-alias-label-primary);
 }
 .dsp-archive-row:hover {
-  background: var(--dsw-alias-bg-layer-1, rgba(255,255,255,.05));
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+/* 当前打开的归档会话：主题色高亮（同官方 selected） */
+.dsp-archive-row.dsp-active {
+  background: color-mix(in srgb, var(--edge-accent, var(--dsw-alias-state-business-primary)) 12%, transparent);
+  box-shadow: inset 2px 0 0 var(--edge-accent, var(--dsw-alias-state-business-primary));
 }
 .dsp-archive-row-title {
   flex: 1;
@@ -289973,7 +290041,6 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
   white-space: nowrap;
   font-size: 13px;
   line-height: 20px;
-  color: var(--dsw-alias-label-primary, #e6e9f0);
 }
 .dsp-archive-row .dsp-archive-menu,
 .dsp-archive-row .dsp-archive-restore {
@@ -289982,13 +290049,13 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
   align-items: center;
   justify-content: center;
   width: 16px;
-  height: 16px;
+  height: 20px;
   border: none;
   border-radius: 4px;
   padding: 0;
   background: transparent;
   cursor: pointer;
-  color: var(--dsw-alias-label-tertiary, rgba(255,255,255,.45));
+  color: var(--dsw-alias-label-tertiary);
   opacity: 0;
   transition: opacity .12s ease;
 }
@@ -289997,15 +290064,15 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
   opacity: 1;
 }
 .dsp-archive-row .dsp-archive-menu:hover {
-  color: var(--dsw-alias-label-primary, #e6e9f0);
+  color: var(--dsw-alias-label-primary);
 }
 .dsp-archive-row .dsp-archive-restore:hover {
-  color: var(--edge-accent, var(--dsw-alias-state-business-primary, #4d9fff));
+  color: var(--edge-accent, var(--dsw-alias-state-business-primary));
 }
 .dsp-archive-empty {
-  padding: 8px 6px 4px 18px;
+  padding: 8px 8px 4px;
   font-size: 12px;
-  color: var(--dsw-alias-label-tertiary, rgba(255,255,255,.45));
+  color: var(--dsw-alias-label-tertiary);
 }
 @media (prefers-reduced-motion: reduce) {
   .dsp-archive-chevron { transition: none; }
@@ -290486,12 +290553,20 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		const MENU_CLASS = "dsp-archive-menu";
 		const COLLAPSED_KEY = "dsh.webui.archive-collapsed";
 		const GROUP_COLLAPSED_PREFIX = "dsh.webui.archive-group-collapsed:";
+		/** 展开时的面板高度占比（视口百分比，10–90，可拖动分隔条调节）。 */
+		const HEIGHT_KEY = "dsh.webui.archive-height";
+		const DEFAULT_HEIGHT_PCT = 50;
+		const MIN_HEIGHT_PCT = 10;
+		const MAX_HEIGHT_PCT = 90;
 		/** 还原（取消归档）按钮图标：与归档按钮同一抽屉图形，箭头方向相反表示取出。 */
 		const RESTORE_SVG = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z\"/></svg>";
 		/** 三点菜单图标（与官方行菜单一致）。 */
 		const MENU_SVG = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"5\" r=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><circle cx=\"12\" cy=\"19\" r=\"2\"/></svg>";
 		/** chevron（收起/展开）。 */
 		const CHEVRON_SVG = "<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M9.29 15.88 13.17 12 9.29 8.12a.996.996 0 1 1 1.41-1.41l4.59 4.59c.39.39.39 1.02 0 1.41l-4.59 4.59a.996.996 0 0 1-1.41 0c-.38-.39-.39-1.03 0-1.42z\"/></svg>";
+		/** 文件夹图标（与官方 projectRow 同款：开/闭）。 */
+		const FOLDER_OPEN_SVG = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z\"/></svg>";
+		const FOLDER_CLOSE_SVG = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z\"/></svg>";
 		let sessions$1;
 		let workspaces;
 		/** 注入运行时服务（与 context-menu 的 setSessionPinServices 同源）。 */
@@ -290506,6 +290581,14 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			} catch {
 				return fallback;
 			}
+		}
+		/** 展开高度占比（视口百分比）。 */
+		function readHeightPct() {
+			try {
+				const raw = Number.parseInt(localStorage.getItem(HEIGHT_KEY) ?? "", 10);
+				if (Number.isInteger(raw)) return Math.min(MAX_HEIGHT_PCT, Math.max(MIN_HEIGHT_PCT, raw));
+			} catch {}
+			return DEFAULT_HEIGHT_PCT;
 		}
 		function writeFlag(key, value) {
 			try {
@@ -290526,6 +290609,32 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			panel = document.createElement("div");
 			panel.className = PANEL_CLASS;
 			panel.dataset.plugin = "@dsh-external/dsh-webui";
+			const handle = document.createElement("div");
+			handle.className = "dsp-archive-handle";
+			handle.setAttribute("role", "separator");
+			handle.setAttribute("aria-orientation", "horizontal");
+			handle.setAttribute("aria-label", "拖动调整已归档区域高度");
+			handle.addEventListener("pointerdown", (event) => {
+				if (readCollapsed(COLLAPSED_KEY, true)) return;
+				event.preventDefault();
+				const startY = event.clientY;
+				const startPct = readHeightPct();
+				const onMove = (move) => {
+					const delta = (startY - move.clientY) / window.innerHeight * 100;
+					const pct = Math.min(MAX_HEIGHT_PCT, Math.max(MIN_HEIGHT_PCT, startPct + delta));
+					try {
+						localStorage.setItem(HEIGHT_KEY, String(Math.round(pct)));
+					} catch {}
+					const body = panel?.querySelector(`.${BODY_CLASS}`);
+					if (body !== null) body.style.maxHeight = `calc(${pct}vh - 34px)`;
+				};
+				const onUp = () => {
+					window.removeEventListener("pointermove", onMove);
+					window.removeEventListener("pointerup", onUp);
+				};
+				window.addEventListener("pointermove", onMove);
+				window.addEventListener("pointerup", onUp);
+			});
 			const header = document.createElement("div");
 			header.className = HEADER_CLASS;
 			header.setAttribute("role", "button");
@@ -290533,16 +290642,17 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			header.innerHTML = `<span class="dsp-archive-chevron">${CHEVRON_SVG}</span><span class="dsp-archive-label">已归档</span><span class="dsp-archive-count"></span>`;
 			const body = document.createElement("div");
 			body.className = BODY_CLASS;
-			panel.append(header, body);
+			panel.append(handle, header, body);
 			host.after(panel);
 			return panel;
 		}
-		/** 一行归档会话：标题 + 三点 + 还原。 */
-		function buildRow(id, title) {
+		/** 一行归档会话：标题 + 三点 + 还原（当前打开的会话主题色高亮）。 */
+		function buildRow(id, title, active) {
 			const row = document.createElement("div");
 			row.className = ROW_CLASS;
 			row.setAttribute("role", "treeitem");
 			row.dataset.sessionId = id;
+			row.classList.toggle("dsp-active", active);
 			const titleEl = document.createElement("span");
 			titleEl.className = TITLE_CLASS;
 			titleEl.textContent = title || "(无标题)";
@@ -290626,11 +290736,15 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			if (header === null || body === null) return;
 			const groups = collectArchived();
 			const total = [...groups.values()].reduce((sum, list) => sum + list.length, 0);
+			const currentSession = sessions$1?.list.getSnapshot().current;
 			const countEl = header.querySelector(".dsp-archive-count");
 			if (countEl !== null) countEl.textContent = total > 0 ? String(total) : "";
-			const collapsed = readCollapsed(COLLAPSED_KEY, false);
+			const collapsed = readCollapsed(COLLAPSED_KEY, true);
 			header.classList.toggle("dsp-collapsed", collapsed);
 			body.style.display = collapsed ? "none" : "";
+			const handle = panel.querySelector(".dsp-archive-handle");
+			if (handle !== null) handle.style.display = collapsed ? "none" : "";
+			if (!collapsed) body.style.maxHeight = `calc(${readHeightPct()}vh - 34px)`;
 			body.replaceChildren();
 			if (total === 0) {
 				const empty = document.createElement("div");
@@ -290647,18 +290761,22 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				groupHeader.className = GROUP_HEADER_CLASS;
 				groupHeader.setAttribute("role", "button");
 				const groupCollapsed = readCollapsed(`${GROUP_COLLAPSED_PREFIX}${workspaceId}`, false);
-				groupHeader.innerHTML = `<span class="dsp-archive-chevron">${CHEVRON_SVG}</span><span class="dsp-archive-group-title">${workspaceTitle(workspaceId)}</span><span class="dsp-archive-count">${entries.length}</span>`;
+				const wsActive = currentSession !== void 0 && (workspaces?.list.getSnapshot().items.find((w) => w.workspaceId === workspaceId)?.sessionIds.includes(currentSession) ?? false);
+				groupHeader.innerHTML = `<span class="dsp-archive-chevron">${CHEVRON_SVG}</span><span class="dsp-archive-group-icon">${groupCollapsed ? FOLDER_CLOSE_SVG : FOLDER_OPEN_SVG}</span><span class="dsp-archive-group-title">${workspaceTitle(workspaceId)}</span><span class="dsp-archive-count">${entries.length}</span>`;
 				groupHeader.classList.toggle("dsp-collapsed", groupCollapsed);
+				groupHeader.classList.toggle("dsp-active", wsActive);
 				groupHeader.addEventListener("click", () => {
 					const next = !readCollapsed(`${GROUP_COLLAPSED_PREFIX}${workspaceId}`, false);
 					writeFlag(`${GROUP_COLLAPSED_PREFIX}${workspaceId}`, next);
 					groupHeader.classList.toggle("dsp-collapsed", next);
+					const icon = groupHeader.querySelector(".dsp-archive-group-icon");
+					if (icon !== null) icon.innerHTML = next ? FOLDER_CLOSE_SVG : FOLDER_OPEN_SVG;
 					list.style.display = next ? "none" : "";
 				});
 				const list = document.createElement("div");
 				list.className = "dsp-archive-group-list";
 				list.style.display = groupCollapsed ? "none" : "";
-				for (const entry of entries) list.appendChild(buildRow(entry.id, entry.title));
+				for (const entry of entries) list.appendChild(buildRow(entry.id, entry.title, entry.id === currentSession));
 				group.append(groupHeader, list);
 				body.appendChild(group);
 			}
