@@ -288581,9 +288581,12 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		/** 运行中任务面板宽度。 */
 		const RUN_PANEL_W = 320;
 		/** 记录面板：黑色浮层，悬停时从胶囊下方滑出（opacity + translateY 过渡）。 */
-		const panelStyle = (open, shiftX) => ({
+		const panelStyle = (open, shiftX, above) => ({
 			position: "absolute",
-			top: "100%",
+			...above ? {
+				top: "auto",
+				bottom: "100%"
+			} : { top: "100%" },
 			left: shiftX,
 			width: `min(${DONE_PANEL_W}px, calc(100vw - 24px))`,
 			maxHeight: "min(66vh, 600px)",
@@ -288598,15 +288601,18 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			background: "var(--dsw-alias-bg-layer-2, rgba(12,12,13,.94))",
 			boxShadow: "0 16px 44px rgba(0,0,0,.5)",
 			opacity: open ? 1 : 0,
-			transform: `translateY(${open ? 0 : -8}px)`,
+			transform: `translateY(${open ? 0 : above ? 8 : -8}px)`,
 			visibility: open ? "visible" : "hidden",
 			pointerEvents: open ? "auto" : "none",
 			transition: open ? "opacity .18s ease, transform .18s ease, visibility 0s" : "opacity .18s ease, transform .18s ease, visibility 0s linear .18s"
 		});
 		/** 运行中任务面板：从胶囊下方滑出的窄列表。 */
-		const runPanelStyle = (open, shiftX) => ({
+		const runPanelStyle = (open, shiftX, above) => ({
 			position: "absolute",
-			top: "100%",
+			...above ? {
+				top: "auto",
+				bottom: "100%"
+			} : { top: "100%" },
 			left: shiftX,
 			width: `min(${RUN_PANEL_W}px, calc(100vw - 24px))`,
 			maxHeight: "min(60vh, 480px)",
@@ -288621,7 +288627,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			background: "var(--dsw-alias-bg-layer-2, rgba(12,12,13,.94))",
 			boxShadow: "0 16px 44px rgba(0,0,0,.5)",
 			opacity: open ? 1 : 0,
-			transform: `translateY(${open ? 0 : -8}px)`,
+			transform: `translateY(${open ? 0 : above ? 8 : -8}px)`,
 			visibility: open ? "visible" : "hidden",
 			pointerEvents: open ? "auto" : "none",
 			transition: open ? "opacity .18s ease, transform .18s ease, visibility 0s" : "opacity .18s ease, transform .18s ease, visibility 0s linear .18s"
@@ -289149,7 +289155,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			const [restConfig, setRestConfig] = (0, react.useState)(() => restStore.get());
 			const [lateConfig, setLateConfig] = (0, react.useState)(() => lateStore.get());
 			const [appearance, setAppearance] = (0, react.useState)(() => appearanceStore.get());
-			appearance.scale;
+			const scale = appearance.scale;
 			const [funIdx, setFunIdx] = (0, react.useState)(() => Math.floor(Math.random() * FUN_LINES.length));
 			const lastTapRef = (0, react.useRef)(0);
 			const lastFunSwitchRef = (0, react.useRef)(0);
@@ -289614,7 +289620,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 						]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: runPanelStyle(hoveredRunning, runShift),
+						style: runPanelStyle(hoveredRunning, runShift, pos !== null && window.innerHeight - pos.y - 30 * scale < Math.min(window.innerHeight * .6, 480)),
 						role: "dialog",
 						"aria-label": "正在执行中的任务",
 						"aria-hidden": !hoveredRunning,
@@ -289665,7 +289671,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 						]
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						style: panelStyle(hovered, doneShift),
+						style: panelStyle(hovered, doneShift, pos !== null && window.innerHeight - pos.y - 30 * scale < Math.min(window.innerHeight * .66, 600)),
 						role: "dialog",
 						"aria-label": "对话完成记录",
 						"aria-hidden": !hovered,
