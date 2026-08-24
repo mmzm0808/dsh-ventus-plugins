@@ -288547,7 +288547,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			display: "flex",
 			alignItems: "stretch",
 			height: "calc(30px * var(--dps))",
-			maxWidth: "min(720px, calc(100vw - 48px))",
+			maxWidth: "min(560px, calc(100vw - 48px))",
 			...width !== null ? { width } : {},
 			borderRadius: "calc(15px * var(--dps))",
 			border: "1px solid color-mix(in srgb, var(--edge-accent, var(--dsw-alias-state-business-primary)) 55%, transparent)",
@@ -289716,12 +289716,16 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 									})
 								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									style: {
+										flex: "0 1 auto",
+										minWidth: 0,
+										whiteSpace: "nowrap",
 										overflow: "hidden",
 										textOverflow: "ellipsis"
 									},
+									title: displayText,
 									children: chars.map((ch, i) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 										style: {
-											display: "inline-block",
+											display: "inline",
 											whiteSpace: "pre",
 											opacity: 0,
 											animation: `dpCharIn .22s ease ${i * 28}ms forwards`
