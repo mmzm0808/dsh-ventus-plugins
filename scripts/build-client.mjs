@@ -49,6 +49,7 @@ const CLIENT_ENTRIES = [
   ['@dsh-external/dsh-visualize', '@dsh-external/dsh-visualize/lib/client.js'],
   ['@dsh-external/dsh-webui', '@dsh-external/dsh-webui/lib/client.js'],
   ['@nanmicoder/dsh-auto-mode', '@nanmicoder/dsh-auto-mode/lib/client.js'],
+  ['dsh-context', 'dsh-context/lib/client.js'],
   ['dsh-usage-skill', 'dsh-usage-skill/lib/client.js'],
 ]
 
@@ -81,6 +82,7 @@ const INJECT = [
   'modules',
   'settingsScope',
   'conversationEvents',
+  'conversation',
   'remote',
   'layout',
 ]
