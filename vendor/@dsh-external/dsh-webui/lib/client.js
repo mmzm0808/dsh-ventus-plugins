@@ -292289,7 +292289,25 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			fontWeight: unread > 0 ? 500 : 400,
 			whiteSpace: "nowrap",
 			overflow: "hidden",
-			transition: "width .28s ease"
+			transition: "width .28s ease",
+			paddingRight: "calc(30px * var(--dps))"
+		});
+		/** 浮动文件按钮：绝对定位在 wrap 右端，脱离 shell 的 overflow 裁剪，
+		*  内容超 maxWidth 时不再被裁掉。 */
+		const floatingFileButtonStyle = (hovered) => ({
+			position: "absolute",
+			top: 0,
+			right: 0,
+			bottom: "calc(8px * var(--dps))",
+			width: "calc(30px * var(--dps))",
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
+			border: "none",
+			borderLeft: "1px solid rgba(255,255,255,.16)",
+			background: hovered ? "rgba(255,255,255,.14)" : "transparent",
+			color: "var(--dsw-alias-label-secondary, rgba(255,255,255,.74))",
+			cursor: "pointer"
 		});
 		/** 胶囊主体（点击 = 进入最新完成的会话；按住拖动 = 移动胶囊）。 */
 		const pillMainStyle = {
@@ -292429,19 +292447,6 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			margin: "calc(7px * var(--dps)) 0",
 			background: "rgba(255,255,255,.16)"
 		};
-		/** 胶囊右侧「文件」按钮：点击打开文件浏览器抽屉。 */
-		const fileButtonStyle = (hovered) => ({
-			flex: "none",
-			width: "calc(30px * var(--dps))",
-			display: "flex",
-			alignItems: "center",
-			justifyContent: "center",
-			border: "none",
-			borderRadius: 0,
-			background: hovered ? "rgba(255,255,255,.14)" : "transparent",
-			color: "var(--dsw-alias-label-secondary, rgba(255,255,255,.74))",
-			cursor: "pointer"
-		});
 		/** shell 直接子项统一禁止收缩：宽度测量（子块求和）才不受受控宽度污染。 */
 		const shellChildStyle = { flex: "none" };
 		/** 记录面板宽度（视口溢出保护计算用）。 */
@@ -293003,6 +293008,75 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				})]
 			});
 		}
+		/** 轻量右键菜单（Portal 浮层）：点击菜单项执行并关闭；点击外部 / Esc 关闭。 */
+		function ContextMenu$1(props) {
+			const ref = (0, react.useRef)(null);
+			(0, react.useEffect)(() => {
+				const onDown = (event) => {
+					if (ref.current !== null && !ref.current.contains(event.target)) props.onClose();
+				};
+				const onKey = (event) => {
+					if (event.key === "Escape") props.onClose();
+				};
+				window.addEventListener("mousedown", onDown);
+				window.addEventListener("keydown", onKey);
+				return () => {
+					window.removeEventListener("mousedown", onDown);
+					window.removeEventListener("keydown", onKey);
+				};
+			}, [props]);
+			const style = {
+				position: "fixed",
+				left: Math.min(props.x, Math.max(0, window.innerWidth - 160)),
+				top: Math.min(props.y, Math.max(0, window.innerHeight - 40 * props.items.length - 8)),
+				zIndex: 2e4,
+				minWidth: 120,
+				padding: 4,
+				borderRadius: 8,
+				border: "1px solid var(--dsw-alias-border-l2, rgba(255,255,255,.14))",
+				background: "var(--dsw-alias-bg-layer-2, rgba(16,18,22,.97))",
+				boxShadow: "0 12px 36px rgba(0,0,0,.5)",
+				color: "var(--dsw-alias-label-primary, #e6e9f0)",
+				fontSize: 12,
+				lineHeight: "28px"
+			};
+			return (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+				ref,
+				style,
+				role: "menu",
+				onContextMenu: (event) => {
+					event.preventDefault();
+					event.stopPropagation();
+				},
+				children: props.items.map((item) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+					type: "button",
+					role: "menuitem",
+					style: {
+						display: "block",
+						width: "100%",
+						padding: "0 10px",
+						textAlign: "left",
+						border: "none",
+						background: "transparent",
+						color: "inherit",
+						font: "inherit",
+						borderRadius: 6,
+						cursor: "pointer"
+					},
+					onMouseEnter: (event) => {
+						event.currentTarget.style.background = "rgba(255,255,255,.12)";
+					},
+					onMouseLeave: (event) => {
+						event.currentTarget.style.background = "transparent";
+					},
+					onClick: () => {
+						props.onClose();
+						item.onPick();
+					},
+					children: item.label
+				}, item.label))
+			}), document.body);
+		}
 		/** 顶部悬浮「对话完成」胶囊：点击进会话、悬停滑出记录、可拖拽、常驻显示。 */
 		function DonePill(props) {
 			const [entries, setEntries] = (0, react.useState)([]);
@@ -293015,6 +293089,8 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			const [hoveredRunning, setHoveredRunning] = (0, react.useState)(false);
 			const [fileHovered, setFileHovered] = (0, react.useState)(false);
 			const [enabled, setEnabled] = (0, react.useState)(enabledStore.get());
+			const [pillMenu, setPillMenu] = (0, react.useState)(null);
+			const [docMenu, setDocMenu] = (0, react.useState)(null);
 			const [pos, setPos] = (0, react.useState)(() => {
 				const anchor = loadAnchor();
 				return anchor === null ? null : anchorToPos(anchor, 160);
@@ -293048,6 +293124,24 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			(0, react.useEffect)(() => appearanceStore.subscribe(setAppearance), []);
 			(0, react.useEffect)(() => {
 				ensurePillKeyframes();
+			}, []);
+			(0, react.useEffect)(() => {
+				const onDocContextMenu = (event) => {
+					const target = event.target;
+					if (target === null) return;
+					if (wrapRef.current !== null && wrapRef.current.contains(target)) return;
+					if (target.closest("a, button, input, textarea, select, [contenteditable], [role=\"button\"], code, pre, [data-context-menu]") !== null) return;
+					if (target.closest("[data-conversation-scroll]") === null) return;
+					event.preventDefault();
+					setDocMenu({
+						x: event.clientX,
+						y: event.clientY
+					});
+				};
+				document.addEventListener("contextmenu", onDocContextMenu, true);
+				return () => {
+					document.removeEventListener("contextmenu", onDocContextMenu, true);
+				};
 			}, []);
 			(0, react.useEffect)(() => {
 				setReminderTick((t) => t + 1);
@@ -293379,6 +293473,14 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			return (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				ref: wrapRef,
 				style: wrapStyle(dragging, pos, appearance.scale, fontStackOf(appearance.font)),
+				onContextMenu: (event) => {
+					event.preventDefault();
+					event.stopPropagation();
+					setPillMenu({
+						x: event.clientX,
+						y: event.clientY
+					});
+				},
 				onPointerDown,
 				onPointerMove,
 				onPointerUp,
@@ -293493,31 +293595,27 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 										children: ch
 									}, `${i}-${ch}`))
 								}, displayText)]
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								style: pillDividerStyle,
-								"aria-hidden": true
-							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								style: fileButtonStyle(fileHovered),
-								"aria-label": "文件浏览器",
-								title: "文件浏览器",
-								onPointerDown: (event) => {
-									event.stopPropagation();
-								},
-								onMouseEnter: () => {
-									setFileHovered(true);
-									setHovered(false);
-									setHoveredRunning(false);
-								},
-								onMouseLeave: () => {
-									setFileHovered(false);
-								},
-								onClick: toggleFileExplorer,
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconFolderOpenOutline16, { size: 14 })
 							})
 						]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						style: floatingFileButtonStyle(fileHovered),
+						"aria-label": "文件浏览器",
+						title: "文件浏览器",
+						onPointerDown: (event) => {
+							event.stopPropagation();
+						},
+						onMouseEnter: () => {
+							setFileHovered(true);
+							setHovered(false);
+							setHoveredRunning(false);
+						},
+						onMouseLeave: () => {
+							setFileHovered(false);
+						},
+						onClick: toggleFileExplorer,
+						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconFolderOpenOutline16, { size: 14 })
 					}),
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						style: runPanelStyle(hoveredRunning, runShift, pos !== null && window.innerHeight - pos.y - 30 * scale < 240),
@@ -293711,6 +293809,32 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 								children: "暂无记录 — 任一会话的对话完成后会出现在这里"
 							})
 						]
+					}),
+					pillMenu !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ContextMenu$1, {
+						x: pillMenu.x,
+						y: pillMenu.y,
+						items: [{
+							label: "隐藏胶囊",
+							onPick: () => {
+								enabledStore.set(false);
+							}
+						}],
+						onClose: () => {
+							setPillMenu(null);
+						}
+					}),
+					docMenu !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ContextMenu$1, {
+						x: docMenu.x,
+						y: docMenu.y,
+						items: [{
+							label: "打开胶囊",
+							onPick: () => {
+								enabledStore.set(true);
+							}
+						}],
+						onClose: () => {
+							setDocMenu(null);
+						}
 					})
 				]
 			}), document.body);
