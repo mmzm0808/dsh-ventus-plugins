@@ -293262,7 +293262,6 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					const target = event.target;
 					if (target === null) return;
 					if (wrapRef.current !== null && wrapRef.current.contains(target)) return;
-					if (target.closest("a, button, input, textarea, select, [contenteditable], [role=\"button\"], code, pre, [data-context-menu]") !== null) return;
 					if (target.closest("[class*=\"sessionRow\"], [class*=\"sidebar\"], [class*=\"Sidebar\"]") !== null) return;
 					event.preventDefault();
 					setDocMenu({
