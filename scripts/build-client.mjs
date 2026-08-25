@@ -109,6 +109,23 @@ const STAMP_SHA = process.env.STAMP_SHA
     try { return execSync('git rev-parse HEAD', { cwd: ROOT }).toString().trim() } catch { return null }
   })()
 
+/**
+ * 整合包默认 UI 偏好（方案 B：合理默认，随仓库版本化）。
+ *
+ * 只在「首次安装 / 从未设置过」时写入（localStorage.getItem === null），
+ * 不覆盖用户后续自定义。白名单机制：只有这里显式列出的键才会被注入——
+ * 结构上排除一切 API key / token / 本地路径等敏感配置。
+ *
+ * 注意：悬浮球 / 胶囊的**位置**不在此列（用户明确不管）；侧边栏收起是
+ * 官方内存 store（不持久化），由 applyDefaultPrefs 首次运行时调用
+ * ctx.layout.toggleSidebar() 折叠一次。
+ */
+const DEFAULT_PREFS = {
+  'dsh-theme-endfield-enabled': '1',
+  'dsh-theme-endfield-palette': 'wuling',
+  'dsh.donePill.enabled': '1',
+}
+
 const stampCode = STAMP_SHA === null ? '' : `/* dsh-ventus-plugins: local commit stamp */
 try { localStorage.setItem('dsh.ventus.localSha', ${JSON.stringify(STAMP_SHA)}) } catch {}
 `
@@ -127,9 +144,27 @@ ${stampCode}window.__ModuleLoader__.load({
 
 ${embedded}
 
+    var DEFAULT_PREFS = ${JSON.stringify(DEFAULT_PREFS)};
+    function applyDefaultPrefs(ctx) {
+      try {
+        for (var k in DEFAULT_PREFS) {
+          if (localStorage.getItem(k) === null) localStorage.setItem(k, DEFAULT_PREFS[k]);
+        }
+      } catch (e) {}
+      // 首次运行时折叠侧边栏（官方侧边栏状态为内存 store，不持久化；
+      // 仅首次折叠一次，之后尊重用户手动展开/收起）。
+      try {
+        if (localStorage.getItem('dsh.ventus.sidebarInit') === null) {
+          localStorage.setItem('dsh.ventus.sidebarInit', '1');
+          if (ctx.layout && typeof ctx.layout.toggleSidebar === 'function') ctx.layout.toggleSidebar();
+        }
+      } catch (e) {}
+    }
+
     exports.name = 'dsh-ventus-plugins';
     exports.inject = ${JSON.stringify(INJECT)};
     exports.apply = (ctx) => {
+      applyDefaultPrefs(ctx);
       const ids = ${JSON.stringify(SUB_IDS_EMBEDDED)};
       for (const id of ids) {
         try {
