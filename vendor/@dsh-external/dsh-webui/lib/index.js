@@ -15,6 +15,7 @@ import { applyRewind as applyRewindHost } from './rewind.js';
 import { applyDonePill as applyDonePillHost } from './done-pill.js';
 import { applyVisionHelper } from './vision-helper.js';
 import { applyPerfBench } from './perf-bench.js';
+import { perfHandler } from './perf-overview.js';
 import { applyModulesHost } from './modules-host.js';
 import { applyFileExplorer as applyFileExplorerHost } from './file-explorer.js';
 export const name = 'dsh-webui';
@@ -169,5 +170,11 @@ export async function apply(ctx, config = {}) {
         applyVisionHelper(ctx, config.visionHelper ?? {});
     // 12) 供应商性能基准（/api/perf-bench，provider-hub 性能测试弹窗的数据源）。
     applyPerfBench(ctx);
+    // 12.5) 整合包性能概览（/api/ventus-perf，侧边栏「性能」栏目数据源）。
+    ctx.webServer.register({
+        kind: 'exact',
+        path: '/api/ventus-perf',
+        handler: perfHandler,
+    });
 }
 //# sourceMappingURL=index.js.map
