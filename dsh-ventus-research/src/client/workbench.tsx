@@ -7,6 +7,7 @@
  */
 import { memo, useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react'
 import type { PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import { setQuestionIndex, useQuestion } from './question-bridge.tsx'
 
 export type ResearchWorkbenchProps = PropsRuntime<'conversation.view'>
 
@@ -331,6 +332,85 @@ function ClaimDetail({ claim, evidence, adjudications }: {
   )
 }
 
+// ---- AI 提问面板（AskUserQuestion 工作台作答）----
+
+function QuestionPanel(): JSX.Element | null {
+  const pending = useQuestion()
+  const [picked, setPicked] = useState<Record<string, string[]>>({})
+  const [submitting, setSubmitting] = useState(false)
+  if (pending === null) return null
+  const { wait, question, index } = pending
+  const total = wait.payload.questions.length
+  const options = question.options ?? []
+  const selected = picked[question.id] ?? []
+
+  const toggle = (label: string): void => {
+    setPicked(prev => {
+      const cur = prev[question.id] ?? []
+      if (question.multiSelect) {
+        return { ...prev, [question.id]: cur.includes(label) ? cur.filter(x => x !== label) : [...cur, label] }
+      }
+      return { ...prev, [question.id]: [label] }
+    })
+  }
+
+  const submit = async (): Promise<void> => {
+    if (submitting) return
+    setSubmitting(true)
+    const answers = wait.payload.questions.map(q => {
+      const sel = picked[q.id] ?? []
+      return sel.length > 0 ? { id: q.id, selected: sel } : { id: q.id, custom: '' }
+    })
+    try {
+      await wait.respond({ ok: true, value: { sessionId: wait.sessionId, answer: { answers } } })
+    } catch { /* 收据被拒 */ }
+    setSubmitting(false)
+  }
+
+  const cancel = (): void => {
+    void wait.respond({ ok: false, error: { code: 'cancelled', message: 'user closed', details: {} } })
+  }
+
+  return (
+    <div style={cardStyle}>
+      <div style={cardTitleStyle}>AI 提问（工作台作答）{total > 1 ? ` · ${index + 1}/${total}` : ''}</div>
+      {question.header !== undefined && (
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--dsw-alias-label-primary)', marginBottom: 4 }}>{question.header}</div>
+      )}
+      <div style={{ fontSize: 13, color: 'var(--dsw-alias-label-primary)', marginBottom: 8 }}>{question.question}</div>
+      {options.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {options.map(opt => (
+            <label key={opt.label} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', cursor: 'pointer', fontSize: 12 }}>
+              <input
+                type={question.multiSelect ? 'checkbox' : 'radio'}
+                checked={selected.includes(opt.label)}
+                style={{ marginTop: 3 }}
+                onChange={() => { toggle(opt.label) }}
+              />
+              <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span style={{ color: 'var(--dsw-alias-label-primary)' }}>{opt.label}</span>
+                {opt.description !== undefined && (
+                  <span style={{ fontSize: 11, color: 'var(--dsw-alias-label-tertiary)' }}>{opt.description}</span>
+                )}
+              </span>
+            </label>
+          ))}
+        </div>
+      )}
+      {options.length === 0 && (
+        <div style={{ fontSize: 12, color: 'var(--dsw-alias-label-tertiary)' }}>（无选项，直接提交或取消）</div>
+      )}
+      <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+        {index > 0 && <button type="button" style={pageBtnStyle} onClick={() => setQuestionIndex(index - 1)}>上一题</button>}
+        {index < total - 1 && <button type="button" style={pageBtnStyle} onClick={() => setQuestionIndex(index + 1)}>下一题</button>}
+        <button type="button" style={refreshBtnStyle} disabled={submitting} onClick={() => { void submit() }}>提交</button>
+        <button type="button" style={pageBtnStyle} disabled={submitting} onClick={cancel}>取消</button>
+      </div>
+    </div>
+  )
+}
+
 // ---- 工作台主组件 ----
 
 export function ResearchWorkbench(_props: ResearchWorkbenchProps): JSX.Element | null {
@@ -360,6 +440,7 @@ export function ResearchWorkbench(_props: ResearchWorkbenchProps): JSX.Element |
 
   return (
     <div style={rootStyle}>
+      <QuestionPanel />
       {data === null && loading && <div style={emptyStyle}>加载中…</div>}
       {data?.ok === false && <div style={emptyStyle}>{data.error ?? '未打开课题（先用 rb_open 立项）'}</div>}
 

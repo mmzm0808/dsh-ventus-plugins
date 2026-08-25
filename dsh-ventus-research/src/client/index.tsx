@@ -8,6 +8,7 @@
 import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import { ResearchWorkbench } from './workbench.tsx'
+import { QuestionBridge, selectQuestion } from './question-bridge.tsx'
 
 export const inject = ['slots']
 
@@ -15,5 +16,12 @@ export function apply(ctx: ClientContext): void {
   ctx.slots.inject('conversation.view', () => ctx.slots.register(
     { name: 'conversation.view', id: 'research', order: 30, locale: 'research', label: () => '科研' },
     props => <ResearchWorkbench {...props} />,
+  ))
+
+  // AskUserQuestion 桥接：匹配 AI 提问（conversation.composer chain），
+  // 广播到科研工作台显示；工作台选择后走 wait.respond 回填模型。
+  ctx.slots.inject('conversation.composer', () => ctx.slots.register(
+    { name: 'conversation.composer', select: selectQuestion },
+    props => <QuestionBridge matched={props.matched} />,
   ))
 }
