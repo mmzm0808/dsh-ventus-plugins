@@ -7,7 +7,7 @@ cd "$ROOT"
 
 CHECKOUT="${DSH_CHECKOUT:-}"
 if [ -z "$CHECKOUT" ]; then
-  for candidate in "$HOME/dsh-harness" "$HOME/dsh" "$HOME/.dsh/dsh-harness" "E:/ProgramData/deepseek-harness"; do
+  for candidate in "$HOME/dsh-harness" "$HOME/dsh" "$HOME/.dsh/dsh-harness"; do
     if [ -d "$candidate/packages" ]; then CHECKOUT="$candidate"; break; fi
   done
 fi
