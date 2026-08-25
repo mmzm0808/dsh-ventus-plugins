@@ -289969,6 +289969,36 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 .dsp-archive-panel .dsp-archive-group-title {
   color: color-mix(in srgb, var(--edge-accent, var(--dsw-alias-state-business-primary)) 72%, var(--dsw-alias-label-primary));
 }
+/* 已归档多选 / 删除按钮（标题行右侧，主题 UI 风格） */
+.dsp-archive-multi,
+.dsp-archive-delete {
+  margin-left: auto;
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255,255,255,.14));
+  background: transparent;
+  color: var(--dsw-alias-label-secondary, rgba(255,255,255,.7));
+  border-radius: 8px;
+  padding: 1px 9px;
+  font-size: 11px;
+  line-height: 18px;
+  cursor: pointer;
+  flex: none;
+}
+.dsp-archive-delete {
+  margin-left: 6px;
+  color: var(--dsw-alias-state-danger, #e05c5c);
+  border-color: var(--dsw-alias-state-danger, #e05c5c);
+}
+.dsp-archive-multi-on {
+  color: var(--edge-accent, var(--dsw-alias-state-business-primary));
+  border-color: var(--edge-accent, var(--dsw-alias-state-business-primary));
+}
+/* 多选模式的会话行：checkbox 行首 */
+.dsp-archive-multirow .dsp-archive-check {
+  flex: none;
+  margin: 0;
+  accent-color: var(--dsw-alias-state-business-primary);
+  cursor: pointer;
+}
 /* 可拖动分隔条：调整已归档区与工作区的高度占比 */
 .dsp-archive-handle {
   height: 4px;
@@ -290198,7 +290228,21 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M9.94076 1.34942C10.7047 0.90231 11.6503 0.902415 12.4143 1.34942C12.7061 1.52015 12.9688 1.79118 13.3104 2.13284C13.6521 2.47448 13.9231 2.73721 14.0939 3.02894C14.5408 3.79294 14.5409 4.73856 14.0939 5.50251C13.9231 5.79415 13.652 6.05704 13.3104 6.39861L6.65932 13.0497C6.28068 13.4284 6.00695 13.7108 5.66543 13.9097C5.32391 14.1085 4.94315 14.2074 4.42705 14.3498L3.24394 14.6761C2.77527 14.8054 2.34538 14.9262 2.00131 14.9684C1.65196 15.0112 1.17964 15.0013 0.810764 14.6325C0.441921 14.2637 0.432107 13.7913 0.47486 13.442C0.517035 13.0979 0.6379 12.668 0.767181 12.1993L1.09352 11.0162C1.23588 10.5001 1.33481 10.1193 1.5336 9.77784C1.7325 9.43632 2.0149 9.1626 2.39355 8.78395L9.04466 2.13284C9.38625 1.79126 9.64911 1.52016 9.94076 1.34942ZM15.5427 14.8398H7.55223L8.96707 13.425H15.5427V14.8398ZM3.39382 9.78422C2.965 10.213 2.84244 10.3436 2.75709 10.49C2.67183 10.6366 2.61862 10.8079 2.45733 11.3925L2.13099 12.5756C2.00183 13.0439 1.92194 13.3419 1.88863 13.5536C2.10041 13.5204 2.39872 13.4416 2.86764 13.3123L4.05075 12.9859C4.63544 12.8246 4.80669 12.7715 4.95323 12.6862C5.09968 12.6008 5.23022 12.4783 5.65905 12.0494L10.721 6.98644L8.45577 4.72121L3.39382 9.78422ZM11.7 2.57079C11.3774 2.38198 10.9777 2.38198 10.6551 2.57079C10.5602 2.62647 10.4487 2.72931 10.0449 3.13311L9.45604 3.72094L11.7213 5.98617L12.3102 5.39833C12.7139 4.99457 12.8168 4.88307 12.8725 4.78818C13.0613 4.46561 13.0612 4.06585 12.8725 3.74326C12.8169 3.64827 12.7146 3.53752 12.3102 3.13311C11.9057 2.72863 11.795 2.6264 11.7 2.57079Z" })
 			});
 		}
-		/** 分叉（菜单图标）。 */
+		/** 删除（菜单图标）。 */
+		function TrashIcon({ size = 16 }) {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
+				width: size,
+				height: size,
+				viewBox: "0 0 16 16",
+				fill: "currentColor",
+				"aria-hidden": "true",
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", {
+					fillRule: "evenodd",
+					clipRule: "evenodd",
+					d: "M6 1.5h4a1.5 1.5 0 0 1 1.5 1.5v1H13.5a.75.75 0 0 1 0 1.5h-.575l-.58 8.056A1.75 1.75 0 0 1 10.6 15.75H5.4a1.75 1.75 0 0 1-1.745-1.624L3.075 5.5H2.5a.75.75 0 0 1 0-1.5h2V3A1.5 1.5 0 0 1 6 1.5Zm3.75 2.5v-1a.25.25 0 0 0-.25-.25h-3a.25.25 0 0 0-.25.25v1h3.5ZM5 6.5a.75.75 0 0 1 .75.75v5a.75.75 0 0 1-1.5 0v-5A.75.75 0 0 1 5 6.5Zm3 0a.75.75 0 0 1 .75.75v5a.75.75 0 0 1-1.5 0v-5A.75.75 0 0 1 8 6.5Zm3 0a.75.75 0 0 1 .75.75v5a.75.75 0 0 1-1.5 0v-5A.75.75 0 0 1 11 6.5Z"
+				})
+			});
+		}
 		function ForkIcon({ size = 16 }) {
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
 				width: size,
@@ -290388,6 +290432,10 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		function doUnarchive(sessionId) {
 			workspaces$2?.unarchiveSession(sessionId).catch(() => {});
 		}
+		/** 彻底删除：从归档集移除（不复位到工作区），用户视图消失。 */
+		function doForget(sessionId) {
+			workspaces$2?.forgetSession(sessionId).catch(() => {});
+		}
 		/** 重命名会话（durable title 覆盖；host 归一化）。 */
 		async function doRename(sessionId, title) {
 			const session = sessions$2?.binding(sessionId)?.session;
@@ -290448,6 +290496,16 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ArchiveIcon, {}),
 					onPick: () => {
 						(state.archived ? doUnarchive : doArchive)(state.sessionId);
+						onClose();
+					}
+				},
+				{
+					id: "delete",
+					label: "彻底删除",
+					icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(TrashIcon, {}),
+					danger: true,
+					onPick: () => {
+						if (window.confirm(`确认彻底删除会话「${state.title}」？此操作不可恢复。`)) doForget(state.sessionId);
 						onClose();
 					}
 				}
@@ -290623,6 +290681,23 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		/** 内存展开覆盖：null = 默认收起；true/false = 本次会话用户展开/收起（不持久化，
 		*  保证每次启动默认收起，用户展开只对本次生效）。 */
 		let archiveExpandedOverride = null;
+		/** 已归档多选模式（本次会话）：true 时会话行显示 checkbox，点行切换选中。 */
+		let archiveMultiSelect = false;
+		/** 多选模式下已选中的会话 id 集合。 */
+		const archiveSelected = /* @__PURE__ */ new Set();
+		/** 切换一个会话的多选选中态并同步 checkbox。 */
+		function toggleArchiveSelect(id, cb) {
+			const next = !archiveSelected.has(id);
+			if (next) archiveSelected.add(id);
+			else archiveSelected.delete(id);
+			cb.checked = next;
+			updateArchiveDelete();
+		}
+		/** 更新「删除」按钮显隐（选中 > 0 才显示）。 */
+		function updateArchiveDelete() {
+			const del = document.querySelector(`.${PANEL_CLASS}`)?.querySelector(".dsp-archive-delete");
+			if (del !== null) del.style.display = archiveSelected.size > 0 ? "" : "none";
+		}
 		const GROUP_COLLAPSED_PREFIX = "dsh.webui.archive-group-collapsed:";
 		/** 展开时的面板高度占比（视口百分比，10–90，可拖动分隔条调节）。 */
 		const HEIGHT_KEY = "dsh.webui.archive-height";
@@ -290711,6 +290786,37 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			header.setAttribute("role", "button");
 			header.setAttribute("tabindex", "0");
 			header.innerHTML = `<span class="dsp-archive-chevron">${CHEVRON_SVG}</span><span class="dsp-archive-label">已归档</span><span class="dsp-archive-count"></span>`;
+			const multiBtn = document.createElement("button");
+			multiBtn.type = "button";
+			multiBtn.className = "dsp-archive-multi";
+			multiBtn.setAttribute("aria-label", "多选已归档会话");
+			multiBtn.textContent = "多选";
+			multiBtn.addEventListener("click", (event) => {
+				event.stopPropagation();
+				archiveMultiSelect = !archiveMultiSelect;
+				archiveSelected.clear();
+				multiBtn.classList.toggle("dsp-archive-multi-on", archiveMultiSelect);
+				updateArchiveDelete();
+				render();
+			});
+			header.appendChild(multiBtn);
+			const delBtn = document.createElement("button");
+			delBtn.type = "button";
+			delBtn.className = "dsp-archive-delete";
+			delBtn.textContent = "删除";
+			delBtn.style.display = "none";
+			delBtn.addEventListener("click", (event) => {
+				event.stopPropagation();
+				if (archiveSelected.size === 0) return;
+				if (window.confirm(`确认彻底删除 ${archiveSelected.size} 个已归档会话？此操作不可恢复。`)) {
+					for (const id of [...archiveSelected]) workspaces$1?.forgetSession(id).catch(() => {});
+					archiveSelected.clear();
+					archiveMultiSelect = false;
+					multiBtn.classList.remove("dsp-archive-multi-on");
+					render();
+				}
+			});
+			header.appendChild(delBtn);
 			const body = document.createElement("div");
 			body.className = BODY_CLASS;
 			panel.append(handle, header, body);
@@ -290755,10 +290861,28 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				event.stopPropagation();
 				workspaces$1?.unarchiveSession(id).catch(() => {});
 			});
-			row.append(titleEl, menuBtn, restoreBtn);
-			row.addEventListener("click", () => {
-				sessions$1?.open(id);
-			});
+			if (archiveMultiSelect) {
+				row.classList.add("dsp-archive-multirow");
+				const cb = document.createElement("input");
+				cb.type = "checkbox";
+				cb.className = "dsp-archive-check";
+				cb.checked = archiveSelected.has(id);
+				cb.addEventListener("click", (event) => {
+					event.stopPropagation();
+				});
+				cb.addEventListener("change", () => {
+					toggleArchiveSelect(id, cb);
+				});
+				row.append(cb, titleEl);
+				row.addEventListener("click", () => {
+					toggleArchiveSelect(id, cb);
+				});
+			} else {
+				row.append(titleEl, menuBtn, restoreBtn);
+				row.addEventListener("click", () => {
+					sessions$1?.open(id);
+				});
+			}
 			return row;
 		}
 		/** 归档会话按工作区分组（未归属进空 key 的未分组桶）。 */
