@@ -281533,7 +281533,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const cardStyle = {
 				...CARD_BASE,
 				width: Math.round(440 + 380 * expand),
-				height: Math.round(250 + 370 * expand),
+				height: Math.round(320 + 350 * expand),
 				opacity: fade,
 				transform: `scale(${(.92 + .08 * fade).toFixed(3)}) translateY(${Math.round(8 * (1 - fade))}px)`
 			};
