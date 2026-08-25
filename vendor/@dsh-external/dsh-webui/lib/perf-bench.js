@@ -535,6 +535,12 @@ async function runDetectAsync(ctx, provider, model) {
                         for (const l of thinkers)
                             efforts[l] = l;
                         nextModels[idx].reasoningEfforts = efforts;
+                        // 兼容声明（通用解）：绝大多数 OpenAI 兼容网关只认 system role，不认
+                        // developer（OpenAI 官方 o 系列的新角色）。推理等级会触发 pi-ai 以
+                        // developer 发送系统提示，网关不认就 400。检测到推理等级时自动声明
+                        // supportsDeveloperRole: false（合并保留已有 compat），保证探测后能
+                        // 正确调用；真支持 developer 的网关可在模型行手动改回 true。
+                        nextModels[idx].compat = { ...(nextModels[idx].compat ?? {}), supportsDeveloperRole: false };
                         st.savedLevels = true;
                     }
                     await ctx.settings.update(ns, { providers: { [provider]: { models: nextModels } } });
