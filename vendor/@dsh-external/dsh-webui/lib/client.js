@@ -289960,11 +289960,14 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
   border-top: 1px solid var(--dsw-alias-border-l2, rgba(255,255,255,.12));
   border-radius: 10px 10px 0 0;
 }
-/* 归档区标题/分组/会话行文字整体降一档（已归档的“非活跃”语义） */
+/* 归档区标题/会话行文字整体降一档（已归档的“非活跃”语义） */
 .dsp-archive-panel .dsp-archive-label,
-.dsp-archive-panel .dsp-archive-group-title,
 .dsp-archive-panel .dsp-archive-row-title {
   color: var(--dsw-alias-label-secondary);
+}
+/* 已归档工作区组标题（文件夹）：常驻主题色半高亮，而非仅悬停高亮 */
+.dsp-archive-panel .dsp-archive-group-title {
+  color: color-mix(in srgb, var(--edge-accent, var(--dsw-alias-state-business-primary)) 72%, var(--dsw-alias-label-primary));
 }
 /* 可拖动分隔条：调整已归档区与工作区的高度占比 */
 .dsp-archive-handle {

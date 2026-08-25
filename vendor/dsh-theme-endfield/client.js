@@ -700,8 +700,11 @@ function apply(ctx) {
         bx[k] = -0.1 * w + ((ci + rnd()) / gx) * spanX
         by[k] = -0.1 * h + ((cj + rnd()) / gy) * spanY
         // Mixed sign gives peaks AND basins; equal signs would read as one blob.
-        ba[k] = (rnd() < 0.5 ? -1 : 1) * (0.6 + rnd() * 0.9)
-        bs[k] = (0.05 + rnd() * 0.09) * m
+        // Amplitude kept low and sigma wide (compared to the original ±0.6..1.5 /
+        // 0.05..0.14) so the field reads as gentle rolling terrain — no abrupt
+        // bullseyes that make the eye dizzy.
+        ba[k] = (rnd() < 0.5 ? -1 : 1) * (0.3 + rnd() * 0.45)
+        bs[k] = (0.09 + rnd() * 0.09) * m
         dx[k] = rnd() * 2 - 1
         dy[k] = rnd() * 2 - 1
       }

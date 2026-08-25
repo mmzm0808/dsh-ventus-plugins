@@ -2020,7 +2020,20 @@ window.__ModuleLoader__.load({
 		function PrefRow(props) {
 			const [open, setOpen] = React.useState(false);
 			const active = props.options.find((o) => o.id === props.value)?.label ?? props.value;
-			return /* @__PURE__ */ React.createElement("div", { className: "lc-settings-row" }, /* @__PURE__ */ React.createElement("span", { className: "lc-settings-label" }, props.label), /* @__PURE__ */ React.createElement(_deepseek_ai_dsh_client_ui_primitives.Menu, {
+			return /* @__PURE__ */ React.createElement("div", { style: {
+				display: "flex",
+				alignItems: "center",
+				gap: 8,
+				padding: "8px 0"
+			} }, /* @__PURE__ */ React.createElement("span", { style: {
+				flex: 1,
+				minWidth: 0,
+				whiteSpace: "nowrap",
+				overflow: "hidden",
+				textOverflow: "ellipsis",
+				fontSize: 14,
+				color: "var(--dsw-alias-label-primary)"
+			} }, props.label), /* @__PURE__ */ React.createElement(_deepseek_ai_dsh_client_ui_primitives.Menu, {
 				open,
 				onClose: () => {
 					setOpen(false);
@@ -2035,7 +2048,21 @@ window.__ModuleLoader__.load({
 				portal: true,
 				anchor: /* @__PURE__ */ React.createElement("button", {
 					type: "button",
-					className: "lc-settings-select",
+					style: {
+						display: "inline-flex",
+						alignItems: "center",
+						gap: 12,
+						height: 36,
+						padding: "0 14px",
+						border: "none",
+						borderRadius: 18,
+						background: "var(--dsw-alias-bg-module-platform)",
+						fontSize: 14,
+						color: "var(--dsw-alias-label-primary)",
+						cursor: "pointer",
+						whiteSpace: "nowrap",
+						opacity: props.disabled ? .5 : 1
+					},
 					disabled: props.disabled,
 					"aria-haspopup": "menu",
 					"aria-expanded": open,
