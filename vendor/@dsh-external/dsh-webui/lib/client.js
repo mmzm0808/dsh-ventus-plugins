@@ -293600,7 +293600,19 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					setShellWidth(Math.round(total));
 				}
 			});
-			if (!enabled) return null;
+			if (!enabled) return (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsx)(react_jsx_runtime.Fragment, { children: docMenu !== null && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ContextMenu$1, {
+				x: docMenu.x,
+				y: docMenu.y,
+				items: [{
+					label: "打开胶囊",
+					onPick: () => {
+						enabledStore.set(true);
+					}
+				}],
+				onClose: () => {
+					setDocMenu(null);
+				}
+			}) }), document.body);
 			const chars = displayText.split("");
 			return (0, react_dom.createPortal)(/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				ref: wrapRef,
