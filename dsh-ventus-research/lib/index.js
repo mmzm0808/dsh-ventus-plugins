@@ -69,6 +69,46 @@ async function signHandler(req, res) {
     const issued = signatureTokens.issue(claimId, revision);
     res.end(JSON.stringify({ ok: true, token: issued.token, expires: issued.expires, claim_id: claimId, revision }));
 }
+/** GET /research-bench/state — 读取当前课题状态快照（供科研工作台渲染）。 */
+async function stateHandler(req, res) {
+    res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
+    if (req.method !== 'GET') {
+        res.end(JSON.stringify({ ok: false, error: 'method must be GET' }));
+        return;
+    }
+    const root = getCurrentBenchRoot();
+    if (root === null) {
+        res.end(JSON.stringify({ ok: false, error: '未打开课题（先用 rb_open 立项）' }));
+        return;
+    }
+    const state = readState(root);
+    if (state === null) {
+        res.end(JSON.stringify({ ok: false, error: '课题状态文件读取失败' }));
+        return;
+    }
+    const byStatus = {};
+    for (const claim of state.claims)
+        byStatus[claim.status] = (byStatus[claim.status] ?? 0) + 1;
+    res.end(JSON.stringify({
+        ok: true,
+        topic: state.topic,
+        root: state.root,
+        trust: state.briefingCache !== undefined ? 'high' : 'low',
+        stats: { total: state.claims.length, byStatus },
+        claims: state.claims.map(c => ({
+            id: c.id, version: c.version, status: c.status, text: c.text,
+            conventionId: c.conventionId, tolClass: c.tolClass,
+            deriveRef: c.deriveRef, verifyRef: c.verifyRef,
+            evidenceRefs: c.evidenceRefs, texRef: c.texRef, frozen: c.frozen,
+        })),
+        evidence: state.evidence.map(e => ({
+            id: e.id, claimId: e.claimId, source: e.source, year: e.year, stance: e.stance,
+        })),
+        adjudications: state.adjudications.map(a => ({
+            claim: a.claim, verdict: a.verdict, by: a.by, at: a.at, note: a.note,
+        })),
+    }));
+}
 export function apply(ctx, config) {
     // 7 个工具：资源挂 ctx.effect，卸载/HMR 自动清理。
     ctx.effect(() => {
@@ -84,6 +124,11 @@ export function apply(ctx, config) {
             path: '/research-bench/sign',
             handler: signHandler,
         }), 'dsh-ventus-research: sign route');
+        ctx.effect(() => ctx.webServer.register({
+            kind: 'exact',
+            path: '/research-bench/state',
+            handler: stateHandler,
+        }), 'dsh-ventus-research: state route');
     }
 }
 //# sourceMappingURL=index.js.map

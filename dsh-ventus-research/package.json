@@ -11,6 +11,10 @@
       "types": "./lib/types/index.d.ts",
       "default": "./lib/index.js"
     },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
@@ -22,12 +26,24 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-slots",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
     }
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": ">=4",
     "@deepseek-ai/dsh-host-webserver": ">=0.1.0-rc.6",
-    "@deepseek-ai/dsh-tools": ">=0.1.0-rc.6"
+    "@deepseek-ai/dsh-tools": ">=0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-runtime": ">=0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-slots": ">=0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-conversation": ">=0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-primitives": ">=0.1.0-rc.6"
   },
   "dependencies": {
     "schemastery": "^3.18.0"
@@ -36,11 +52,19 @@
     "@deepseek-ai/cordis": ">=4",
     "@deepseek-ai/dsh-host-webserver": ">=0.1.0-rc.6",
     "@deepseek-ai/dsh-tools": ">=0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-runtime": ">=0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-slots": ">=0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-conversation": ">=0.1.0-rc.6",
+    "@deepseek-ai/dsh-client-ui-primitives": ">=0.1.0-rc.6",
     "@types/node": "^22.20.0",
+    "@types/react": "^18.3.31",
+    "react": "^18.3.1",
+    "tsdown": "0.22.14",
     "typescript": "~5.7.2"
   },
   "scripts": {
     "build": "bash scripts/build.sh",
+    "build:client": "tsdown",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --test lib/gates.spec.js"
   }

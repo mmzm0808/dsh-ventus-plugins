@@ -293048,6 +293048,9 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 					event.preventDefault();
 					event.stopPropagation();
 				},
+				onPointerDown: (event) => {
+					event.stopPropagation();
+				},
 				children: props.items.map((item) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 					type: "button",
 					role: "menuitem",

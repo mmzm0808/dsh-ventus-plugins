@@ -49,6 +49,34 @@ link_pkg @deepseek-ai/dsh-tools packages/core/tools
 link_pkg @deepseek-ai/dsh-host-webserver packages/host/webserver
 link_pkg @types/node node_modules/@types/node
 
+# client 半身依赖（tsdown 构建与类型解析）
+link_pkg @deepseek-ai/dsh-client-runtime packages/client/runtime
+link_pkg @deepseek-ai/dsh-client-ui-slots packages/client/ui-slots
+link_pkg @deepseek-ai/dsh-client-ui-conversation packages/client/ui-conversation
+link_pkg @deepseek-ai/dsh-client-ui-primitives packages/client/ui-primitives
+link_pkg @deepseek-ai/dsh-client-locale packages/client/locale
+
+# react 全家桶在 pnpm store 里（root node_modules 没有）
+link_store_pkg() {
+  local store_dir
+  store_dir=$(find "$CHECKOUT/node_modules/.pnpm" -maxdepth 1 -type d -iname "$1" 2>/dev/null | head -1)
+  if [ -z "$store_dir" ]; then
+    echo "build: store dependency missing: $1 under $CHECKOUT/node_modules/.pnpm" >&2
+    exit 1
+  fi
+  node -e "
+    const fs = require('fs');
+    const path = require('path');
+    const link = path.resolve(process.argv[1]);
+    const target = path.resolve(process.argv[2]);
+    fs.rmSync(link, { recursive: true, force: true });
+    fs.mkdirSync(path.dirname(link), { recursive: true });
+    fs.symlinkSync(target, link, process.platform === 'win32' ? 'junction' : 'dir');
+  " "node_modules/$2" "$store_dir/node_modules/$2"
+}
+link_store_pkg 'react@*' react
+link_store_pkg '@types+react@*' @types/react
+
 STD_SCHEMA=$(find "$CHECKOUT/node_modules/.pnpm" -maxdepth 1 -type d -iname '@standard-schema+spec@*' 2>/dev/null | head -1)
 if [ -n "$STD_SCHEMA" ]; then
   node -e "
@@ -62,4 +90,8 @@ fi
 
 echo "=== Compiling src → lib ==="
 "$TSC" -p tsconfig.json
+
+echo "=== Building client bundle (tsdown) ==="
+"$CHECKOUT/node_modules/.bin/tsdown"
+
 echo "=== Build complete ==="
