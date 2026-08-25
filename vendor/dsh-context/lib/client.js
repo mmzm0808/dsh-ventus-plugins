@@ -1136,6 +1136,8 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region src/client/components/browser.tsx
+		/** 上下文浏览器单批渲染的 surface 节点数（渐进加载，降低长会话瞬时渲染压力）。 */
+		const NODE_PAGE = 30;
 		function unionTypesOf(p) {
 			const branches = [];
 			if (Array.isArray(p.anyOf)) branches.push(...p.anyOf);
@@ -1489,6 +1491,7 @@ window.__ModuleLoader__.load({
 				const [sel, setSel] = React.useState("live");
 				const [openCat, setOpenCat] = React.useState(null);
 				const [openElem, setOpenElem] = React.useState(null);
+				const [maxNodes, setMaxNodes] = React.useState(NODE_PAGE);
 				const convNodes = typeof props.useSession === "function" ? props.useSession((s) => s.nodes) : void 0;
 				const bySeq = React.useMemo(() => {
 					const m = /* @__PURE__ */ new Map();
@@ -1638,7 +1641,9 @@ window.__ModuleLoader__.load({
 							}));
 						});
 					}
-					return (byCat[c] ?? []).slice().reverse().map((n) => {
+					const allNodes = (byCat[c] ?? []).slice().reverse();
+					const visibleNodes = allNodes.slice(0, maxNodes);
+					return /* @__PURE__ */ React.createElement(React.Fragment, null, visibleNodes.map((n) => {
 						const conv = bySeq.get(n.seq);
 						const rowErr = n.cat === "tool" && toolErrOf(n, conv).err;
 						let tag = null;
@@ -1678,7 +1683,11 @@ window.__ModuleLoader__.load({
 							},
 							hint: conv === void 0 && awaiting ? t("browser.loading") : t("browser.noContent")
 						}), rowErr);
-					});
+					}), allNodes.length > visibleNodes.length && /* @__PURE__ */ React.createElement("button", {
+						type: "button",
+						className: "lc-br-more",
+						onClick: () => setMaxNodes((prev) => prev + NODE_PAGE)
+					}, "加载更多（剩余 ", allNodes.length - visibleNodes.length, " 条）"));
 				};
 				return /* @__PURE__ */ React.createElement("div", {
 					className: "lc-card",
