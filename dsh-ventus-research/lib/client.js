@@ -264,7 +264,15 @@ window.__ModuleLoader__.load({
 			if (stats === void 0) return null;
 			const entries = Object.entries(stats.byStatus);
 			if (entries.length === 0) return null;
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+			const advanced = [
+				"verified",
+				"evidenced",
+				"adjudicated",
+				"published"
+			];
+			const advancedCount = entries.filter(([s]) => advanced.includes(s)).reduce((a, [, c]) => a + c, 0);
+			const pct = stats.total > 0 ? Math.round(advancedCount / stats.total * 100) : 0;
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				style: chipRowStyle,
 				children: entries.map(([status, count]) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 					style: chip(statusColor(status)),
@@ -274,7 +282,44 @@ window.__ModuleLoader__.load({
 						count
 					]
 				}, status))
-			});
+			}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				style: {
+					display: "flex",
+					alignItems: "center",
+					gap: 8,
+					marginTop: 8
+				},
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+					style: {
+						flex: 1,
+						height: 6,
+						borderRadius: 3,
+						background: "var(--dsw-alias-bg-module-platform)",
+						overflow: "hidden"
+					},
+					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { style: {
+						width: `${pct}%`,
+						height: "100%",
+						background: "var(--dsw-alias-state-success)",
+						transition: "width .3s ease"
+					} })
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+					style: {
+						fontSize: 11,
+						color: "var(--dsw-alias-label-tertiary)",
+						whiteSpace: "nowrap"
+					},
+					children: [
+						"已验证以上 ",
+						advancedCount,
+						"/",
+						stats.total,
+						"（",
+						pct,
+						"%）"
+					]
+				})]
+			})] });
 		});
 		const ClaimRow = (0, react.memo)(function ClaimRow({ claim, active, onClick }) {
 			const conv = claim.conventionId !== void 0 ? ` [${claim.conventionId}]` : "";
@@ -307,9 +352,47 @@ window.__ModuleLoader__.load({
 				]
 			});
 		});
-		function ClaimDetail({ claim, evidence, adjudications }) {
+		function ClaimDetail({ claim, evidence, adjudications, onChanged }) {
 			const evs = evidence.filter((e) => e.claimId === claim.id);
 			const adjs = adjudications.filter((a) => a.claim === claim.id);
+			const [adjudicating, setAdjudicating] = (0, react.useState)(false);
+			const [adjudicatingVerdict, setAdjudicatingVerdict] = (0, react.useState)("accepted");
+			const [adjError, setAdjError] = (0, react.useState)("");
+			const signAndAdjudicate = async () => {
+				setAdjudicating(true);
+				setAdjError("");
+				try {
+					const sign = await fetch("/research-bench/sign", {
+						method: "POST",
+						headers: { "content-type": "application/json" },
+						body: JSON.stringify({
+							claim_id: claim.id,
+							revision: claim.version
+						})
+					}).then((r) => r.json());
+					if (sign.ok !== true || sign.token === void 0) {
+						setAdjError(sign.error ?? "签发令牌失败");
+						return;
+					}
+					const adj = await fetch("/research-bench/adjudicate", {
+						method: "POST",
+						headers: { "content-type": "application/json" },
+						body: JSON.stringify({
+							claim_id: claim.id,
+							verdict: adjudicatingVerdict,
+							note: "",
+							signature_token: sign.token
+						})
+					}).then((r) => r.json());
+					if (adj.ok !== true) {
+						setAdjError(adj.error ?? "裁决失败");
+						return;
+					}
+					onChanged();
+				} finally {
+					setAdjudicating(false);
+				}
+			};
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				style: detailStyle,
 				children: [
@@ -382,8 +465,29 @@ window.__ModuleLoader__.load({
 							style: kvKeyStyle,
 							children: "证据"
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-							style: kvValStyle,
-							children: evs.map((e) => `${e.source}${e.stance !== "pending" ? `（${e.stance}）` : ""}`).join("；")
+							style: {
+								...kvValStyle,
+								display: "flex",
+								flexDirection: "column",
+								gap: 2
+							},
+							children: evs.map((e) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
+								e.source,
+								e.stance !== "pending" ? `（${e.stance}）` : "",
+								e.link !== null && e.link !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									style: {
+										...pageBtnStyle,
+										marginLeft: 6,
+										padding: "0 6px",
+										fontSize: 11
+									},
+									onClick: () => {
+										window.open(e.link, "_blank", "noopener");
+									},
+									children: "打开"
+								})
+							] }, e.id))
 						})]
 					}),
 					adjs.length > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -394,6 +498,71 @@ window.__ModuleLoader__.load({
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 							style: kvValStyle,
 							children: adjs.map((a) => `${a.verdict} · ${a.by} · ${a.at}`).join("；")
+						})]
+					}),
+					claim.status === "evidenced" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						style: {
+							...kvStyle,
+							alignItems: "center"
+						},
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							style: kvKeyStyle,
+							children: "裁决签字"
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+							style: {
+								...kvValStyle,
+								display: "flex",
+								gap: 8,
+								alignItems: "center",
+								flexWrap: "wrap"
+							},
+							children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("select", {
+									value: adjudicatingVerdict,
+									disabled: adjudicating,
+									onChange: (e) => {
+										setAdjudicatingVerdict(e.target.value);
+									},
+									style: {
+										border: "1px solid var(--dsw-alias-border-l2)",
+										background: "var(--dsw-alias-bg-layer-1)",
+										color: "var(--dsw-alias-label-primary)",
+										borderRadius: 8,
+										padding: "2px 8px",
+										fontSize: 12
+									},
+									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "accepted",
+											children: "接受"
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "limited",
+											children: "限定"
+										}),
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: "rejected",
+											children: "拒绝"
+										})
+									]
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									style: refreshBtnStyle,
+									disabled: adjudicating,
+									onClick: () => {
+										signAndAdjudicate();
+									},
+									children: adjudicating ? "签字中…" : "签字裁决"
+								}),
+								adjError !== "" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									style: {
+										fontSize: 11,
+										color: "var(--dsw-alias-state-danger)"
+									},
+									children: adjError
+								})
+							]
 						})]
 					})
 				]
@@ -692,7 +861,8 @@ window.__ModuleLoader__.load({
 						selectedClaim !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ClaimDetail, {
 							claim: selectedClaim,
 							evidence: data.evidence ?? [],
-							adjudications: data.adjudications ?? []
+							adjudications: data.adjudications ?? [],
+							onChanged: load
 						})
 					] })
 				]

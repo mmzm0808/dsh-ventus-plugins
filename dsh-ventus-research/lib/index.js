@@ -1,5 +1,6 @@
 import z from 'schemastery';
-import { findClaim, readState } from './state.js';
+import { findClaim, localIso, pushOpLog, readState, writeState } from './state.js';
+import { transition } from './gates.js';
 import { signatureTokens } from './token.js';
 import { getCurrentBenchRoot, registerBenchTools } from './tools.js';
 /** 稳定 cordis 插件名（匹配 cordis.patch.yml insert id）。 */
@@ -102,12 +103,78 @@ async function stateHandler(req, res) {
             evidenceRefs: c.evidenceRefs, texRef: c.texRef, frozen: c.frozen,
         })),
         evidence: state.evidence.map(e => ({
-            id: e.id, claimId: e.claimId, source: e.source, year: e.year, stance: e.stance,
+            id: e.id, claimId: e.claimId, source: e.source, year: e.year, stance: e.stance, link: e.link ?? null,
         })),
         adjudications: state.adjudications.map(a => ({
             claim: a.claim, verdict: a.verdict, by: a.by, at: a.at, note: a.note,
         })),
     }));
+}
+/** POST /research-bench/adjudicate — 工作台人工裁决（signature token 校验，与 rb_adjudicate 同语义）。 */
+async function adjudicateHandler(req, res) {
+    res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
+    const fail = (error) => { res.end(JSON.stringify({ ok: false, error })); };
+    if (req.method !== 'POST') {
+        fail('method must be POST');
+        return;
+    }
+    let body;
+    try {
+        body = await readJsonBody(req);
+    }
+    catch {
+        fail('invalid JSON body');
+        return;
+    }
+    if (typeof body !== 'object' || body === null) {
+        fail('body must be a JSON object');
+        return;
+    }
+    const record = body;
+    const claimId = record.claim_id;
+    const verdict = record.verdict;
+    const token = record.signature_token;
+    const note = typeof record.note === 'string' ? record.note : undefined;
+    if (typeof claimId !== 'string' || typeof verdict !== 'string' || typeof token !== 'string') {
+        fail('body requires { claim_id: string, verdict: string, signature_token: string }');
+        return;
+    }
+    if (verdict !== 'accepted' && verdict !== 'limited' && verdict !== 'rejected') {
+        fail(`verdict 必须是 accepted/limited/rejected，得到 ${verdict}`);
+        return;
+    }
+    const root = getCurrentBenchRoot();
+    const state = root !== null ? readState(root) : null;
+    if (state === null || root === null) {
+        fail('未打开课题（先用 rb_open 立项）');
+        return;
+    }
+    const claim = findClaim(state, claimId);
+    if (claim === undefined) {
+        fail(`claim ${claimId} 不存在`);
+        return;
+    }
+    if (claim.status !== 'evidenced') {
+        fail(`claim ${claimId} 状态为 ${claim.status}，需 evidenced 才能裁决`);
+        return;
+    }
+    if (!signatureTokens.consume(token, claimId, claim.version)) {
+        fail('NEEDS_HUMAN_SIGNATURE: 令牌缺失/过期/不匹配');
+        return;
+    }
+    state.adjudications.push({
+        claim: claimId, verdict, by: 'human', at: localIso(), ...(note === undefined ? {} : { note }),
+    });
+    const next = transition(claim.status, 'adjudicate');
+    if (next === null) {
+        fail(`claim ${claimId} 状态不允许裁决`);
+        return;
+    }
+    claim.status = next;
+    claim.frozen = true;
+    pushOpLog(state, 'rb_adjudicate', 'ai', `verdict=${verdict}`, claimId);
+    writeState(root, state);
+    res.end(JSON.stringify({ ok: true, claim_id: claimId, verdict, status: claim.status }));
 }
 export function apply(ctx, config) {
     // 7 个工具：资源挂 ctx.effect，卸载/HMR 自动清理。
@@ -129,6 +196,11 @@ export function apply(ctx, config) {
             path: '/research-bench/state',
             handler: stateHandler,
         }), 'dsh-ventus-research: state route');
+        ctx.effect(() => ctx.webServer.register({
+            kind: 'exact',
+            path: '/research-bench/adjudicate',
+            handler: adjudicateHandler,
+        }), 'dsh-ventus-research: adjudicate route');
     }
 }
 //# sourceMappingURL=index.js.map

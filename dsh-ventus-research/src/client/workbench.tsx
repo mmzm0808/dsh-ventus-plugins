@@ -44,6 +44,7 @@ interface EvidenceRow {
   source: string
   year?: number
   stance: string
+  link?: string | null
 }
 
 interface AdjRow {
@@ -274,12 +275,25 @@ const StatusChips = memo(function StatusChips({ stats }: { stats: StatePayload['
   if (stats === undefined) return null
   const entries = Object.entries(stats.byStatus)
   if (entries.length === 0) return null
+  const advanced = ['verified', 'evidenced', 'adjudicated', 'published']
+  const advancedCount = entries.filter(([s]) => advanced.includes(s)).reduce((a, [, c]) => a + c, 0)
+  const pct = stats.total > 0 ? Math.round((advancedCount / stats.total) * 100) : 0
   return (
-    <div style={chipRowStyle}>
-      {entries.map(([status, count]) => (
-        <span key={status} style={chip(statusColor(status))}>{status} · {count}</span>
-      ))}
-    </div>
+    <>
+      <div style={chipRowStyle}>
+        {entries.map(([status, count]) => (
+          <span key={status} style={chip(statusColor(status))}>{status} · {count}</span>
+        ))}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+        <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'var(--dsw-alias-bg-module-platform)', overflow: 'hidden' }}>
+          <div style={{ width: `${pct}%`, height: '100%', background: 'var(--dsw-alias-state-success)', transition: 'width .3s ease' }} />
+        </div>
+        <span style={{ fontSize: 11, color: 'var(--dsw-alias-label-tertiary)', whiteSpace: 'nowrap' }}>
+          已验证以上 {advancedCount}/{stats.total}（{pct}%）
+        </span>
+      </div>
+    </>
   )
 })
 
@@ -301,13 +315,46 @@ const ClaimRow = memo(function ClaimRow({
 
 // ---- claim 详情（懒加载：选中才渲染）----
 
-function ClaimDetail({ claim, evidence, adjudications }: {
+function ClaimDetail({ claim, evidence, adjudications, onChanged }: {
   claim: ClaimRow
   evidence: EvidenceRow[]
   adjudications: AdjRow[]
+  onChanged: () => void
 }) {
   const evs = evidence.filter(e => e.claimId === claim.id)
   const adjs = adjudications.filter(a => a.claim === claim.id)
+  const [adjudicating, setAdjudicating] = useState(false)
+  const [adjudicatingVerdict, setAdjudicatingVerdict] = useState<'accepted' | 'limited' | 'rejected'>('accepted')
+  const [adjError, setAdjError] = useState('')
+
+  const signAndAdjudicate = async (): Promise<void> => {
+    setAdjudicating(true)
+    setAdjError('')
+    try {
+      const sign = await fetch('/research-bench/sign', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ claim_id: claim.id, revision: claim.version }),
+      }).then(r => r.json() as Promise<{ ok: boolean; token?: string; error?: string }>)
+      if (sign.ok !== true || sign.token === undefined) {
+        setAdjError(sign.error ?? '签发令牌失败')
+        return
+      }
+      const adj = await fetch('/research-bench/adjudicate', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ claim_id: claim.id, verdict: adjudicatingVerdict, note: '', signature_token: sign.token }),
+      }).then(r => r.json() as Promise<{ ok: boolean; error?: string }>)
+      if (adj.ok !== true) {
+        setAdjError(adj.error ?? '裁决失败')
+        return
+      }
+      onChanged()
+    } finally {
+      setAdjudicating(false)
+    }
+  }
+
   return (
     <div style={detailStyle}>
       <div style={kvStyle}><span style={kvKeyStyle}>状态</span><span style={{ ...kvValStyle, color: statusColor(claim.status) }}>{claim.status}</span></div>
@@ -319,13 +366,43 @@ function ClaimDetail({ claim, evidence, adjudications }: {
       {evs.length > 0 && (
         <div style={kvStyle}>
           <span style={kvKeyStyle}>证据</span>
-          <span style={kvValStyle}>{evs.map(e => `${e.source}${e.stance !== 'pending' ? `（${e.stance}）` : ''}`).join('；')}</span>
+          <span style={{ ...kvValStyle, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {evs.map(e => (
+              <span key={e.id}>
+                {e.source}{e.stance !== 'pending' ? `（${e.stance}）` : ''}
+                {e.link !== null && e.link !== undefined && (
+                  <button type="button" style={{ ...pageBtnStyle, marginLeft: 6, padding: '0 6px', fontSize: 11 }} onClick={() => { window.open(e.link, '_blank', 'noopener') }}>打开</button>
+                )}
+              </span>
+            ))}
+          </span>
         </div>
       )}
       {adjs.length > 0 && (
         <div style={kvStyle}>
           <span style={kvKeyStyle}>裁决</span>
           <span style={kvValStyle}>{adjs.map(a => `${a.verdict} · ${a.by} · ${a.at}`).join('；')}</span>
+        </div>
+      )}
+      {claim.status === 'evidenced' && (
+        <div style={{ ...kvStyle, alignItems: 'center' }}>
+          <span style={kvKeyStyle}>裁决签字</span>
+          <span style={{ ...kvValStyle, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <select
+              value={adjudicatingVerdict}
+              disabled={adjudicating}
+              onChange={(e) => { setAdjudicatingVerdict(e.target.value as 'accepted' | 'limited' | 'rejected') }}
+              style={{ border: '1px solid var(--dsw-alias-border-l2)', background: 'var(--dsw-alias-bg-layer-1)', color: 'var(--dsw-alias-label-primary)', borderRadius: 8, padding: '2px 8px', fontSize: 12 }}
+            >
+              <option value="accepted">接受</option>
+              <option value="limited">限定</option>
+              <option value="rejected">拒绝</option>
+            </select>
+            <button type="button" style={refreshBtnStyle} disabled={adjudicating} onClick={() => { void signAndAdjudicate() }}>
+              {adjudicating ? '签字中…' : '签字裁决'}
+            </button>
+            {adjError !== '' && <span style={{ fontSize: 11, color: 'var(--dsw-alias-state-danger)' }}>{adjError}</span>}
+          </span>
         </div>
       )}
     </div>
@@ -490,6 +567,7 @@ export function ResearchWorkbench(_props: ResearchWorkbenchProps): JSX.Element |
               claim={selectedClaim}
               evidence={data.evidence ?? []}
               adjudications={data.adjudications ?? []}
+              onChanged={load}
             />
           )}
         </>
