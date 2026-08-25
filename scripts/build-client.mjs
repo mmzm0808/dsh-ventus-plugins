@@ -50,6 +50,7 @@ const CLIENT_ENTRIES = [
   ['@dsh-external/dsh-webui', '@dsh-external/dsh-webui/lib/client.js'],
   ['@nanmicoder/dsh-auto-mode', '@nanmicoder/dsh-auto-mode/lib/client.js'],
   ['dsh-context', 'dsh-context/lib/client.js'],
+  ['@huanlin/dsh-plugin-mineru', '@huanlin/dsh-plugin-mineru/lib/client.js'],
   ['dsh-ventus-research', 'dsh-ventus-research/lib/client.js'],
   ['dsh-usage-skill', 'dsh-usage-skill/lib/client.js'],
 ]
