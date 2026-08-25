@@ -1,6 +1,6 @@
 {
   "name": "dsh-ventus-plugins",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Ventus 插件全家桶整合：better-sidebar / deepseek-usage / theme-endfield / ua-relay / ventus-progress / ventus-search / ventus-whale / super-injector / visualize / webui / auto-mode 合并为单一插件，功能与设置完全保留。",
   "license": "MIT",
   "type": "module",

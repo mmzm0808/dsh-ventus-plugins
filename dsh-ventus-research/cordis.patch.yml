@@ -1,0 +1,8 @@
+# dsh-ventus-research — 科研工作流插件（独立 bundle 行）
+#
+# 与整合包聚合行（ventus-plugins）并列挂载，作为独立 fiber 加载：
+# 失败/禁用不影响其它子插件；删除本行即完全退场，不成任何依赖。
+- insert:
+    - id: ventus-research
+      name: dsh-ventus-research
+      config: {}
