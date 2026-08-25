@@ -290617,7 +290617,9 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 		const TITLE_CLASS = "dsp-archive-row-title";
 		const RESTORE_CLASS = "dsp-archive-restore";
 		const MENU_CLASS = "dsp-archive-menu";
-		const COLLAPSED_KEY = "dsh.webui.archive-collapsed";
+		/** 内存展开覆盖：null = 默认收起；true/false = 本次会话用户展开/收起（不持久化，
+		*  保证每次启动默认收起，用户展开只对本次生效）。 */
+		let archiveExpandedOverride = null;
 		const GROUP_COLLAPSED_PREFIX = "dsh.webui.archive-group-collapsed:";
 		/** 展开时的面板高度占比（视口百分比，10–90，可拖动分隔条调节）。 */
 		const HEIGHT_KEY = "dsh.webui.archive-height";
@@ -290681,7 +290683,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			handle.setAttribute("aria-orientation", "horizontal");
 			handle.setAttribute("aria-label", "拖动调整已归档区域高度");
 			handle.addEventListener("pointerdown", (event) => {
-				if (readCollapsed(COLLAPSED_KEY, true)) return;
+				if (archiveExpandedOverride === null || !archiveExpandedOverride) return;
 				event.preventDefault();
 				const startY = event.clientY;
 				const startPct = readHeightPct();
@@ -290806,7 +290808,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			const currentSession = sessions$1?.list.getSnapshot().current;
 			const countEl = header.querySelector(".dsp-archive-count");
 			if (countEl !== null) countEl.textContent = total > 0 ? String(total) : "";
-			const collapsed = readCollapsed(COLLAPSED_KEY, true);
+			const collapsed = archiveExpandedOverride === null ? true : !archiveExpandedOverride;
 			header.classList.toggle("dsp-collapsed", collapsed);
 			body.style.display = collapsed ? "none" : "";
 			const handle = panel.querySelector(".dsp-archive-handle");
@@ -290854,10 +290856,10 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			const body = panel.querySelector(`.${BODY_CLASS}`);
 			if (header === null || body === null) return;
 			header.addEventListener("click", () => {
-				const next = !readCollapsed(COLLAPSED_KEY, false);
-				writeFlag(COLLAPSED_KEY, next);
-				header.classList.toggle("dsp-collapsed", next);
-				body.style.display = next ? "none" : "";
+				archiveExpandedOverride = !(archiveExpandedOverride === null ? false : archiveExpandedOverride);
+				header.classList.toggle("dsp-collapsed", !archiveExpandedOverride);
+				body.style.display = archiveExpandedOverride ? "" : "none";
+				if (archiveExpandedOverride) body.style.maxHeight = `calc(${readHeightPct()}vh - 34px)`;
 			});
 		}
 		let started = false;
