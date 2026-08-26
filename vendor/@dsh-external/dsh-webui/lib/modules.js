@@ -64,6 +64,8 @@ export const WEBUI_MODULE_KEYS = [
     'sidebarFloat', // 悬浮侧边栏
     'updater', // 壳管理更新
     'proxy', // 网络代理
+    // ── 团队编排 ──
+    'team', // 多团队 / 多角色 agent 编排（team 模块）
 ];
 const KEY_SET = new Set(WEBUI_MODULE_KEYS);
 /**

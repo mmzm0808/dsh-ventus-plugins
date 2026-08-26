@@ -2538,6 +2538,32 @@ function buildApi(ctx, ptyManager, agentPtyRegistry, resolved, terminalShell, ge
 			}
 			return { ok: true };
 		},
+		/** Delete a file or directory (recursive). The path must be absolute
+		*  and inside the session cwd (containment check). */
+		"fs.delete": async (payload) => {
+			const { cwd } = cwdOf(payload);
+			const path = requireAbsolute(requireString(payload, "path"));
+			if (!isWithin(cwd, path)) throw new SidebarError("fs-error", `"${path}" is outside the session cwd`, 400);
+			try {
+				await rm(path, { recursive: true, force: true });
+			} catch (error) {
+				throw new SidebarError("fs-error", `cannot delete "${path}": ${error instanceof Error ? error.message : String(error)}`, 400);
+			}
+			return { ok: true };
+		},
+		/** Create a directory (recursive). The path must be absolute and inside
+		*  the session cwd (containment check). */
+		"fs.mkdir": async (payload) => {
+			const { cwd } = cwdOf(payload);
+			const path = requireAbsolute(requireString(payload, "path"));
+			if (!isWithin(cwd, path)) throw new SidebarError("fs-error", `"${path}" is outside the session cwd`, 400);
+			try {
+				await mkdir(path, { recursive: true });
+			} catch (error) {
+				throw new SidebarError("fs-error", `cannot create directory "${path}": ${error instanceof Error ? error.message : String(error)}`, 400);
+			}
+			return { ok: true };
+		},
 		"git.status": async (payload) => {
 			const { cwd } = cwdOf(payload);
 			return status(cwd);

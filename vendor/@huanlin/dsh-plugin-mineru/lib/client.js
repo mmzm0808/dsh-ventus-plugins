@@ -56,9 +56,14 @@ window.__ModuleLoader__.load({
 		async function callRpc(rpc, endpoint, payload) {
 			return rpc.call("/mineru-api", endpoint, payload);
 		}
+		function maskKey(v) {
+			if (typeof v !== "string" || v.length <= 10) return v ? "******" : "";
+			return v.slice(0, 6) + "******" + v.slice(-4);
+		}
 		function SettingsPage({ rpc, t }) {
 			const [config, setConfig] = (0, react.useState)(null);
 			const [draft, setDraft] = (0, react.useState)(null);
+			const [revealed, setRevealed] = (0, react.useState)(false);
 			const [loading, setLoading] = (0, react.useState)(true);
 			const [saving, setSaving] = (0, react.useState)(false);
 			const [saved, setSaved] = (0, react.useState)(false);
@@ -169,6 +174,8 @@ window.__ModuleLoader__.load({
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: classMap.editor,
 						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", { className: classMap.field, children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: classMap.fieldLabel, children: "解析模式" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("select", { className: classMap.select, value: draft.mode ?? "local", onChange: (e) => { const m = e.target.value; patch(m === "cloud" ? { mode: m, baseURL: "https://mineru.net" } : { mode: m }); }, children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", { value: "local", children: "本地服务器（/tasks）" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", { value: "cloud", children: "云端 API（mineru.net）" })] })] }),
+							(draft.mode ?? "local") === "cloud" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", { className: classMap.field, children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: classMap.fieldLabel, children: "云端模型版本" }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("select", { className: classMap.select, value: draft.cloudModelVersion ?? "vlm", onChange: (e) => patch({ cloudModelVersion: e.target.value }), children: ["pipeline","vlm","MinerU-HTML"].map((v) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", { value: v, children: v })) })] }),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
 								className: classMap.field,
 								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
@@ -178,6 +185,8 @@ window.__ModuleLoader__.load({
 									className: classMap.input,
 									value: draft.baseURL,
 									placeholder: t("field.baseURL.placeholder"),
+									disabled: draft.mode === "cloud",
+									style: { opacity: draft.mode === "cloud" ? 0.6 : 1, cursor: draft.mode === "cloud" ? "not-allowed" : "auto" },
 									onChange: (e) => patch({ baseURL: e.target.value })
 								})]
 							}),
@@ -188,9 +197,11 @@ window.__ModuleLoader__.load({
 									children: t("field.apiKeyEnv")
 								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
 									className: classMap.input,
-									value: draft.apiKeyEnv,
-									placeholder: t("field.apiKeyEnv.placeholder"),
-									onChange: (e) => patch({ apiKeyEnv: e.target.value })
+									value: revealed ? draft.apiKey : (draft.apiKey ? maskKey(draft.apiKey) : ""),
+									placeholder: (draft.apiKeyConfigured && !draft.apiKey) ? "已配置API，点击输入替换" : "粘贴你的 API Key",
+									onFocus: () => setRevealed(true),
+									onBlur: () => setRevealed(false),
+									onChange: (e) => patch({ apiKey: e.target.value })
 								})]
 							}),
 							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {

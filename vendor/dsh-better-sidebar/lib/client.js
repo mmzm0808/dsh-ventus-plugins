@@ -2703,6 +2703,10 @@ window.__ModuleLoader__.load({
 				path,
 				content
 			})),
+			/** Delete a file or directory (recursive for directories). */
+			fsDelete: (scope, path) => call("fs.delete", scopePayload(scope, { path })),
+			/** Create a directory (recursive). */
+			fsMkdir: (scope, path) => call("fs.mkdir", scopePayload(scope, { path })),
 			gitStatus: (scope, signal) => call("git.status", scopePayload(scope, {}), signal),
 			gitDiff: (scope, path, staged, signal) => call("git.diff", scopePayload(scope, {
 				...path !== void 0 ? { path } : {},
@@ -2884,6 +2888,8 @@ window.__ModuleLoader__.load({
 		}
 		/** How long the row's "copied" label stays after a successful write. */
 		const COPIED_MS = 1200;
+		/** Auto-refresh poll interval for the open tree levels (ms). */
+		const REFRESH_MS = 5000;
 		function FileTree(props) {
 			const { sessionId, cwd, expanded, onToggle, onOpenFile, onOpenFileNewTab, onOpenFileSide, onReferenceFile, refreshTick, selectedPath, revealSeq } = props;
 			const [data, setData] = (0, react.useState)({});
@@ -2892,6 +2898,8 @@ window.__ModuleLoader__.load({
 			const [copiedPath, setCopiedPath] = (0, react.useState)(null);
 			/** Open context menu: the row path (and whether it is a directory) plus the cursor position. */
 			const [rowMenu, setRowMenu] = (0, react.useState)(null);
+			/** Recently deleted rows (path + kind), for the "撤回" menu action (cap 10). */
+			const [undoStack, setUndoStack] = (0, react.useState)([]);
 			/** File-row DOM refs keyed by posix path, for the reveal scroll (rows only
 			*  exist once their ancestor levels have loaded). */
 			const rowRefs = (0, react.useRef)(/* @__PURE__ */ new Map());
@@ -2908,6 +2916,22 @@ window.__ModuleLoader__.load({
 				const posixKey = toPosix(dir);
 				if (dataRef.current[posixKey] !== void 0) return;
 				storeLevel(posixKey, {});
+				api.fsTree({
+					sessionId,
+					cwd
+				}, dir).then((listing) => {
+					storeLevel(posixKey, { entries: listing.entries });
+				}).catch((error) => {
+					storeLevel(posixKey, { error: error instanceof Error ? error.message : String(error) });
+				});
+			}, [
+				sessionId,
+				cwd,
+				storeLevel
+			]);
+			/** Force-reload one directory level (bypasses the loadDir cache). */
+			const reloadDir = (0, react.useCallback)((dir) => {
+				const posixKey = toPosix(dir);
 				api.fsTree({
 					sessionId,
 					cwd
@@ -2938,6 +2962,43 @@ window.__ModuleLoader__.load({
 				expanded,
 				refreshTick,
 				loadDir
+			]);
+			/** Auto-refresh: re-poll the visible tree levels every REFRESH_MS. The
+			*  expanded set is untouched — each level updates in place, so nothing
+			*  collapses or flashes. The timer is torn down on unmount/cwd change. */
+			(0, react.useEffect)(() => {
+				const root = cwd;
+				if (root === void 0) return;
+				const refreshLevels = () => {
+					reloadDir(toPosix(root));
+					for (const dir of expanded) reloadDir(dir);
+				};
+				const timer = window.setInterval(refreshLevels, REFRESH_MS);
+				return () => {
+					window.clearInterval(timer);
+				};
+			}, [
+				cwd,
+				expanded,
+				reloadDir
+			]);
+			/** Refresh once when the window regains focus (files may have changed
+			*  while the sidebar was not the active window). */
+			(0, react.useEffect)(() => {
+				const root = cwd;
+				if (root === void 0) return;
+				const onFocus = () => {
+					reloadDir(toPosix(root));
+					for (const dir of expanded) reloadDir(dir);
+				};
+				window.addEventListener("focus", onFocus);
+				return () => {
+					window.removeEventListener("focus", onFocus);
+				};
+			}, [
+				cwd,
+				expanded,
+				reloadDir
 			]);
 			(0, react.useEffect)(() => {
 				if (selected === void 0) return;
@@ -3002,6 +3063,43 @@ window.__ModuleLoader__.load({
 				document.body.appendChild(anchor);
 				anchor.click();
 				anchor.remove();
+			};
+			/** Re-poll every visible tree level (root + expanded) in place. */
+			const refreshVisible = () => {
+				if (cwd === void 0) return;
+				reloadDir(toPosix(cwd));
+				for (const dir of expanded) reloadDir(dir);
+			};
+			/** Delete a row after confirmation, then refresh its level. */
+			const deleteRow = async (path, isDir) => {
+				if (cwd !== void 0 && toPosix(path) === toPosix(cwd)) {
+					window.alert("不能删除当前会话根目录");
+					return;
+				}
+				const posix = toPosix(path);
+				const message = `${isDir ? "删除文件夹" : "删除文件"}\n${path}\n确定要删除吗？删除后可点「撤回」恢复。`;
+				if (!window.confirm(message)) return;
+				try {
+					await api.fsDelete({ sessionId, cwd }, path);
+					if (isDir && expanded.includes(posix)) onToggle(posix);
+					setUndoStack((stack) => [...stack, { path, isDir }].slice(-10));
+					refreshVisible();
+				} catch (reason) {
+					window.alert(`删除失败: ${reason instanceof Error ? reason.message : String(reason)}`);
+				}
+			};
+			/** Restore the most recently deleted row (file → empty file, dir → mkdir). */
+			const undoDelete = async () => {
+				const last = undoStack[undoStack.length - 1];
+				if (last === void 0) return;
+				try {
+					if (last.isDir) await api.fsMkdir({ sessionId, cwd }, last.path);
+					else await api.fsWrite({ sessionId, cwd }, last.path, "");
+					setUndoStack((stack) => stack.slice(0, -1));
+					refreshVisible();
+				} catch (reason) {
+					window.alert(`撤回失败: ${reason instanceof Error ? reason.message : String(reason)}`);
+				}
 			};
 			const root = cwd;
 			const renderLevel = (dir, depth) => {
@@ -3156,6 +3254,16 @@ window.__ModuleLoader__.load({
 							id: "open-explorer",
 							label: "在资源管理器打开",
 							icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconFolderOpen16, { size: 14 })
+						},
+						{
+							id: "delete",
+							label: "删除",
+							icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconTrashOutline16, { size: 14 })
+						},
+						{
+							id: "undo",
+							label: "撤回",
+							icon: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconRefreshOutline16, { size: 14 })
 						}
 					],
 					onSelect: (id) => {
@@ -3164,7 +3272,7 @@ window.__ModuleLoader__.load({
 						setRowMenu(null);
 						if (id === "open-new-tab") {
 							const a = document.createElement("a");
-							a.href = "file:///" + target.path.replaceAll("\\", "/");
+							a.href = fileUrl({ sessionId, cwd }, target.path, false);
 							a.target = "_blank";
 							a.rel = "noopener";
 							a.click();
@@ -3185,6 +3293,14 @@ window.__ModuleLoader__.load({
 								headers: { "content-type": "application/json" },
 								body: JSON.stringify({ path: target.path })
 							});
+							return;
+						}
+						if (id === "delete") {
+							void deleteRow(target.path, target.isDir === true);
+							return;
+						}
+						if (id === "undo") {
+							void undoDelete();
 							return;
 						}
 						copyPath(id === "relative" ? relativeTo(cwd ?? "", target.path) : target.path, target.path);

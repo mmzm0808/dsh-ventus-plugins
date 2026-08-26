@@ -19,7 +19,7 @@ function locateIntegrationRoot() {
 }
 /** 各功能：名称（2-5 字）→ 整合包 vendor 相对目录。 */
 const PERF_SUBS = [
-    { name: '工具链', rel: 'vendor/@dsh-external/dsh-webui' },
+    { name: '核心 UI', rel: 'vendor/@dsh-external/dsh-webui' },
     { name: '右侧栏', rel: 'vendor/dsh-better-sidebar' },
     { name: '用量', rel: 'vendor/dsh-deepseek-usage' },
     { name: '主题', rel: 'vendor/dsh-theme-endfield' },
@@ -46,7 +46,7 @@ function measureBytes(dir) {
             continue;
         }
         for (const name of names) {
-            if (name === 'node_modules')
+            if (name === 'node_modules' || name.endsWith('.map'))
                 continue;
             const full = join(cur, name);
             try {

@@ -13,7 +13,7 @@
  * @module dsh-deepseek-usage/ventus-update
  */
 import { spawnSync } from 'node:child_process';
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -172,7 +172,15 @@ export async function applyVentusUpdate(selected) {
         const bundledCount = /\((\d+) sub-bundles?\)/.exec(build.stdout ?? '')?.[1]
             ? Number(/(\d+) sub-bundles?/.exec(build.stdout ?? '')?.[1])
             : 0;
-        return { ok: true, updated, sha, bundledCount };
+        // 取消勾选 = 禁用：已装但未勾选的子插件写入 disabled.json，保留本地备份（vendor 产物不动），重启后不挂载。
+        const disabledIds = scanInstalled(root)
+            .filter(p => p.installed && !selected.includes(p.id))
+            .map(p => p.id);
+        try {
+            writeFileSync(join(root, 'disabled.json'), JSON.stringify(disabledIds, null, 2));
+        }
+        catch { /* 写失败不阻断更新 */ }
+        return { ok: true, updated, sha, bundledCount, disabled: disabledIds.length };
     }
     finally {
         rmSync(tmp, { recursive: true, force: true });

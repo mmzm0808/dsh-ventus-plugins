@@ -1,8 +1,11 @@
 import z from "schemastery";
 import { readFile, writeFile } from "node:fs/promises";
 import { basename, extname, join } from "node:path";
-import { tmpdir } from "node:os";
+import { tmpdir, homedir } from "node:os";
+import { readFileSync, mkdtempSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { defineTool } from "@deepseek-ai/dsh-tools";
+import { settingsNamespace } from "@deepseek-ai/dsh-settings";
 //#region src/client.ts
 /**
 * client.ts — MinerU HTTP client.
@@ -24,6 +27,21 @@ var MinerUError = class extends Error {
 		this.name = "MinerUError";
 	}
 };
+
+function encryptApiKey(plaintext) {
+	if (!plaintext) return '';
+	const ps = spawnSync('powershell', ['-NoProfile', '-Command',
+			"Add-Type -AssemblyName System.Security; $b = [System.Text.Encoding]::UTF8.GetBytes('" + plaintext.replace(/'/g, "''") + "'); $e = [System.Security.Cryptography.ProtectedData]::Protect($b, $null, 'CurrentUser'); [Convert]::ToBase64String($e)"]);
+	if (ps.status !== 0) throw new Error('MinerU API Key 加密失败: ' + (ps.stderr?.toString() || ''));
+	return ps.stdout.toString().trim();
+}
+function decryptApiKey(ciphertext) {
+	if (!ciphertext) return '';
+	const ps = spawnSync('powershell', ['-NoProfile', '-Command',
+			"Add-Type -AssemblyName System.Security; $d = [Convert]::FromBase64String('" + ciphertext + "'); $r = [System.Security.Cryptography.ProtectedData]::Unprotect($d, $null, 'CurrentUser'); [System.Text.Encoding]::UTF8.GetString($r)"]);
+	if (ps.status !== 0) throw new Error('MinerU API Key 解密失败: ' + (ps.stderr?.toString() || ''));
+	return ps.stdout.toString().trim();
+}
 const MIME_BY_EXT = {
 	".pdf": "application/pdf",
 	".png": "image/png",
@@ -98,22 +116,103 @@ var MinerUClient = class {
 	timeoutMs;
 	apiKeyResolver;
 	constructor(opts) {
+		this.mode = opts.mode ?? "local";
 		this.baseURL = opts.baseURL.replace(/\/+$/, "");
 		this.timeoutMs = opts.timeoutMs;
+		this.cloudModelVersion = opts.cloudModelVersion ?? "vlm";
 		this.apiKeyResolver = opts.apiKeyResolver;
 	}
 	async health(signal) {
+		if (this.mode === "cloud") {
+			// 云端无 /health；校验 baseURL 可达 + token（GET 根路径，401=token 无效，200=可达）。
+			const controller = new AbortController();
+			const onAbort = () => controller.abort();
+			signal.addEventListener("abort", onAbort, { once: true });
+			try {
+				const apiKey = this.apiKeyResolver ? await this.apiKeyResolver() : void 0;
+				const headers = {};
+				if (apiKey) headers["authorization"] = `Bearer ${apiKey}`;
+				const resp = await fetch(this.baseURL + "/api/v4/extract/task/health", { method: "GET", headers, signal: controller.signal });
+				if (resp.status === 401 || resp.status === 403) return { status: "unhealthy", version: "cloud", queued_tasks: 0, processing_tasks: 0, completed_tasks: 0, failed_tasks: 0, max_concurrent_requests: 0, error: `云端 token 无效 (HTTP ${resp.status})` };
+				return { status: "healthy", version: "cloud", queued_tasks: 0, processing_tasks: 0, completed_tasks: 0, failed_tasks: 0, max_concurrent_requests: 0 };
+			} finally {
+				signal.removeEventListener("abort", onAbort);
+			}
+		}
 		return this.request("GET", "/health", void 0, signal, [200]);
 	}
 	async submitTask(filePath, params, signal) {
+		if (this.mode === "cloud") return this.submitCloud(filePath, params, signal);
 		const form = await buildFormData(filePath, params);
 		return this.request("POST", "/tasks", form, signal, [202]);
 	}
+	async submitCloud(filePath, params, signal) {
+		const buffer = await readFile(filePath);
+		const fileName = basename(filePath);
+		const body = JSON.stringify({ files: [{ name: fileName }], model_version: this.cloudModelVersion });
+		const resp = await this.request("POST", "/api/v4/file-urls/batch", body, signal, [200]);
+		const data = resp?.data ?? resp;
+		if (!data || !data.file_urls || data.file_urls.length === 0) throw new MinerUError("云端未返回上传链接", 500, data);
+		const uploadUrl = data.file_urls[0];
+		const up = await fetch(uploadUrl, { method: "PUT", body: buffer, signal });
+		if (up.status >= 300) throw new MinerUError(`云端文件上传失败: HTTP ${up.status}`, up.status);
+		return { task_id: String(data.batch_id ?? resp?.data?.batch_id ?? ""), status: "pending" };
+	}
 	async getTaskStatus(taskId, signal) {
+		if (this.mode === "cloud") {
+			const resp = await this.request("GET", `/api/v4/extract-results/batch/${encodeURIComponent(taskId)}`, void 0, signal, [200]);
+			return this.cloudStatus(resp);
+		}
 		return this.request("GET", `/tasks/${encodeURIComponent(taskId)}`, void 0, signal, [200]);
 	}
+	cloudStatus(resp) {
+		const items = resp?.data?.extract_result ?? [];
+		if (!Array.isArray(items) || items.length === 0)
+			return { task_id: resp?.data?.batch_id ?? "", status: "pending" };
+		const states = new Set(items.map(r => r.state ?? "pending"));
+		let status = "pending";
+		if (states.has("failed")) status = "failed";
+		else if (states.has("running") || states.has("converting")) status = "processing";
+		else if (states.has("done"))
+			status = states.size === 1 && states.has("done") ? "completed" : "processing";
+		const out = { task_id: resp?.data?.batch_id ?? "", status };
+		const first = items[0];
+		if (first?.file_name) out.file_names = [first.file_name];
+		if (first?.err_msg) out.error = first.err_msg;
+		return out;
+	}
 	async getTaskResult(taskId, signal) {
+		if (this.mode === "cloud") {
+			const resp = await this.request("GET", `/api/v4/extract-results/batch/${encodeURIComponent(taskId)}`, void 0, signal, [200]);
+			return this.cloudResult(resp, taskId, signal);
+		}
 		return this.request("GET", `/tasks/${encodeURIComponent(taskId)}/result`, void 0, signal, [200]);
+	}
+	async cloudResult(resp, taskId, signal) {
+			const items = resp?.data?.extract_result ?? [];
+			if (!Array.isArray(items) || items.length === 0)
+				throw new MinerUError("云端无结果数据", 404, resp);
+			const r = items[0];
+		const zipUrl = r.full_zip_url;
+		if (!zipUrl) throw new MinerUError("云端任务未完成或无结果链接", 404, r);
+		const zres = await fetch(zipUrl, { signal });
+		if (zres.status >= 300) throw new MinerUError(`云端结果下载失败: HTTP ${zres.status}`, zres.status);
+		const buf = Buffer.from(await zres.arrayBuffer());
+		const dir = mkdtempSync(join(tmpdir(), "mineru-cloud-"));
+		const zipPath = join(dir, "result.zip");
+		await writeFile(zipPath, buf);
+		let md;
+		try {
+			const tar = spawnSync("tar", ["-xf", zipPath, "-C", dir]);
+			if (tar.status !== 0) {
+				spawnSync("powershell", ["-NoProfile", "-Command", `Expand-Archive -Path '${zipPath}' -DestinationPath '${dir}' -Force`]);
+			}
+			md = readFileSync(join(dir, "full.md"), "utf8");
+		} catch (e) {
+			throw new MinerUError(`云端结果解压失败: ${e?.message ?? e}`, 500);
+		}
+		const stem = r.file_name ? String(r.file_name).replace(/\.[^.]+$/, "") : "document";
+		return { task_id: taskId, results: { [stem]: { md_content: md } } };
 	}
 	async request(method, path, body, parentSignal, acceptedStatuses) {
 		parentSignal.throwIfAborted();
@@ -126,6 +225,7 @@ var MinerUClient = class {
 			parentSignal.throwIfAborted();
 			const headers = {};
 			if (apiKey) headers["authorization"] = `Bearer ${apiKey}`;
+			if (typeof body === "string") headers["content-type"] = "application/json";
 			const response = await fetch(`${this.baseURL}${path}`, {
 				method,
 				headers,
@@ -727,8 +827,10 @@ function fail(message) {
 }
 function toRuntimeConfig(resolved) {
 	return {
+		mode: resolved.mode,
+		cloudModelVersion: resolved.cloudModelVersion,
 		baseURL: resolved.baseURL,
-		apiKeyEnv: resolved.apiKeyEnv,
+		apiKeyCipher: resolved.apiKeyCipher,
 		defaultBackend: resolved.defaultBackend,
 		defaultParseMethod: resolved.defaultParseMethod,
 		defaultLang: resolved.defaultLang,
@@ -742,7 +844,7 @@ function registerRpc(ctx, deps) {
 	ctx.logger.info("dsh-mineru: registering RPC channel /mineru-api");
 	ctx.connection.rpc.handle("/mineru-api", async (endpoint, payload) => {
 		switch (endpoint) {
-			case "mineru/config.get": return ok({ config: toRuntimeConfig(deps.getResolved()) });
+			case "mineru/config.get": { const cfg = toRuntimeConfig(deps.getResolved()); return ok({ config: { ...cfg, apiKeyCipher: "", apiKeyConfigured: !!cfg.apiKeyCipher } }); }
 			case "mineru/config.set": {
 				const p = payload;
 				if (p === void 0 || typeof p !== "object" || p === null) return fail("payload must be { config: Partial<MineruRuntimeConfig> }");
@@ -751,8 +853,10 @@ function registerRpc(ctx, deps) {
 				if (patch.baseURL !== void 0 && (typeof patch.baseURL !== "string" || patch.baseURL === "")) return fail("baseURL must be a non-empty string");
 				const current = deps.getResolved();
 				const next = {
+					mode: patch.mode ?? current.mode ?? "local",
+					cloudModelVersion: patch.cloudModelVersion ?? current.cloudModelVersion ?? "vlm",
 					baseURL: patch.baseURL ?? current.baseURL,
-					apiKeyEnv: patch.apiKeyEnv ?? current.apiKeyEnv,
+					apiKeyCipher: (typeof patch.apiKey === "string" && patch.apiKey.length > 0) ? encryptApiKey(patch.apiKey) : current.apiKeyCipher ?? "",
 					defaultBackend: patch.defaultBackend ?? current.defaultBackend,
 					defaultParseMethod: patch.defaultParseMethod ?? current.defaultParseMethod,
 					defaultLang: patch.defaultLang ?? current.defaultLang,
@@ -765,7 +869,15 @@ function registerRpc(ctx, deps) {
 				return ok({ config: toRuntimeConfig(next) });
 			}
 			case "mineru/health": try {
-				const h = await deps.getClient().health(new AbortController().signal);
+				const draft = (typeof payload?.config === "object" && payload.config !== null) ? payload.config : {};
+				const client = Object.keys(draft).length > 0
+					? makeClient(ctx, resolveConfig({ ...deps.getResolved(), ...draft }))
+					: deps.getClient();
+				if (typeof draft?.apiKey === "string" && draft.apiKey.length > 0) {
+					const tok = draft.apiKey;
+					client.apiKeyResolver = async () => tok;
+				}
+				const h = await client.health(new AbortController().signal);
 				return ok({
 					status: h.status,
 					version: h.version,
@@ -801,17 +913,20 @@ function registerRpc(ctx, deps) {
 *     allowlist — same pattern as yet-another-subagent).
 */
 const name = "dsh-mineru";
-const inject = ["tools", "connection"];
+const inject = ["tools", "connection", "settings"];
+const KEY_FILE = join(homedir(), '.dsh', 'plugin-data', 'dsh-mineru-key.json');
 const Config = z.object({
-	baseURL: z.string().description("MinerU API base URL (e.g. http://host:18000). Required."),
-	apiKeyEnv: z.string().role("credential-ref").default("MINERU_API_KEY"),
+	mode: z.union(["local", "cloud"]).default("local").description("解析服务器类型：local=自托管 MinerU 服务器（/tasks 接口），cloud=mineru.net 云端 API（/api/v4 接口）。"),
+	baseURL: z.string().default("http://127.0.0.1:18000").description("MinerU API base URL. 本地填自托管地址（如 http://127.0.0.1:18000）；云端填 https://mineru.net。"),
+	apiKeyCipher: z.string().default(""),
 	defaultBackend: z.union([
 		"pipeline",
 		"vlm-engine",
 		"hybrid-engine",
 		"vlm-http-client",
 		"hybrid-http-client"
-	]).default("pipeline"),
+	]).default("hybrid-engine"),
+	cloudModelVersion: z.union(["pipeline", "vlm", "MinerU-HTML"]).default("vlm").description("云端模型版本：pipeline / vlm / MinerU-HTML。"),
 	defaultParseMethod: z.union([
 		"auto",
 		"txt",
@@ -824,11 +939,17 @@ const Config = z.object({
 	maxMdOutputChars: z.number().default(2e5)
 });
 function resolveConfig(config) {
-	if (typeof config.baseURL !== "string" || config.baseURL === "") throw new Error("dsh-mineru: config \"baseURL\" is required. Set it in the DSH GUI settings or cordis.patch.yml.");
+	const mode = config.mode ?? "local";
+	const baseURL = typeof config.baseURL === "string" && config.baseURL !== ""
+		? config.baseURL
+		: (mode === "cloud" ? "https://mineru.net" : "");
+	if (baseURL === "") throw new Error("dsh-mineru: config \"baseURL\" is required. Set it in the DSH GUI settings or cordis.patch.yml.");
 	return {
-		baseURL: config.baseURL,
-		apiKeyEnv: config.apiKeyEnv ?? "MINERU_API_KEY",
-		defaultBackend: config.defaultBackend ?? "pipeline",
+		mode,
+		baseURL,
+		apiKeyCipher: config.apiKeyCipher ?? "",
+		defaultBackend: config.defaultBackend ?? "hybrid-engine",
+		cloudModelVersion: config.cloudModelVersion ?? "vlm",
 		defaultParseMethod: config.defaultParseMethod ?? "auto",
 		defaultLang: config.defaultLang ?? "ch",
 		pollIntervalMs: config.pollIntervalMs ?? 2e3,
@@ -839,18 +960,16 @@ function resolveConfig(config) {
 }
 function makeClient(ctx, resolved) {
 	return new MinerUClient({
+		mode: resolved.mode,
 		baseURL: resolved.baseURL,
 		timeoutMs: resolved.requestTimeoutMs,
+		cloudModelVersion: resolved.cloudModelVersion,
 		apiKeyResolver: async () => {
-			try {
-				const credentials = ctx.get("credentials");
-				if (credentials?.resolve) {
-					const hit = await credentials.resolve(resolved.apiKeyEnv);
-					if (hit?.value) return hit.value;
-				}
-			} catch {}
-			const envVal = process.env[resolved.apiKeyEnv];
-			return envVal && envVal.length > 0 ? envVal : void 0;
+			const cipher = (resolved.apiKeyCipher ?? "").trim();
+			if (cipher) {
+				try { const decrypted = decryptApiKey(cipher); if (decrypted) return decrypted; } catch {}
+			}
+			return void 0;
 		}
 	});
 }
@@ -859,10 +978,72 @@ function apply(ctx, config = {}) {
 	let client = makeClient(ctx, resolved);
 	const getResolved = () => resolved;
 	const getClient = () => client;
+	let persistConfig = () => {};
+	const persistKeyFile = (next) => {
+		void (async () => {
+			try {
+				await writeFile(KEY_FILE, JSON.stringify({
+					mode: next.mode,
+					baseURL: next.baseURL,
+					cloudModelVersion: next.cloudModelVersion,
+					apiKeyCipher: next.apiKeyCipher,
+					defaultBackend: next.defaultBackend,
+					defaultParseMethod: next.defaultParseMethod,
+					defaultLang: next.defaultLang
+				}));
+			} catch (e) {
+				ctx.logger.warn(`dsh-mineru: persist sidecar failed: ${e?.message ?? e}`);
+			}
+		})();
+	};
+	ctx.inject(["settings"], (sctx) => {
+		const ns = settingsNamespace("mineru");
+		try { sctx.settings.register(ns, Config); } catch (e) { /* 命名空间可能已注册 */ }
+		try {
+			const desc = sctx.settings.describe({ redactSecrets: false }).find((candidate) => candidate.ns === ns);
+			if (desc?.value) {
+				const saved = desc.value;
+				resolved = resolveConfig({
+					...resolved,
+					...saved,
+					apiKeyCipher: resolved.apiKeyCipher !== "" ? resolved.apiKeyCipher : (saved.apiKeyCipher ?? "")
+				});
+				client = makeClient(ctx, resolved);
+				ctx.logger.info(`dsh-mineru: restored saved config baseURL=${resolved.baseURL}`);
+			}
+		} catch (e) {
+			ctx.logger.warn(`dsh-mineru: read saved config failed: ${e?.message ?? e}`);
+		}
+		if ((resolved.apiKeyCipher ?? "") === "") {
+			try {
+				const raw = readFileSync(KEY_FILE, "utf8");
+				const saved = JSON.parse(raw);
+				if (saved && typeof saved === "object" && (saved.apiKeyCipher ?? "") !== "") {
+					resolved = resolveConfig({ ...resolved, ...saved });
+					client = makeClient(ctx, resolved);
+					ctx.logger.info("dsh-mineru: restored saved config from sidecar");
+				}
+			} catch (e) {
+				ctx.logger.debug(`dsh-mineru: read sidecar failed: ${e?.message ?? e}`);
+			}
+		}
+		persistConfig = (next) => {
+			void (async () => {
+				try {
+					const desc = sctx.settings.describe({ redactSecrets: false }).find((candidate) => candidate.ns === ns);
+					await sctx.settings.update(ns, next, desc?.revision);
+					persistKeyFile(next);
+				} catch (e) {
+					ctx.logger.warn(`dsh-mineru: persist config failed: ${e?.message ?? e}`);
+				}
+			})();
+		};
+	});
 	const onConfigChanged = (next) => {
 		resolved = next;
 		client = makeClient(ctx, resolved);
 		ctx.logger.info(`dsh-mineru: config updated, baseURL=${resolved.baseURL}`);
+		persistConfig(next);
 	};
 	registerTools(ctx, getClient, getResolved);
 	registerRpc(ctx, {

@@ -18,6 +18,7 @@ import { applyPerfBench } from './perf-bench.js';
 import { perfHandler } from './perf-overview.js';
 import { applyModulesHost } from './modules-host.js';
 import { applyFileExplorer as applyFileExplorerHost } from './file-explorer.js';
+import { applyTeamHost } from './team/host.js';
 export const name = 'dsh-webui';
 export const inject = ['settings', 'tools', 'web', 'systemPrompt', 'webServer', 'sandboxPolicy', 'fs', 'workspaceRegistry', 'credentials', 'sessions', 'sessionPersistence', 'llm', 'shell'];
 // ── 推理等级补全 ────────────────────────────────────────────────────────────
@@ -168,6 +169,9 @@ export async function apply(ctx, config = {}) {
     //     vision_describe / generate_image / 图片降级 / HTTP 接口。
     if (modules.vision)
         applyVisionHelper(ctx, config.visionHelper ?? {});
+    // 13) 团队编排（team 模块）：多团队 / 多角色 agent 编排。
+    if (modules.team)
+        applyTeamHost(ctx);
     // 12) 供应商性能基准（/api/perf-bench，provider-hub 性能测试弹窗的数据源）。
     applyPerfBench(ctx);
     // 12.5) 整合包性能概览（/api/ventus-perf，侧边栏「性能」栏目数据源）。
