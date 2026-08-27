@@ -336375,6 +336375,8 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const [collapsedPill, setCollapsedPill] = (0, react.useState)(false);
 			const lingerTimer = (0, react.useRef)(0);
 			const hudRef = (0, react.useRef)(null);
+			/** 任意侧边栏窗口/modal/全屏遮罩打开时，隐藏 HUD（避免胶囊盖住设置页/侧边栏弹窗）。 */
+			const [windowOpen, setWindowOpen] = (0, react.useState)(false);
 			const active = runs.length > 0;
 			const shown = active ? runs : finished !== null ? [finished] : [];
 			(0, react.useEffect)(() => {
@@ -336454,6 +336456,16 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				window.clearTimeout(lingerTimer.current);
 			}, []);
 			(0, react.useEffect)(() => {
+				const dispose = ensureSidebarWindowObserver();
+				const check = () => setWindowOpen(isSidebarWindowOpen());
+				check();
+				const timer = window.setInterval(check, 600);
+				return () => {
+					window.clearInterval(timer);
+					dispose();
+				};
+			}, []);
+			(0, react.useEffect)(() => {
 				if (!expanded) return;
 				const onPointerDown = (event) => {
 					const hud = hudRef.current;
@@ -336482,6 +336494,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				});
 			}, []);
 			if (shown.length === 0) return null;
+			if (windowOpen) return null;
 			const fbAnchor = collapsedAnchor();
 			const fbCol = contentColumn();
 			const fbLeft = fbAnchor !== null ? fbAnchor.colLeft : fbCol !== null ? Math.max(0, fbCol.left) : 0;
