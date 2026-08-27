@@ -332131,7 +332131,8 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		*  - 全屏画布的节点（`.team-board-node` 下固定宽高，保证连线锚点稳定）。
 		*
 		* 卡片自上而下：头像 + 名称/分组 → 定位语 → 生效模型 → 装配摘要 → 关联 chips。
-		* 卡片本体点击 = 打开编辑弹窗；连线模式下点击 = 完成关联。
+		* 交互：整张卡片按住即拖（画布节点）；单击 = 选中，双击 = 打开编辑弹窗；
+		* 连线模式下点击 = 完成关联（优先级最高）。
 		* 卡片内不再内联编辑面 —— 内联展开会把画布节点撑高、盖住邻居节点导致点不到控件。
 		*/
 		/** 执行通道显示名。 */
@@ -332141,18 +332142,31 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			subagent: "subagent"
 		};
 		/** 角色卡片（展示态）。 */
-		function RoleCard({ role, teamModel, selected, linking, linkMode, chainIndex, links, onOpen, onRemove, onStartLink, onFinishLink, onRemoveLink, onDragPointerDown }) {
+		function RoleCard({ role, teamModel, selected, linking, linkMode, chainIndex, links, onOpen, onSelect, onRemove, onStartLink, onFinishLink, onRemoveLink, onDragPointerDown }) {
 			const modelText = bindingValue(role.model !== null ? role.model : teamModel);
 			const modelSource = role.model !== null ? "role" : "team";
 			const avatar = role.avatar !== void 0 && role.avatar !== "" ? role.avatar : role.name.slice(0, 1);
 			const caps = role.capabilities ?? DEFAULT_CAPABILITIES;
 			const capsText = capabilitySummary(role.capabilities);
 			const capsPlain = capsText === "" && caps.toolMode === "inherit" && caps.skillMode === "inherit";
+			/** 刚用点击完成/取消关联的时间戳：紧随其后那次 dblclick 不再打开编辑。 */
+			const linkClickAtRef = (0, react.useRef)(0);
 			const handleCardClick = () => {
 				if (linkMode === true) {
+					linkClickAtRef.current = Date.now();
 					onFinishLink();
 					return;
 				}
+				if (onSelect !== void 0) {
+					onSelect();
+					return;
+				}
+				onOpen();
+			};
+			/** 双击 = 打开编辑弹窗（连线模式下不响应，避免完成关联后误开）。 */
+			const handleCardDoubleClick = () => {
+				if (linkMode === true) return;
+				if (Date.now() - linkClickAtRef.current < 400) return;
 				onOpen();
 			};
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -332162,18 +332176,23 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				"data-link-mode": linkMode === true || void 0,
 				"data-group": role.group,
 				onClick: handleCardClick,
+				onDoubleClick: handleCardDoubleClick,
+				onPointerDown: onDragPointerDown,
 				role: "button",
 				tabIndex: 0,
 				"aria-label": `角色 ${role.name}`,
 				onKeyDown: (event) => {
 					if (event.key !== "Enter" && event.key !== " ") return;
 					event.preventDefault();
-					handleCardClick();
+					if (linkMode === true) {
+						onFinishLink();
+						return;
+					}
+					onOpen();
 				},
 				children: [
 					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: "team-grid-head",
-						onPointerDown: onDragPointerDown,
 						children: [
 							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: "team-avatar",
@@ -332353,7 +332372,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		/** 连线层 svg 相对节点包围盒的外扩留白（连线会甩到卡片外侧）。 */
 		const EDGE_PAD = 400;
 		/** 关系画布。 */
-		function TeamBoard({ team, chain, chainOrder, linkFrom, selectedRoleId, linksByRole, toolbar, onOpenRole, onRemoveRole, onStartLink, onFinishLink, onRemoveLink, onFlipLink, onCommitPositions }) {
+		function TeamBoard({ team, chain, chainOrder, linkFrom, selectedRoleId, linksByRole, toolbar, onOpenRole, onSelectRole, onRemoveRole, onStartLink, onFinishLink, onRemoveLink, onFlipLink, onCommitPositions }) {
 			const viewportRef = (0, react.useRef)(null);
 			const [viewport, setViewport] = (0, react.useState)({
 				w: 1200,
@@ -332363,6 +332382,11 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const [local, setLocal] = (0, react.useState)({});
 			/** 正在拖拽的节点 id（用于 z-index 与光标）。 */
 			const [dragging, setDragging] = (0, react.useState)(null);
+			/**
+			* 本地选中覆盖：父组件未传 onSelectRole 时，单击选中的描边高亮由画布自己维持；
+			* 外部 selectedRoleId 一变（如双击打开编辑）本地覆盖即刻让位。
+			*/
+			const [localSelected, setLocalSelected] = (0, react.useState)(null);
 			const [zoom, setZoom] = (0, react.useState)(1);
 			const [pan, setPan] = (0, react.useState)({
 				x: 0,
@@ -332413,7 +332437,11 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				setLocal({});
 				setActiveLink(null);
 				setDragging(null);
+				setLocalSelected(null);
 			}, [team.id]);
+			(0, react.useEffect)(() => {
+				setLocalSelected(null);
+			}, [selectedRoleId]);
 			/** 自动布局用的列数（仅决定网格形状，不再限制画布尺寸）。 */
 			const cols = (0, react.useMemo)(() => {
 				const count = Math.max(1, team.roles.length);
@@ -332739,6 +332767,13 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			}, [pan, zoom]);
 			const linking = linkFrom !== "";
 			const linkFromNode = linking ? byId.get(linkFrom) : void 0;
+			/** 生效选中：本地单击覆盖优先，否则用父组件的 selectedRoleId。 */
+			const effectiveSelectedId = localSelected ?? selectedRoleId;
+			/** 单击节点（未构成拖拽的点击）：选中该角色，给主题色描边高亮。 */
+			const handleSelectRole = (0, react.useCallback)((roleId) => {
+				setLocalSelected(roleId);
+				onSelectRole?.(roleId);
+			}, [onSelectRole]);
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: "team-canvas",
 				children: [toolbar !== void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
@@ -332871,17 +332906,21 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 										top: node.y,
 										width: 250,
 										height: 188,
-										zIndex: dragging === node.role.id ? 30 : selectedRoleId === node.role.id ? 20 : 10
+										zIndex: dragging === node.role.id ? 30 : effectiveSelectedId === node.role.id ? 20 : 10
 									},
 									onPointerDown: (event) => event.stopPropagation(),
 									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(RoleCard, {
 										role: node.role,
 										teamModel: team.model,
-										selected: selectedRoleId === node.role.id,
+										selected: effectiveSelectedId === node.role.id,
 										linking: linkFrom === node.role.id,
 										linkMode: linking,
 										chainIndex: chainOrder[node.role.id] ?? null,
 										links: linksByRole[node.role.id] ?? [],
+										onSelect: () => {
+											if (Date.now() - draggedAtRef.current < 220) return;
+											handleSelectRole(node.role.id);
+										},
 										onOpen: () => {
 											if (Date.now() - draggedAtRef.current < 220) return;
 											onOpenRole(node.role.id);

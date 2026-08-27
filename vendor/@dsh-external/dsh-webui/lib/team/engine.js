@@ -400,8 +400,13 @@ export class TeamEngine {
         catch (error) {
             if (controller.signal.aborted)
                 throw new TeamError('运行已取消', 'cancelled', 409);
-            if (stepController.signal.aborted)
-                throw new TeamError(`本步超时（${globals.timeoutSec}s）`, 'step_timeout', 504);
+            if (stepController.signal.aborted) {
+                // 透传底层真实原因：超时 abort 触发的原始异常（AbortError / provider 报错 /
+                // 通道附带的进度提示）。否则用户只看到「超时」，无法区分 403 挂起、模型慢、子 agent 卡死。
+                const detail = error instanceof Error ? error.message : String(error);
+                const suffix = detail.trim() !== '' ? `；底层：${detail}` : '；底层未抛出任何异常信息';
+                throw new TeamError(`本步超时（${globals.timeoutSec}s）${suffix}`, 'step_timeout', 504);
+            }
             throw error;
         }
         finally {
@@ -420,35 +425,45 @@ export class TeamEngine {
             })];
         let out = '';
         let lastFlush = 0;
-        for await (const chunk of llm.stream({
-            provider: binding.provider,
-            model: binding.model,
-            messages,
-            system,
-            maxTokens: binding.maxTokens ?? DEFAULT_MAX_TOKENS,
-            signal,
-        })) {
-            if (chunk.type === 'text-delta') {
-                out += chunk.text ?? '';
-                const now = Date.now();
-                if (now - lastFlush >= SNAPSHOT_INTERVAL_MS) {
-                    lastFlush = now;
-                    onDelta(out);
+        try {
+            for await (const chunk of llm.stream({
+                provider: binding.provider,
+                model: binding.model,
+                messages,
+                system,
+                maxTokens: binding.maxTokens ?? DEFAULT_MAX_TOKENS,
+                signal,
+            })) {
+                if (chunk.type === 'text-delta') {
+                    out += chunk.text ?? '';
+                    const now = Date.now();
+                    if (now - lastFlush >= SNAPSHOT_INTERVAL_MS) {
+                        lastFlush = now;
+                        onDelta(out);
+                    }
+                    continue;
                 }
-                continue;
+                if (chunk.type !== 'finish')
+                    continue;
+                const reason = chunk.reason;
+                if (reason === undefined)
+                    continue;
+                if (reason.kind === 'error')
+                    throw new Error(reason.failure?.message ?? '模型调用失败');
+                if (reason.kind === 'aborted')
+                    throw new Error('模型调用被中止');
+                if (reason.kind !== 'stop' && reason.kind !== 'max-tokens') {
+                    throw new Error(`模型未正常结束：${reason.kind}`);
+                }
             }
-            if (chunk.type !== 'finish')
-                continue;
-            const reason = chunk.reason;
-            if (reason === undefined)
-                continue;
-            if (reason.kind === 'error')
-                throw new Error(reason.failure?.message ?? '模型调用失败');
-            if (reason.kind === 'aborted')
-                throw new Error('模型调用被中止');
-            if (reason.kind !== 'stop' && reason.kind !== 'max-tokens') {
-                throw new Error(`模型未正常结束：${reason.kind}`);
-            }
+        }
+        catch (error) {
+            // 附进度信息：区分「provider 全程无输出（挂起/静默 403/网络中断）」与「流到一半被打断」。
+            const base = error instanceof Error ? error.message : String(error);
+            const progress = out === ''
+                ? `未收到 ${binding.provider}/${binding.model} 的任何输出（疑似 provider 挂起、网络中断或静默报错）`
+                : `已产出 ${out.length} 字符后中断`;
+            throw new Error(`${base}（${progress}）`);
         }
         if (out.trim() === '') {
             throw new Error(`模型未返回内容（${binding.provider}/${binding.model}）`);
@@ -496,7 +511,17 @@ export class TeamEngine {
         // 跟踪子会话日志：框架只回传最终文本，但本地子会话的事件流（思考/正文
         // 增量、todo_write 任务清单）持续落盘 —— 用水位线读原语把过程实时转发，
         // 用户不用干等，HUD/详情卡能看到子 agent 正在做什么、清单完成了什么。
-        const stopTail = this.tailSubagentSession(run.id, handlers, signal);
+        // 同时记录过程流水位：失败/超时时报告子 agent 是否在干活（区分挂起与慢）。
+        let lastDeltaAt = 0;
+        let lastDeltaTail = '';
+        const stopTail = this.tailSubagentSession(run.id, {
+            onDelta: (accumulated) => {
+                lastDeltaAt = Date.now();
+                lastDeltaTail = accumulated.slice(-200);
+                handlers.onDelta(accumulated);
+            },
+            onTodos: handlers.onTodos,
+        }, signal);
         try {
             const result = await run.result;
             if (result.stopReason !== 'completed' && result.stopReason !== 'max-tokens') {
@@ -510,6 +535,14 @@ export class TeamEngine {
             if (text === '')
                 throw new Error('subagent 未返回内容');
             return text;
+        }
+        catch (error) {
+            // 附过程流摘要：全程无输出 ≈ 模型请求挂起 / provider 静默 403；有输出 ≈ 跑到一半被打断。
+            const base = error instanceof Error ? error.message : String(error);
+            const activity = lastDeltaAt === 0
+                ? '子 agent 全程无任何输出（疑似模型请求挂起、provider 无响应或静默 403）'
+                : `子 agent 最后输出距失败 ${Math.max(0, Math.round((Date.now() - lastDeltaAt) / 1000))}s${lastDeltaTail !== '' ? `，末尾片段：${JSON.stringify(lastDeltaTail.slice(-120))}` : ''}`;
+            throw new Error(`${base}（${activity}）`);
         }
         finally {
             stopTail();
