@@ -14,8 +14,8 @@ function clip(text, budget) {
         return text;
     return `${text.slice(0, budget)}\n\n…（已截断，完整内容见产物文件）`;
 }
-/** 角色的 system 提示词：角色 prompt + 团队上下文 + 输出纪律。 */
-export function buildSystem(team, role, synthesize) {
+/** 角色的 system 提示词：角色 prompt + 团队上下文 + 输出纪律（+ loop 判定约定）。 */
+export function buildSystem(team, role, synthesize, opts = {}) {
     const roster = team.roles
         .map(r => `- ${r.name}（${r.en}）：${r.tagline}`)
         .join('\n');
@@ -36,7 +36,7 @@ export function buildSystem(team, role, synthesize) {
             '- 直接输出交付物本体，不要复述流程、不要写「好的我来整合」这类开场话。',
         ].join('\n');
     }
-    return [
+    const lines = [
         role.prompt.trim() !== '' ? role.prompt : `你是「${role.name}」，${role.tagline}。`,
         '',
         `## 团队「${team.name}」成员`,
@@ -47,7 +47,11 @@ export function buildSystem(team, role, synthesize) {
         '- 结论先行，其后是依据与细节，最后列出遗留问题与建议的下一步。',
         '- 不确定处显式标注「待确认」，不要用猜测填充事实。',
         '- 直接输出成果本体，不要写开场寒暄与流程复述。',
-    ].join('\n');
+    ];
+    if (opts.loop === true) {
+        lines.push('', '## 循环判定输出约定', '你是本链的回环判定角色：根据上游产出的质量，决定是回到循环起点再打磨一轮，还是跳出循环进入下一步。', '在正文末尾**单独一行**输出一个 JSON 对象（必须是整段输出的最后一行，且必须是合法 JSON）：', '- {"verdict":"loop"}   还需再来一轮（执行指针回到循环起点重跑）', '- {"verdict":"done"}   可以汇报（跳出循环，进入下一步）', '可附带 "reason" 字段说明理由，例如 {"verdict":"loop","reason":"第 2 点还未覆盖"}。', '若省略此行或 JSON 解析失败，系统按 done 处理；达到最大回环次数时也会强制按 done 处理。');
+    }
+    return lines.join('\n');
 }
 /** 上游产出注入片段。 */
 function buildUpstream(previous, globals) {

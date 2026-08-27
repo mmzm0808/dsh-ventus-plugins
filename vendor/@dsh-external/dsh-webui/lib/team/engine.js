@@ -129,7 +129,16 @@ export class TeamEngine {
                 next();
         }
     }
-    /** 执行整个 Run（每步落盘快照）。 */
+    /** 执行整个 Run（每步落盘快照）。
+     *
+     * 主循环为指针式 while：游标 cursor 指向当前要执行的 PlannedStep。
+     *  - 普通 role/synthesize 步：照旧单步执行，cursor+1。
+     *  - parallel 组：把同组（parallelGroup 相同且连续）的步骤一次性取出，Promise.all 并发
+     *    执行；各成员 previous 截到 parallelBase 之前。整组完成后 cursor 跳到组尾。
+     *  - loop 步：执行完读取其输出文本末尾的 {"verdict":"loop"|"done"} JSON；
+     *    verdict=loop 且未达 maxLoopIterations 时，把 [backTo, cursor) 区间内步骤重置
+     *    为 pending，cursor 拨回 backTo；否则继续 cursor+1（done 或到顶强制 done）。
+     */
     async execute(runId, team, planned, globals, context) {
         let run = this.store.readRun(runId);
         if (run === null)
@@ -149,10 +158,48 @@ export class TeamEngine {
         let failed = false;
         /** run 级异常信息（不能只写进局部 run：后续会重读磁盘，会把它覆盖掉）。 */
         let runError = '';
+        /** loop 回环计数：key = loop 步的 planned.index；每跳回一次 +1，到顶强制 done。 */
+        const loopIterations = new Map();
+        const maxLoopIterations = Math.max(1, globals.maxLoopIterations);
         try {
-            for (const step of planned) {
+            let cursor = 0;
+            while (cursor < planned.length) {
                 if (controller.signal.aborted)
                     break;
+                const step = planned[cursor];
+                // ── parallel 组：收集同组连续步骤，Promise.all 并发执行 ──
+                if (step.parallelGroup !== undefined) {
+                    const group = [step];
+                    let look = cursor + 1;
+                    while (look < planned.length
+                        && planned[look].parallelGroup === step.parallelGroup
+                        && planned[look].parallelBase === step.parallelBase) {
+                        group.push(planned[look]);
+                        look += 1;
+                    }
+                    const base = step.parallelBase ?? step.index;
+                    const outcomes = await Promise.all(group.map(member => this.runStep({
+                        runId, team, planned: member, globals, providers, controller, context,
+                        previousCutoff: base,
+                    }).catch((error) => {
+                        // runStep 内部已经兜底，本 catch 是双保险（如 patchStep 本身抛错）。
+                        this.patchStep(runId, member.index, {
+                            status: 'error',
+                            finishedAt: new Date().toISOString(),
+                            error: error instanceof Error ? error.message : String(error),
+                        });
+                        return 'error';
+                    })));
+                    run = this.store.readRun(runId) ?? run;
+                    if (outcomes.some(o => o === 'error')) {
+                        failed = true;
+                        if (globals.stopOnError)
+                            break;
+                    }
+                    cursor = look;
+                    continue;
+                }
+                // ── 普通步 / loop 步 ──
                 const outcome = await this.runStep({
                     runId, team, planned: step, globals, providers, controller, context,
                 });
@@ -161,7 +208,27 @@ export class TeamEngine {
                     failed = true;
                     if (globals.stopOnError)
                         break;
+                    cursor += 1;
+                    continue;
                 }
+                if (outcome !== 'done') {
+                    cursor += 1;
+                    continue;
+                }
+                // loop 步：解析 verdict，未达上限则回环到 backTo。
+                if (step.loopBackTo !== undefined) {
+                    const verdict = this.readLoopVerdict(runId, step.index);
+                    const iterations = loopIterations.get(step.index) ?? 0;
+                    if (verdict === 'loop' && iterations < maxLoopIterations) {
+                        loopIterations.set(step.index, iterations + 1);
+                        // 把 [backTo, cursor) 区间内所有步重置为 pending（loop 步自身保留 done，
+                        // 待下一轮 cursor 走到这里时由 runStep 重新执行覆盖）。
+                        this.resetRange(runId, step.loopBackTo, cursor);
+                        cursor = step.loopBackTo;
+                        continue;
+                    }
+                }
+                cursor += 1;
             }
         }
         catch (error) {
@@ -250,8 +317,10 @@ export class TeamEngine {
             return 'error';
         }
         // 2) 装配 prompt。
-        const previous = run.steps.slice(0, planned.index);
-        let system = buildSystem(team, planned.role, planned.synthesize);
+        const previous = run.steps.slice(0, args.previousCutoff ?? planned.index);
+        let system = buildSystem(team, planned.role, planned.synthesize, {
+            loop: planned.loopBackTo !== undefined,
+        });
         const userPrompt = buildUserPrompt(team, planned, run.task, previous, globals, run.chainName);
         // 3) 选通道。
         const channel = this.pickChannel(planned.role.executor, context);
@@ -640,12 +709,101 @@ export class TeamEngine {
         }
         catch { /* 写盘失败不打断执行 */ }
     }
+    /**
+     * 把 [fromInclusive, toExclusive) 区间内所有步重置为 pending（loop 回环用）。
+     * 清掉输出/时间戳/错误等运行态字段，保留 roleId/roleName 等编制字段。
+     */
+    resetRange(runId, fromInclusive, toExclusive) {
+        const run = this.store.readRun(runId);
+        if (run === null)
+            return;
+        const steps = run.steps.map((step) => {
+            if (step.index < fromInclusive || step.index >= toExclusive)
+                return step;
+            const next = {
+                ...step,
+                status: 'pending',
+                inputSnapshot: '',
+                output: '',
+                modelUsed: { provider: '', model: '' },
+                modelSource: 'team',
+            };
+            delete next.outputFile;
+            delete next.startedAt;
+            delete next.finishedAt;
+            delete next.error;
+            delete next.retries;
+            delete next.channel;
+            delete next.warning;
+            delete next.capabilities;
+            delete next.todos;
+            return next;
+        });
+        try {
+            this.store.saveRun({ ...run, steps });
+        }
+        catch { /* 写盘失败不打断执行 */ }
+    }
+    /**
+     * 读 loop 步的完整输出文本，解析末尾 verdict。
+     * 优先读产物文件（outputFile）拿完整文本；读不到退化用快照 output（截断尾部，verdict
+     * 通常在最末，快照截断策略保留尾部所以通常也能拿到）。
+     */
+    readLoopVerdict(runId, stepIndex) {
+        const run = this.store.readRun(runId);
+        const step = run?.steps.find(s => s.index === stepIndex);
+        if (step === undefined)
+            return 'done';
+        let text = '';
+        if (step.outputFile !== undefined) {
+            try {
+                text = this.store.readStepOutput(runId, step.outputFile);
+            }
+            catch {
+                text = step.output;
+            }
+        }
+        else {
+            text = step.output;
+        }
+        return parseLoopVerdict(text);
+    }
 }
 /** 快照输出：保留尾部（流式进行中看最新内容最有用）。 */
 function tailSnapshot(text) {
     if (text.length <= SNAPSHOT_OUTPUT_MAX)
         return text;
     return `…（前文已截断）\n${text.slice(-SNAPSHOT_OUTPUT_MAX)}`;
+}
+/**
+ * 解析 loop 步输出末尾的 verdict。
+ *
+ * 约定：loop 角色在正文末尾**单独一行**输出一个 JSON：
+ *   {"verdict":"loop"}  或  {"verdict":"done"}  （可带 "reason" 等额外字段）
+ *
+ * 实现：从末行往前扫，找到**最后一个**可解析为 {"verdict":"loop"|"done"} 的 JSON 行；
+ * 一行都匹配不到（角色没遵守约定）时按 'done' 处理（防死循环，由 maxLoopIterations 兜底）。
+ */
+function parseLoopVerdict(text) {
+    if (text === '')
+        return 'done';
+    const lines = text.split('\n');
+    for (let i = lines.length - 1; i >= 0; i -= 1) {
+        const line = lines[i].trim();
+        if (!line.startsWith('{') || !line.endsWith('}'))
+            continue;
+        try {
+            const parsed = JSON.parse(line);
+            if (parsed !== null && typeof parsed === 'object') {
+                if (parsed.verdict === 'loop')
+                    return 'loop';
+                if (parsed.verdict === 'done')
+                    return 'done';
+            }
+        }
+        catch { /* 不是合法 JSON，继续往前找 */ }
+    }
+    return 'done';
 }
 /** todo_write 的 arguments（JSON 字符串）→ 任务清单投影；非法/空列表返回 null。 */
 function parseTodoWriteArgs(raw) {

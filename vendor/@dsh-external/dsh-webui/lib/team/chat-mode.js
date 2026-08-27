@@ -25,7 +25,19 @@ function describeTeam(team, mode) {
         lines.push('可用协作链：');
         for (const chain of team.chains) {
             const path = chain.steps
-                .map(step => (step.kind === 'synthesize' ? '主脑整合' : (team.roles.find(r => r.id === step.roleId)?.name ?? step.roleId)))
+                .map((step) => {
+                if (step.kind === 'synthesize')
+                    return '主脑整合';
+                if (step.kind === 'parallel') {
+                    const names = step.roleIds.map(id => team.roles.find(r => r.id === id)?.name ?? id);
+                    return `并行[${names.join('+')}]`;
+                }
+                if (step.kind === 'loop') {
+                    const name = team.roles.find(r => r.id === step.roleId)?.name ?? step.roleId;
+                    return `回环${name}→第${step.backTo + 1}步`;
+                }
+                return team.roles.find(r => r.id === step.roleId)?.name ?? step.roleId;
+            })
                 .join(' → ');
             const tail = chain.finalSynthesize && !chain.steps.some(s => s.kind === 'synthesize') ? ' → 主脑整合' : '';
             lines.push(`- \`${chain.id}\` ${chain.name}：${path}${tail}`);

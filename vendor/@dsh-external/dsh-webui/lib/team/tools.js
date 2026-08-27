@@ -33,7 +33,15 @@ function presentTeam(team) {
         chains: team.chains.map(chain => ({
             id: chain.id,
             name: chain.name,
-            steps: chain.steps.map(step => (step.kind === 'synthesize' ? '主脑整合' : step.roleId)),
+            steps: chain.steps.map((step) => {
+                if (step.kind === 'synthesize')
+                    return '主脑整合';
+                if (step.kind === 'parallel')
+                    return `并行[${step.roleIds.join('+')}]`;
+                if (step.kind === 'loop')
+                    return `回环${step.roleId}→第${step.backTo + 1}步`;
+                return step.roleId;
+            }),
             finalSynthesize: chain.finalSynthesize,
         })),
     };
@@ -319,7 +327,19 @@ export function registerTeamTools({ ctx, store, engine }) {
                 lines.push('', '协作链：');
                 for (const chain of team.chains) {
                     const path = chain.steps
-                        .map(step => (step.kind === 'synthesize' ? '主脑整合' : team.roles.find(r => r.id === step.roleId)?.name ?? step.roleId))
+                        .map((step) => {
+                        if (step.kind === 'synthesize')
+                            return '主脑整合';
+                        if (step.kind === 'parallel') {
+                            const names = step.roleIds.map(id => team.roles.find(r => r.id === id)?.name ?? id);
+                            return `并行[${names.join('+')}]`;
+                        }
+                        if (step.kind === 'loop') {
+                            const name = team.roles.find(r => r.id === step.roleId)?.name ?? step.roleId;
+                            return `回环${name}→第${step.backTo + 1}步`;
+                        }
+                        return team.roles.find(r => r.id === step.roleId)?.name ?? step.roleId;
+                    })
                         .join(' → ');
                     const tail = chain.finalSynthesize && !chain.steps.some(s => s.kind === 'synthesize') ? ' → 主脑整合' : '';
                     lines.push(`- ${chain.id}：${path}${tail}`);

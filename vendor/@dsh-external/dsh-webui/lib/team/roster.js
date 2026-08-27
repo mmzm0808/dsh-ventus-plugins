@@ -106,17 +106,37 @@ export function findCoreRole(team) {
         ?? null;
 }
 /**
- * 把链条展开为线性执行计划：role 步 + 显式/隐式 synthesize 步。
+ * 把链条展开为线性执行计划：role 步 + 显式/隐式 synthesize 步 + parallel 并行组
+ * + loop 回环节点。
+ *
+ * parallel 组：组内每个 roleId 各成一个 PlannedStep，共享 parallelGroup 与
+ * parallelBase（= 组内第一个 PlannedStep 的 index）。
+ * loop 步：占一个 PlannedStep，先记录 chain.steps 的 backTo，展开完成后统一
+ * 映射为 planned 索引（因为 parallel 在 planned 中占多格，索引会偏移）。
  * 找不到角色的步骤直接跳过；主脑缺失时不追加整合步。
  */
 export function planChain(team, chain) {
     const byId = new Map(team.roles.map(role => [role.id, role]));
     const out = [];
     let hasExplicitSynth = false;
-    const push = (role, synthesize, taskNote) => {
-        out.push({ index: out.length, role, synthesize, ...(taskNote !== undefined ? { taskNote } : {}) });
+    const push = (role, synthesize, taskNote, extras) => {
+        out.push({
+            index: out.length,
+            role,
+            synthesize,
+            ...(taskNote !== undefined ? { taskNote } : {}),
+            ...(extras?.parallelGroup !== undefined ? { parallelGroup: extras.parallelGroup } : {}),
+            ...(extras?.parallelBase !== undefined ? { parallelBase: extras.parallelBase } : {}),
+        });
     };
-    for (const step of chain.steps) {
+    // chain.steps[i] 对应 out 中的起始索引（parallel 占多格时取第一格）；
+    // 用于把 loop 的 backTo（用户面向 chain.steps 的索引）映射到 planned 索引。
+    const stepStart = [];
+    // loop 步待二次映射的列表：{ out 内索引, chain.steps 内索引 }
+    const loopFixups = [];
+    for (let i = 0; i < chain.steps.length; i += 1) {
+        const step = chain.steps[i];
+        stepStart.push(out.length);
         if (step.kind === 'synthesize') {
             const role = (step.roleId !== undefined ? byId.get(step.roleId) : undefined) ?? findCoreRole(team);
             if (role === null || role === undefined)
@@ -125,10 +145,37 @@ export function planChain(team, chain) {
             push(role, true);
             continue;
         }
+        if (step.kind === 'parallel') {
+            const groupId = `p${i}`;
+            const base = out.length;
+            for (const roleId of step.roleIds) {
+                const role = byId.get(roleId);
+                if (role === undefined)
+                    continue;
+                push(role, false, step.taskNote, { parallelGroup: groupId, parallelBase: base });
+            }
+            continue;
+        }
+        if (step.kind === 'loop') {
+            const role = byId.get(step.roleId);
+            if (role === undefined)
+                continue;
+            push(role, false);
+            loopFixups.push({ outIdx: out.length - 1, chainBackTo: step.backTo });
+            continue;
+        }
         const role = byId.get(step.roleId);
         if (role === undefined)
             continue;
         push(role, false, step.taskNote);
+    }
+    // 二次映射：loop.backTo（chain.steps 索引）→ planned 索引；越界则丢弃 loop 标记。
+    for (const { outIdx, chainBackTo } of loopFixups) {
+        const planned = out[outIdx];
+        const target = stepStart[chainBackTo];
+        if (planned === undefined || target === undefined || target >= planned.index)
+            continue;
+        planned.loopBackTo = target;
     }
     if (chain.finalSynthesize && !hasExplicitSynth) {
         const core = findCoreRole(team);

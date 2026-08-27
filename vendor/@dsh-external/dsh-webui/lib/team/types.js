@@ -28,6 +28,7 @@ export const DEFAULT_GLOBALS = {
     maxConcurrentRuns: 1,
     outputChunkChars: 8000,
     stopOnError: true,
+    maxLoopIterations: 5,
 };
 /** chat-mode 默认值。 */
 export const DEFAULT_CHAT_MODE = {
@@ -194,9 +195,37 @@ function normalizeStep(input) {
     if (input === null || typeof input !== 'object')
         return null;
     const raw = input;
-    if (str(raw.kind) === 'synthesize') {
+    const kind = str(raw.kind);
+    if (kind === 'synthesize') {
         const roleId = str(raw.roleId).trim();
         return { kind: 'synthesize', ...(roleId !== '' ? { roleId } : {}) };
+    }
+    if (kind === 'parallel') {
+        const rawIds = Array.isArray(raw.roleIds) ? raw.roleIds : [];
+        const seen = new Set();
+        const roleIds = [];
+        for (const item of rawIds) {
+            if (typeof item !== 'string')
+                continue;
+            const value = item.trim();
+            if (value === '' || seen.has(value))
+                continue;
+            seen.add(value);
+            roleIds.push(value);
+        }
+        if (roleIds.length === 0)
+            return null;
+        const note = str(raw.taskNote).trim();
+        return { kind: 'parallel', roleIds, ...(note !== '' ? { taskNote: note } : {}) };
+    }
+    if (kind === 'loop') {
+        const roleId = str(raw.roleId).trim();
+        if (roleId === '')
+            return null;
+        const backTo = typeof raw.backTo === 'number' && Number.isFinite(raw.backTo)
+            ? Math.max(0, Math.floor(raw.backTo))
+            : 0;
+        return { kind: 'loop', roleId, backTo };
     }
     const roleId = str(raw.roleId).trim();
     if (roleId === '')
@@ -259,6 +288,8 @@ function normalizeOverrides(input) {
         out.outputChunkChars = Math.max(500, Math.floor(raw.outputChunkChars));
     if (typeof raw.stopOnError === 'boolean')
         out.stopOnError = raw.stopOnError;
+    if (typeof raw.maxLoopIterations === 'number')
+        out.maxLoopIterations = Math.max(1, Math.min(20, Math.floor(raw.maxLoopIterations)));
     return Object.keys(out).length > 0 ? out : undefined;
 }
 /** 团队 id 合法性（同时用作文件名，必须严格）。 */
@@ -314,12 +345,37 @@ export function normalizeTeam(input) {
             if (seenChain.has(chain.id))
                 continue;
             seenChain.add(chain.id);
-            // 先随迁移改写引用，再丢弃指向不存在角色的 role 步骤（synthesize 步的 roleId 可留空）。
+            // 先随迁移改写引用，再丢弃指向不存在角色的步骤（synthesize 步的 roleId 可留空；
+            // parallel 组过滤掉不存在的角色，整组丢空则丢步）。
             chain.steps = chain.steps
-                .map(step => (step.kind === 'role' && renamed.has(step.roleId)
-                ? { ...step, roleId: renamed.get(step.roleId) ?? step.roleId }
-                : step))
-                .filter(step => step.kind === 'synthesize' ? (step.roleId === undefined || seenRole.has(step.roleId)) : seenRole.has(step.roleId));
+                .map((step) => {
+                if ((step.kind === 'role' || step.kind === 'loop') && renamed.has(step.roleId)) {
+                    return { ...step, roleId: renamed.get(step.roleId) ?? step.roleId };
+                }
+                if (step.kind === 'parallel') {
+                    const roleIds = step.roleIds.map(id => renamed.get(id) ?? id);
+                    return { ...step, roleIds };
+                }
+                return step;
+            })
+                .map((step) => {
+                if (step.kind === 'synthesize') {
+                    return (step.roleId === undefined || seenRole.has(step.roleId)) ? step : null;
+                }
+                if (step.kind === 'role' || step.kind === 'loop') {
+                    return seenRole.has(step.roleId) ? step : null;
+                }
+                if (step.kind === 'parallel') {
+                    const roleIds = step.roleIds.filter(id => seenRole.has(id));
+                    if (roleIds.length === 0)
+                        return null;
+                    return roleIds.length === step.roleIds.length ? step : { ...step, roleIds };
+                }
+                return null;
+            })
+                .filter((s) => s !== null);
+            // 回环 backTo 必须指向更靠前的合法索引（< 当前位置）；越界的 loop 步丢弃。
+            chain.steps = chain.steps.filter((step, idx) => step.kind !== 'loop' || step.backTo < idx);
             chains.push(chain);
         }
     }
@@ -364,6 +420,7 @@ export function normalizeGlobals(input) {
         maxConcurrentRuns: Math.max(1, Math.min(5, Math.floor(num(raw.maxConcurrentRuns, DEFAULT_GLOBALS.maxConcurrentRuns)))),
         outputChunkChars: Math.max(500, Math.floor(num(raw.outputChunkChars, DEFAULT_GLOBALS.outputChunkChars))),
         stopOnError: raw.stopOnError !== false,
+        maxLoopIterations: Math.max(1, Math.min(20, Math.floor(num(raw.maxLoopIterations, DEFAULT_GLOBALS.maxLoopIterations)))),
     };
 }
 /** 归一化单个会话的团队模式状态。 */
