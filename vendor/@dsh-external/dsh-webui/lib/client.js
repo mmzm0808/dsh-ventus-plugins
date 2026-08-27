@@ -270446,7 +270446,6 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [providerId, setProviderId] = (0, react.useState)(null);
 			const [toast, setToast] = (0, react.useState)(null);
 			const toastSeq = (0, react.useRef)(0);
-			const hoverLeaveTimer = (0, react.useRef)(null);
 			const rootRef = (0, react.useRef)(null);
 			const triggerRef = (0, react.useRef)(null);
 			const id = (0, react.useId)();
@@ -270471,30 +270470,20 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			(0, react.useEffect)(() => {
 				if (available) load();
 			}, [available, load]);
-			(0, react.useEffect)(() => () => {
-				if (hoverLeaveTimer.current !== null) window.clearTimeout(hoverLeaveTimer.current);
-			}, []);
+			(0, react.useEffect)(() => {
+				if (!open) return;
+				const onPointerDown = (event) => {
+					const root = rootRef.current;
+					if (root !== null && event.target instanceof Node && !root.contains(event.target)) setOpen(false);
+				};
+				document.addEventListener("pointerdown", onPointerDown, true);
+				return () => document.removeEventListener("pointerdown", onPointerDown, true);
+			}, [open]);
 			if (!available) return null;
-			/** 取消「移出后延迟关闭」的定时器。 */
-			const cancelHoverHide = () => {
-				if (hoverLeaveTimer.current !== null) {
-					window.clearTimeout(hoverLeaveTimer.current);
-					hoverLeaveTimer.current = null;
-				}
-			};
-			/** hover 进入按钮/菜单：立即显示并取消延迟关闭。 */
-			const showPanel = () => {
-				cancelHoverHide();
+			/** 触发按钮：点击开合菜单（点选模型后也会自行收起，见 choose）。 */
+			const togglePanel = () => {
 				setProviderId(null);
-				setOpen(true);
-			};
-			/** hover 移出：延迟 0.08 秒再关闭，给用户时间从按钮移入菜单点选。 */
-			const scheduleHide = () => {
-				cancelHoverHide();
-				hoverLeaveTimer.current = window.setTimeout(() => {
-					hoverLeaveTimer.current = null;
-					setOpen(false);
-				}, 80);
+				setOpen((previous) => !previous);
 			};
 			const choose = (selection) => {
 				if (state.current?.provider === selection.provider && state.current.model === selection.model) {
@@ -270530,8 +270519,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						"aria-expanded": open,
 						"aria-controls": open ? `${id}-menu` : void 0,
 						title: modelLabel,
-						onMouseEnter: showPanel,
-						onMouseLeave: scheduleHide,
+						onClick: togglePanel,
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 							className: css$7.msTriggerLabel,
 							children: modelLabel
@@ -270543,8 +270531,6 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 						role: "menu",
 						"aria-label": "选择模型",
 						"aria-busy": state.status === "loading" || busy,
-						onMouseEnter: showPanel,
-						onMouseLeave: scheduleHide,
 						children: [
 							state.status === "loading" && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								className: css$7.msStatus,
@@ -270804,7 +270790,6 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [open, setOpen] = (0, react.useState)(false);
 			const [closing, setClosing] = (0, react.useState)(false);
 			const closeTimer = (0, react.useRef)(null);
-			const hoverLeaveTimer = (0, react.useRef)(null);
 			const [dragIndex, setDragIndex] = (0, react.useState)(null);
 			const rootRef = (0, react.useRef)(null);
 			const sliderRef = (0, react.useRef)(null);
@@ -270819,16 +270804,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					setOpen(false);
 				}, 130);
 			};
-			/** 取消「移出后延迟关闭」的定时器。 */
-			const cancelHoverHide = () => {
-				if (hoverLeaveTimer.current !== null) {
-					window.clearTimeout(hoverLeaveTimer.current);
-					hoverLeaveTimer.current = null;
-				}
-			};
-			/** hover 进入按钮/面板：立即显示并取消延迟关闭；关闭动画中则中断恢复。 */
+			/** 立即打开；关闭动画中则中断恢复。 */
 			const showPanel = () => {
-				cancelHoverHide();
 				if (closing) {
 					if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
 					closeTimer.current = null;
@@ -270836,18 +270813,26 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				}
 				setOpen(true);
 			};
-			/** hover 移出：延迟 0.08 秒再关闭，给用户时间从按钮移入面板拖动滑杆。 */
-			const scheduleHide = () => {
-				cancelHoverHide();
-				hoverLeaveTimer.current = window.setTimeout(() => {
-					hoverLeaveTimer.current = null;
+			/** 触发按钮：点击开合面板（开着 = 带关闭动画收起）。 */
+			const togglePanel = () => {
+				if (open && !closing) {
 					closePanel();
-				}, 80);
+					return;
+				}
+				showPanel();
 			};
 			(0, react.useEffect)(() => () => {
 				if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
-				if (hoverLeaveTimer.current !== null) window.clearTimeout(hoverLeaveTimer.current);
 			}, []);
+			(0, react.useEffect)(() => {
+				if (!open) return;
+				const onPointerDown = (event) => {
+					const root = rootRef.current;
+					if (root !== null && event.target instanceof Node && !root.contains(event.target)) closePanel();
+				};
+				document.addEventListener("pointerdown", onPointerDown, true);
+				return () => document.removeEventListener("pointerdown", onPointerDown, true);
+			}, [open]);
 			const reasoning = (0, react.useMemo)(() => {
 				const current = state.current;
 				if (current === null) return void 0;
@@ -270961,8 +270946,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					"aria-expanded": open,
 					title: `推理等级：${activeChoice?.label ?? "默认"}`,
 					disabled: locked || state.status === "selecting",
-					onMouseEnter: showPanel,
-					onMouseLeave: scheduleHide,
+					onClick: togglePanel,
 					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: css$7.effLabel,
 						children: activeChoice?.label ?? "默认"
@@ -270971,8 +270955,6 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					className: `${css$7.effPanel} ${closing ? "dsh-glass-anim-out" : "dsh-glass-anim-in"}`,
 					role: "dialog",
 					"aria-label": "修改推理等级",
-					onMouseEnter: showPanel,
-					onMouseLeave: scheduleHide,
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: css$7.effPanelHead,
@@ -287058,7 +287040,9 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const state = (0, react.useSyncExternalStore)((fn) => directory.subscribe(fn), () => directory.getSnapshot());
 			const [phase, setPhase] = (0, react.useState)("idle");
 			const [detail, setDetail] = (0, react.useState)("");
-			const [hovered, setHovered] = (0, react.useState)(false);
+			/** 面板开合：点击按钮切换；只有点击面板外部才关闭（鼠标离开不关）。
+			* 优化进行中/完成/出错时面板强制可见（phase 驱动），与开合态无关。 */
+			const [open, setOpen] = (0, react.useState)(false);
 			const [lengthMode, setLengthMode] = (0, react.useState)("medium");
 			const [setTarget, setSetTarget] = (0, react.useState)(() => readFlag$1(TARGET_KEY, true));
 			const [verifyWithBrowser, setVerifyWithBrowser] = (0, react.useState)(() => readFlag$1(VERIFY_KEY, false));
@@ -287070,31 +287054,22 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			*/
 			const [history, setHistory] = (0, react.useState)([]);
 			const closeTimer = (0, react.useRef)(null);
-			const hoverLeaveTimer = (0, react.useRef)(null);
+			const rootRef = (0, react.useRef)(null);
 			const abortRef = (0, react.useRef)(null);
 			const busy = phase === "optimizing";
 			(0, react.useEffect)(() => () => {
 				if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
-				if (hoverLeaveTimer.current !== null) window.clearTimeout(hoverLeaveTimer.current);
 			}, []);
+			(0, react.useEffect)(() => {
+				if (!open) return;
+				const onPointerDown = (event) => {
+					const root = rootRef.current;
+					if (root !== null && event.target instanceof Node && !root.contains(event.target)) setOpen(false);
+				};
+				document.addEventListener("pointerdown", onPointerDown, true);
+				return () => document.removeEventListener("pointerdown", onPointerDown, true);
+			}, [open]);
 			if (!available) return null;
-			const cancelHoverHide = () => {
-				if (hoverLeaveTimer.current !== null) {
-					window.clearTimeout(hoverLeaveTimer.current);
-					hoverLeaveTimer.current = null;
-				}
-			};
-			const showPanel = () => {
-				cancelHoverHide();
-				setHovered(true);
-			};
-			const scheduleHide = () => {
-				cancelHoverHide();
-				hoverLeaveTimer.current = window.setTimeout(() => {
-					hoverLeaveTimer.current = null;
-					setHovered(false);
-				}, 120);
-			};
 			const finish = (next, text) => {
 				setPhase(next);
 				setDetail(text);
@@ -287239,12 +287214,11 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					if (reader !== null) reader.cancel().catch(() => {});
 				}
 			};
-			const panelVisible = hovered || phase !== "idle";
+			const panelVisible = open || phase !== "idle";
 			const statusClass = phase === "optimizing" ? css$2.statusOptimizing : phase === "done" ? css$2.statusDone : phase === "error" ? css$2.statusError : void 0;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: css$2.root,
-				onMouseEnter: showPanel,
-				onMouseLeave: scheduleHide,
+				ref: rootRef,
 				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 					type: "button",
 					className: css$2.trigger,
@@ -287252,15 +287226,13 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 					title: "自动优化提示词",
 					disabled: busy,
 					onClick: () => {
-						showPanel();
+						setOpen((previous) => !previous);
 					},
 					children: busy ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconLoadingOutline16, { className: css$2.busy }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSparkle16, {})
 				}), panelVisible && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: css$2.panel,
 					role: "group",
 					"aria-label": "提示词优化面板",
-					onMouseEnter: showPanel,
-					onMouseLeave: scheduleHide,
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 							className: css$2.panelTitle,
@@ -287499,6 +287471,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const vh = window.innerHeight;
 			const candidates = document.querySelectorAll(`[role="dialog"][aria-modal="true"], [${SIDEBAR_WINDOW_ATTR}], [style*="position:fixed"], [style*="position: fixed"]`);
 			for (const el of candidates) {
+				if (el.closest(`[data-dsh-window-exempt]`) !== null) continue;
 				if (el.hasAttribute("data-dsh-sidebar-window") || el.getAttribute("role") === "dialog") {
 					const rect = el.getBoundingClientRect();
 					if (rect.width > 0 && rect.height > 0) return true;
@@ -331308,6 +331281,11 @@ body[data-ds-dark-theme] .team-ask{background:var(--dsw-static-neutral-bluish-85
 .team-run-form{display:flex;flex-direction:column;gap:10px;padding:0 0 4px}
 .team-step-list{display:flex;flex-direction:column;gap:6px}
 .team-step{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid var(--dsw-alias-border-l1,rgba(255,255,255,.08));border-radius:10px}
+.team-step[data-drop-before='true']{box-shadow:0 -2px 0 0 var(--dsw-alias-state-business-primary,#4176e6)}
+.team-step[data-drop-after='true']{box-shadow:0 2px 0 0 var(--dsw-alias-state-business-primary,#4176e6)}
+.team-drag-grip{flex:none;align-self:center;margin:3px -4px 0 -2px;padding:2px 3px;cursor:grab;font-size:12px;line-height:1;color:var(--dsw-alias-label-dimmed,#777);user-select:none;-webkit-user-select:none;touch-action:none}
+.team-drag-grip:hover{color:var(--dsw-alias-label-secondary,#bbb)}
+.team-drag-grip:active{cursor:grabbing}
 .team-step[data-status='running']{border-color:color-mix(in srgb,var(--dsw-alias-state-business-primary,#4176e6) 55%,transparent)}
 .team-step[data-status='done']{border-color:color-mix(in srgb,var(--dsw-alias-state-success-primary,#3fb96b) 45%,transparent)}
 .team-step[data-status='error']{border-color:color-mix(in srgb,var(--dsw-alias-state-error-primary,#e0434b) 55%,transparent)}
@@ -332385,6 +332363,12 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		const GAP_X = 130;
 		const GAP_Y = 78;
 		const MARGIN = 80;
+		/** 吸附网格步长（world px）：底纹网格为 32，取半格兼顾对齐与微调自由度。 */
+		const SNAP_GRID = 16;
+		/** 吸附取整：把坐标对齐到最近的网格线。 */
+		function snapValue(value) {
+			return Math.round(value / SNAP_GRID) * SNAP_GRID;
+		}
 		/**
 		* 旧版归一化坐标的量程基准（仅用于一次性折算历史数据，勿用于新逻辑）。
 		* 老公式：world.w = max(1680, MARGIN*2 + cols*NODE_W + (cols-1)*GAP_X)，
@@ -332399,7 +332383,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		/** 连线层 svg 相对节点包围盒的外扩留白（连线会甩到卡片外侧）。 */
 		const EDGE_PAD = 400;
 		/** 关系画布。 */
-		function TeamBoard({ team, chain, chainOrder, linkFrom, selectedRoleId, linksByRole, toolbar, onOpenRole, onSelectRole, onRemoveRole, onStartLink, onFinishLink, onRemoveLink, onFlipLink, onCommitPositions, maxLoopIterations = 5 }) {
+		function TeamBoard({ team, chain, chainOrder, linkFrom, selectedRoleId, linksByRole, toolbar, onOpenRole, onSelectRole, onRemoveRole, onStartLink, onFinishLink, onRemoveLink, onFlipLink, onCommitPositions, maxLoopIterations = 5, snapToGrid = false }) {
 			const viewportRef = (0, react.useRef)(null);
 			const [viewport, setViewport] = (0, react.useState)({
 				w: 1200,
@@ -332433,6 +332417,11 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				x: 0,
 				y: 0
 			});
+			/** 吸附开关最新值（拖拽回调是 pointerdown 时建立的闭包，必须走 ref 读最新态）。 */
+			const snapRef = (0, react.useRef)(snapToGrid);
+			(0, react.useEffect)(() => {
+				snapRef.current = snapToGrid;
+			}, [snapToGrid]);
 			(0, react.useEffect)(() => {
 				zoomRef.current = zoom;
 			}, [zoom]);
@@ -332687,10 +332676,14 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 						moved = true;
 						setDragging(roleId);
 					}
-					const next = {
+					const raw = {
 						x: Math.round(point.x - grabX),
 						y: Math.round(point.y - grabY)
 					};
+					const next = snapRef.current ? {
+						x: snapValue(raw.x),
+						y: snapValue(raw.y)
+					} : raw;
 					posRef.current = {
 						...posRef.current,
 						[roleId]: next
@@ -333228,6 +333221,11 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		//#region src/client/team/ChainEditor.tsx
 		/**
 		* team — 链条编辑（步骤增删排序 + 每步任务说明 + 尾部整合开关）。
+		*
+		* 步骤排序两种途径并存：
+		*  - 拖拽：行首 ⠿ 抓手发起 HTML5 拖放，经过行上半 = 插到该行前，下半 = 插到该
+		*    行后（插入点用主题色线条指示）；
+		*  - ↑↓ 按钮：触屏 / 不习惯拖拽时的保底（HTML5 DnD 在触屏上不可用）。
 		*/
 		/** 步骤展示名。 */
 		function stepName(step, roles) {
@@ -333238,6 +333236,10 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		function ChainEditor({ chain, roles, open, onToggleOpen, onSave, onRemove, onRun }) {
 			const [draft, setDraft] = (0, react.useState)(chain);
 			const [saving, setSaving] = (0, react.useState)(false);
+			/** 拖拽源步骤下标（null = 不在拖拽中）。 */
+			const dragFrom = (0, react.useRef)(null);
+			/** 插入点下标（0..steps.length；null = 无悬停目标）。 */
+			const [dropAt, setDropAt] = (0, react.useState)(null);
 			(0, react.useEffect)(() => {
 				if (!open) setDraft(chain);
 			}, [chain, open]);
@@ -333262,6 +333264,43 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 						steps: next
 					};
 				});
+			};
+			/** 拖拽落点提交：把 from 步移动到「先移除自身后」的 to 位。 */
+			const moveTo = (from, to) => {
+				setDraft((previous) => {
+					if (from === to || from < 0 || from >= previous.steps.length) return previous;
+					const next = [...previous.steps];
+					const [item] = next.splice(from, 1);
+					next.splice(to, 0, item);
+					return {
+						...previous,
+						steps: next
+					};
+				});
+			};
+			/** 行上 dragover：按指针在行内的上下半计算插入点（上半 = 行前，下半 = 行后）。 */
+			const onRowDragOver = (index) => (event) => {
+				if (dragFrom.current === null) return;
+				event.preventDefault();
+				event.dataTransfer.dropEffect = "move";
+				const rect = event.currentTarget.getBoundingClientRect();
+				const insertAt = index + (event.clientY - rect.top > rect.height / 2 ? 1 : 0);
+				setDropAt((previous) => previous === insertAt ? previous : insertAt);
+			};
+			/** 落点 = 插入点；插入点在被拖项之后时要先减 1（移除自身造成的位移）。 */
+			const onRowDrop = (event) => {
+				event.preventDefault();
+				const from = dragFrom.current;
+				const at = dropAt;
+				dragFrom.current = null;
+				setDropAt(null);
+				if (from === null || at === null) return;
+				const to = at > from ? at - 1 : at;
+				if (to !== from) moveTo(from, to);
+			};
+			const endDrag = () => {
+				dragFrom.current = null;
+				setDropAt(null);
 			};
 			const removeStep = (index) => {
 				setDraft((previous) => ({
@@ -333357,7 +333396,24 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 									children: "还没有步骤，用下面的下拉添加。"
 								}) : draft.steps.map((step, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 									className: "team-step",
+									"data-drop-before": dropAt === index ? "true" : void 0,
+									"data-drop-after": dropAt === draft.steps.length && index === draft.steps.length - 1 ? "true" : void 0,
+									onDragOver: onRowDragOver(index),
+									onDrop: onRowDrop,
+									onDragLeave: () => setDropAt((previous) => previous === index || previous === index + 1 ? null : previous),
 									children: [
+										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											className: "team-drag-grip",
+											draggable: true,
+											title: "按住拖动排序",
+											onDragStart: (event) => {
+												dragFrom.current = index;
+												event.dataTransfer.effectAllowed = "move";
+												event.dataTransfer.setData("text/plain", String(index));
+											},
+											onDragEnd: endDrag,
+											children: "⠿"
+										}),
 										/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 											className: "team-card-idx",
 											style: { marginTop: 5 },
@@ -334376,6 +334432,20 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		const RUN_POLL_MS = 1200;
 		/** 抽屉关闭动画时长（与 styles.ts 的 team-drawer-out 保持一致）。 */
 		const DRAWER_EXIT_MS = 220;
+		/** 画布「自动吸附网格」开关的 localStorage 键。 */
+		const SNAP_GRID_KEY = "dsh-webui.team.board.snap-grid";
+		function readSnapGrid() {
+			try {
+				return window.localStorage.getItem(SNAP_GRID_KEY) === "1";
+			} catch {
+				return false;
+			}
+		}
+		function writeSnapGrid(value) {
+			try {
+				window.localStorage.setItem(SNAP_GRID_KEY, value ? "1" : "0");
+			} catch {}
+		}
 		/** 团队入口按钮 + 右侧全高抽屉（贴侧边栏右缘铺满到屏幕右缘）。 */
 		function TeamNavApp() {
 			const slot = useNavSlot("team");
@@ -334532,6 +334602,8 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const [linkFrom, setLinkFrom] = (0, react.useState)("");
 			/** 当前选中角色（卡片描边高亮）。 */
 			const [selectedRoleId, setSelectedRoleId] = (0, react.useState)("");
+			/** 画布拖动吸附网格（localStorage 持久化，重开画布保持）。 */
+			const [snapGrid, setSnapGrid] = (0, react.useState)(() => readSnapGrid());
 			/** 输入 / 确认弹窗（替代 window.prompt / confirm）。 */
 			const dlg = useDialogs();
 			const [chainId, setChainId] = (0, react.useState)("");
@@ -335562,6 +335634,22 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 									onClick: () => void resetPositions(),
 									children: "自动重排"
 								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("label", {
+									className: "team-check",
+									style: {
+										margin: 0,
+										whiteSpace: "nowrap"
+									},
+									title: "拖动卡片时对齐到背景网格线",
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("input", {
+										type: "checkbox",
+										checked: snapGrid,
+										onChange: (e) => {
+											setSnapGrid(e.target.checked);
+											writeSnapGrid(e.target.checked);
+										}
+									}), "自动吸附网格"]
+								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { style: { flex: 1 } }),
 								linkFrom !== "" ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 									className: "team-link-tip",
@@ -335573,7 +335661,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 									})]
 								}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									className: "team-pop-hint",
-									children: "拖卡片头部移动 · 空白处拖拽平移 · Ctrl+滚轮缩放 · 右键连线删除"
+									children: "拖卡片移动 · 双击开详情 · 空白拖拽平移 · Ctrl+滚轮缩放 · 右键连线删除"
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 									type: "button",
@@ -335602,7 +335690,8 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 							},
 							onCommitPositions: (positions) => {
 								commitPositions(positions);
-							}
+							},
+							snapToGrid: snapGrid
 						})
 					}), document.body) : null,
 					editingRole !== null && team !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(RoleEditorModal, {
@@ -335997,10 +336086,10 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			});
 			const [teams, setTeams] = (0, react.useState)([]);
 			const [chains, setChains] = (0, react.useState)([]);
-			const [hovered, setHovered] = (0, react.useState)(false);
+			/** 浮窗开合：点击按钮切换；只有点击浮窗外部才关闭（鼠标离开不关）。 */
+			const [open, setOpen] = (0, react.useState)(false);
 			const [err, setErr] = (0, react.useState)(null);
-			const btnRef = (0, react.useRef)(null);
-			const hoverLeaveTimer = (0, react.useRef)(null);
+			const rootRef = (0, react.useRef)(null);
 			(0, react.useEffect)(() => {
 				let alive = true;
 				getChatMode(sid).then((data) => {
@@ -336013,7 +336102,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				};
 			}, [sid]);
 			(0, react.useEffect)(() => {
-				if (!hovered) return;
+				if (!open) return;
 				let alive = true;
 				listTeams().then((data) => {
 					if (!alive) return;
@@ -336028,9 +336117,9 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				return () => {
 					alive = false;
 				};
-			}, [hovered]);
+			}, [open]);
 			(0, react.useEffect)(() => {
-				if (!hovered) return;
+				if (!open) return;
 				const teamId = state.teamId !== "" ? state.teamId : teams[0]?.id ?? "";
 				if (teamId === "") {
 					setChains([]);
@@ -336050,13 +336139,19 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					alive = false;
 				};
 			}, [
-				hovered,
+				open,
 				state.teamId,
 				teams
 			]);
-			(0, react.useEffect)(() => () => {
-				if (hoverLeaveTimer.current !== null) window.clearTimeout(hoverLeaveTimer.current);
-			}, []);
+			(0, react.useEffect)(() => {
+				if (!open) return;
+				const onPointerDown = (event) => {
+					const root = rootRef.current;
+					if (root !== null && event.target instanceof Node && !root.contains(event.target)) setOpen(false);
+				};
+				document.addEventListener("pointerdown", onPointerDown, true);
+				return () => document.removeEventListener("pointerdown", onPointerDown, true);
+			}, [open]);
 			if (!available) return null;
 			const commit = (patch) => {
 				const next = {
@@ -336073,39 +336168,20 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					force: next.force
 				}).catch((error) => setErr(error instanceof Error ? error.message : String(error)));
 			};
-			const cancelHoverHide = () => {
-				if (hoverLeaveTimer.current !== null) {
-					window.clearTimeout(hoverLeaveTimer.current);
-					hoverLeaveTimer.current = null;
-				}
-			};
-			const showPanel = () => {
-				cancelHoverHide();
-				setHovered(true);
-			};
-			const scheduleHide = () => {
-				cancelHoverHide();
-				hoverLeaveTimer.current = window.setTimeout(() => {
-					hoverLeaveTimer.current = null;
-					setHovered(false);
-				}, 120);
-			};
 			const activeTeam = teams.find((team) => team.id === state.teamId) ?? teams[0];
 			const modelText = activeTeam !== void 0 && activeTeam.model.provider !== "" ? `${activeTeam.model.model}` : "未设置（用全局默认 / 会话模型）";
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: "team-toggle-root",
-				onMouseEnter: showPanel,
-				onMouseLeave: scheduleHide,
+				ref: rootRef,
 				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
-					ref: btnRef,
 					type: "button",
 					className: "team-toggle-btn",
 					"data-on": state.enabled,
 					"aria-label": "团队模式",
-					"aria-expanded": hovered,
+					"aria-expanded": open,
 					title: state.enabled ? `团队模式：${activeTeam?.name ?? state.teamId}` : "团队模式（关闭）",
 					onClick: () => {
-						showPanel();
+						setOpen((previous) => !previous);
 					},
 					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("svg", {
 						width: "15",
@@ -336131,12 +336207,10 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 						className: "team-toggle-name",
 						children: activeTeam.name
 					}) : null]
-				}), hovered && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				}), open && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: "team-pop",
 					role: "dialog",
 					"aria-label": "团队模式设置",
-					onMouseEnter: showPanel,
-					onMouseLeave: scheduleHide,
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: "team-pop-head",
@@ -336866,6 +336940,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const title = viewing.kind === "final" ? `最终交付物 · ${run.teamName}` : `${step?.roleName ?? "角色"} · 第 ${(step?.index ?? 0) + 1} 步`;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: "team-step-mask",
+				"data-dsh-window-exempt": "",
 				onClick: onClose,
 				children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: "team-step-card",

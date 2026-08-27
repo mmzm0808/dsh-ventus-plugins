@@ -2939,10 +2939,24 @@ window.__ModuleLoader__.load({
 				refreshTick,
 				loadDir
 			]);
+			/** Pending-reveal gate: scroll only after a real reveal request (tab
+			*  activation), not on every directory-data change (folder expand /
+			*  auto-refresh would otherwise yank the tree back to the current file). */
+			const pendingReveal = (0, react.useRef)(false);
 			(0, react.useEffect)(() => {
 				if (selected === void 0) return;
+				pendingReveal.current = true;
+			}, [
+				selected,
+				revealSeq
+			]);
+			(0, react.useEffect)(() => {
+				if (selected === void 0 || !pendingReveal.current) return;
 				const frame = (typeof requestAnimationFrame === "function" ? requestAnimationFrame : (callback) => window.setTimeout(() => callback(performance.now()), 0))(() => {
-					rowRefs.current.get(selected)?.scrollIntoView?.({ block: "nearest" });
+					const row = rowRefs.current.get(selected);
+					if (row === void 0) return;
+					pendingReveal.current = false;
+					row.scrollIntoView?.({ block: "nearest" });
 				});
 				return () => {
 					cancelAnimationFrame(frame);

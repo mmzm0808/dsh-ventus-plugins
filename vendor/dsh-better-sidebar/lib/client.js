@@ -3000,10 +3000,26 @@ window.__ModuleLoader__.load({
 				expanded,
 				reloadDir
 			]);
+			/** Pending-reveal gate: the scroll-to-file runs only after a real reveal
+			*  request (tab activation bumps revealSeq / selects a new path). Without
+			*  this gate the effect below re-runs on EVERY directory-data change
+			*  (folder expand, 5s auto-refresh, focus refresh) and yanks the tree
+			*  back to the current file — the user never asked for that. */
+			const pendingReveal = (0, react.useRef)(false);
 			(0, react.useEffect)(() => {
 				if (selected === void 0) return;
+				pendingReveal.current = true;
+			}, [
+				selected,
+				revealSeq
+			]);
+			(0, react.useEffect)(() => {
+				if (selected === void 0 || !pendingReveal.current) return;
 				const frame = (typeof requestAnimationFrame === "function" ? requestAnimationFrame : (callback) => window.setTimeout(() => callback(performance.now()), 0))(() => {
-					rowRefs.current.get(selected)?.scrollIntoView?.({ block: "nearest" });
+					const row = rowRefs.current.get(selected);
+					if (row === void 0) return;
+					pendingReveal.current = false;
+					row.scrollIntoView?.({ block: "nearest" });
 				});
 				return () => {
 					cancelAnimationFrame(frame);
