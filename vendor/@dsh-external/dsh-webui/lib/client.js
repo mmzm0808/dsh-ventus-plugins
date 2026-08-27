@@ -336225,6 +336225,10 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			if (goal !== null) top = Math.min(top, goal);
 			const composer = bottomVisibleTop(COMPOSER_SELECTORS, 200, 24);
 			if (composer !== null) top = Math.min(top, composer);
+			if (top === window.innerHeight) {
+				const ta = bottomVisibleTop(["textarea", "[contenteditable=\"true\"]"], 200, 20);
+				if (ta !== null) top = Math.min(top, ta);
+			}
 			return top;
 		}
 		/** 面板与各边的安全间距。 */
@@ -336370,6 +336374,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const [viewing, setViewing] = (0, react.useState)(null);
 			const [collapsedPill, setCollapsedPill] = (0, react.useState)(false);
 			const lingerTimer = (0, react.useRef)(0);
+			const hudRef = (0, react.useRef)(null);
 			const active = runs.length > 0;
 			const shown = active ? runs : finished !== null ? [finished] : [];
 			(0, react.useEffect)(() => {
@@ -336448,6 +336453,15 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			(0, react.useEffect)(() => () => {
 				window.clearTimeout(lingerTimer.current);
 			}, []);
+			(0, react.useEffect)(() => {
+				if (!expanded) return;
+				const onPointerDown = (event) => {
+					const hud = hudRef.current;
+					if (hud !== null && event.target instanceof Node && !hud.contains(event.target)) setExpanded(false);
+				};
+				document.addEventListener("pointerdown", onPointerDown, true);
+				return () => document.removeEventListener("pointerdown", onPointerDown, true);
+			}, [expanded]);
 			const toggle = (0, react.useCallback)(() => {
 				setExpanded((previous) => {
 					writeExpanded(!previous);
@@ -336539,6 +336553,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				className: "team-hud",
 				"data-collapsed": !expanded,
 				style,
+				ref: hudRef,
 				children: [expanded ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 					className: "team-hud-body",
 					children: shown.map((run) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(RunSegment, {
