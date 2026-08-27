@@ -336487,7 +336487,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const fbLeft = fbAnchor !== null ? fbAnchor.colLeft : fbCol !== null ? Math.max(0, fbCol.left) : 0;
 			const fbRight = fbAnchor !== null ? fbAnchor.colRight : fbCol !== null ? Math.min(window.innerWidth, fbCol.right) : window.innerWidth;
 			const fbMaxWidth = fbAnchor !== null ? fbAnchor.width : "min(720px, 92vw)";
-			const fbBottom = Math.max(8, window.innerHeight - (fbAnchor?.bottomAnchor ?? window.innerHeight - 16));
+			const fbBottom = Math.max(8, window.innerHeight - (anchorTop() - DOCK_GAP));
 			const style = layout !== null ? expanded ? {
 				left: layout.left,
 				width: layout.width,
