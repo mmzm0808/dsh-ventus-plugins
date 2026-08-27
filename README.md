@@ -2,20 +2,20 @@
 
 [English](README_EN.md) | 中文
 
-## Ventus 插件全家桶 —— 单一插件整合包
+## Ventus 系列插件聚合版 —— 自定义选择性安装
 
-把 **11 个自装 DSH 插件**整合为**一个插件**，功能与设置与多插件时代**完全一致**。
-插件列表只显示一个入口，侧边栏、悬浮球、主题、搜索、桌宠、技能、用量统计全部保留。
+把 **14 个自装 DSH 插件**整合为**一个插件**，功能与设置与多插件时代**完全一致**，并支持**按需勾选安装**（最小包只装用量监测，后续可随时补装其余）。
+插件列表只显示一个入口，侧边栏、悬浮球、主题、搜索、桌宠、团队模式、用量统计全部保留。
 
-> **整合动机**：插件列表越滚越长、每次升级要逐个同步。整合后：
+> **聚合动机**：插件列表越滚越长、每次升级要逐个同步。聚合后：
 > - 插件管理面板只出现 `dsh-ventus-plugins` 一个条目；
 > - 所有子插件共享同一个生命周期（host 聚合挂载 + client 单一 bundle）；
-> - 升级只需替换一个包。
+> - 自定义选择性安装：最小包起步，设置页勾选增量补装，只装要的，升级只换一个包。
 
 <p align="center">
   <img alt="license" src="https://img.shields.io/badge/license-MIT-blue">
   <img alt="version" src="https://img.shields.io/badge/version-v0.2.0-blueviolet">
-  <img alt="plugins" src="https://img.shields.io/badge/plugins-11%20in%201-4d6bfe">
+  <img alt="plugins" src="https://img.shields.io/badge/plugins-14%20in%201-4d6bfe">
   <img alt="runtime" src="https://img.shields.io/badge/runtime-dsh%20web-4d6bfe">
   <img alt="stars" src="https://img.shields.io/github/stars/mmzm0808/dsh-ventus-plugins">
   <img alt="last-commit" src="https://img.shields.io/github/last-commit/mmzm0808/dsh-ventus-plugins">
@@ -31,13 +31,16 @@
     <tr><td>🎨 主题</td><td><code>dsh-theme-endfield</code></td><td>终末地工业编辑部风格主题：米纸底、墨字、信号黄强调、直角。等高线背景、ENDFIELD 水印、玻璃/纯色侧边栏表面（主题设置下拉框）、hero 贴底（可开关）</td></tr>
     <tr><td>📊 用量监测</td><td><code>dsh-deepseek-usage</code></td><td>右侧悬浮球：实时余额、今日 R0 涨价倍率、模型命中率徽标；展开面板：累计/今日消费、请求数、Tokens、分模型用量、趋势图、登录/退出、截图</td></tr>
     <tr><td>📈 用量与技能</td><td><code>dsh-usage-skill</code></td><td>Token 用量热力图（日/月/年）、多 Provider 余额卡、技能包管理面板（侧边栏入口已禁用，仅保留组件导出与字典）</td></tr>
-    <tr><td>📁 右侧重栏</td><td><code>dsh-better-sidebar</code></td><td>VSCode 式右侧栏：文件树 / 编辑器（CodeMirror 多语言高亮）/ 终端 / Git / 浏览器，按会话隔离；文本编辑器底部信息栏（总字数 + 选中字数）</td></tr>
+    <tr><td>📁 右侧重栏</td><td><code>dsh-better-sidebar</code></td><td>VSCode 式右侧栏：文件树 / 编辑器（CodeMirror 多语言高亮）/ 终端 / Git / 浏览器，按会话隔离；文件变化自动刷新、右键删除/撤回；文本编辑器底部信息栏（总字数 + 选中字数）</td></tr>
     <tr><td>🔍 搜索</td><td><code>dsh-ventus-search</code></td><td>Bing / 360 / Bilibili 多引擎搜索 + Readability 正文抓取，注册为 DSH 搜索 provider，带设置卡与总开关</td></tr>
     <tr><td>🐋 桌宠</td><td><code>dsh-ventus-whale</code></td><td>3D 虎鲸桌宠浮窗：拖拽 / 旋转 / 右键菜单，设置页配置大小、灵敏度、显示文字</td></tr>
     <tr><td>📶 子代理进度</td><td><code>dsh-ventus-progress</code></td><td>解析子代理输出的 `progress-json` 进度模型，子代理条目悬停显示分段进度条与当前任务文字；自带 skill 引导 AI 输出进度模型</td></tr>
-    <tr><td>🛠️ 工具链</td><td><code>@dsh-external/dsh-webui</code></td><td>视图图块 / 消息导航 / 工具调用聚合 / Markdown 渲染 / 模型推理等级同步 / AnySearch；**悬浮侧边栏**（含三点菜单浮窗不收起修复）与提示词优化浮窗</td></tr>
+    <tr><td>👥 工具链 + 团队模式</td><td><code>@dsh-external/dsh-webui</code></td><td>视图图块 / 消息导航 / 工具调用聚合 / Markdown 渲染 / 模型推理等级同步 / AnySearch / 右侧消息横条；悬浮侧边栏（三点浮窗不收起修复 + Ctrl+Alt+S / 双击 Escape 快捷键）与提示词优化浮窗；**多智能体团队模式**（角色/协作链编排、关系画布、执行 HUD、子代理与 llm 双通道、运行历史）；**侧边栏「性能」栏**（各子插件体积占比进度条、占比/内存切换、可拖拽调高）</td></tr>
     <tr><td>🧩 模组注入</td><td><code>@dsh-external/dsh-super-injector</code></td><td>运行时注入任意本地 DSH 插件包（junction + loader.create，不重启），热重载 + 插件管理 UI</td></tr>
     <tr><td>👁️ 可视化</td><td><code>@dsh-external/dsh-visualize</code></td><td>`visualize` 工具 + 配套 skill：模型渲染交互式 HTML 片段为沙箱卡片（Codex `/visualize` 语义）</td></tr>
+    <tr><td>📄 文档解析</td><td><code>@huanlin/dsh-plugin-mineru</code></td><td>MinerU PDF / 扫描件解析（本地自托管或 mineru.net 云端 API），API Key 文件兜底持久化（重启不重输）</td></tr>
+    <tr><td>🧠 上下文</td><td><code>dsh-context</code></td><td>会话上下文管理（记忆/上下文项聚合）</td></tr>
+    <tr><td>🔬 科研工作台</td><td><code>dsh-ventus-research</code></td><td>课题立项 → 证据 → 人工裁决的研究工作流（claim 状态机 + signature token）；AskUserQuestion 工作台桥接（AI 提问在工作台作答）</td></tr>
     <tr><td>⚖️ 权限策略</td><td><code>@nanmicoder/dsh-auto-mode</code></td><td>沙箱优先的自动权限策略：工作区写 + 语义审查 + 一次性宽授权（**Auto 权限项**，已并入本包 patch）</td></tr>
     <tr><td>🌐 UA 中继</td><td><code>dsh-ua-relay</code></td><td>B.AI（bankofai.io）UA 重写反代：绕过网关 UA 拦截，配置目标 `https://api.bankofai.io`</td></tr>
   </tbody>
@@ -49,7 +52,7 @@
 
 ## 🧩 功能开关结构
 
-整合包对外是一个插件，内部保留 11 个子插件各自的设置与开关。开关分两层：
+整合包对外是一个插件，内部保留 14 个子插件各自的设置与开关。开关分两层：
 
 **第一层 · 子插件级**（设置 → Ventus 插件 / 对应设置卡）
 
@@ -106,8 +109,9 @@
 
 | 功能 | 能力 |
 |---|---|
-| 右侧重栏 better-sidebar | VSCode 式文件树 / 编辑器 / 终端 / Git / 浏览器，按会话隔离；**外部链接与产物点击弹双按钮**（新标签页/侧边栏、侧边栏编辑器/系统打开） |
-| 悬浮侧边栏 sidebarFloat | 侧边栏可悬浮为独立窗口（设置项持久化） |
+| 右侧重栏 better-sidebar | VSCode 式文件树 / 编辑器 / 终端 / Git / 浏览器，按会话隔离；**文件/文件夹变化自动刷新**（5s 轮询 + 窗口聚焦）、**右键删除/撤回**（删除确认 + 撤销栈恢复）；**外部链接与产物点击弹双按钮**（新标签页/侧边栏、侧边栏编辑器/系统打开） |
+| 悬浮侧边栏 sidebarFloat | 侧边栏可悬浮为独立窗口（设置项持久化）；**Ctrl+Alt+S 快捷键**与**双击 Escape** 一键展开/收起（非固定模式，输入框聚焦时忽略） |
+| 性能栏 perfPanel | 左侧边栏「已归档」下方第三栏「性能」：各子插件体积占比进度条（最大者 100%）、占比/内存切换按钮、可拖拽分隔条调高（与已归档一致）、可收起 |
 | 文件浏览器 / 目录选择器 | 工作区文件树弹窗、目录选择器 |
 
 **📊 用量与进度**
@@ -125,6 +129,16 @@
 | 自动化 automation | 定时自动化任务（cron/at/every） |
 | PlanWeave | 计划项目工作台 |
 | 记忆引擎 memory | 侧边栏记忆面板、注入开关、Memory Dream（合并/精炼/剪枝） |
+
+**👥 团队模式（多智能体编排）**
+
+| 功能 | 能力 |
+|---|---|
+| 角色 / 协作链 | 团队由多个角色组成（主脑 / 察 / 驳 / 策 / 匠 / 造 / 笔 等），协作链把角色串成执行序列，支持主脑整合步；每角色可独立配置模型、执行通道（subagent / llm 直跑）、工具与技能装配 |
+| 关系画布 TeamBoard | 无限画布编排团队：节点任意位置拖动、单击选中（主题描边）、双击打开编辑、锚点连线、缩放平移；已归档式角色卡片 |
+| 执行 HUD RunHud | 运行时对话区悬浮条：团队名 + 步骤圆点 + n/N 步 + 耗时，可展开为各角色运行卡（状态/模型来源/单步计时/流式摘要）；贴输入框上方停靠，任意窗口打开时自动隐藏、点外自动收起 |
+| 运行与通道 | 运行历史落盘（runs/ 目录），支持取消；子代理（`subagents.start`，带工具装配限制）与 llm 直跑双通道；超时/失败错误透传底层真实原因 |
+| 出厂团队 | 小凉全能团、凝聚态理论计算团队、插件设计工坊等预设团队开箱即用 |
 
 **🎨 主题与系统**
 
@@ -158,7 +172,7 @@ dsh plugin --profile web add github:mmzm0808/dsh-ventus-plugins#min
 
 ### 完整安装
 
-全部 11 个子插件一次装齐：
+全部 14 个子插件一次装齐：
 
 ```sh
 dsh plugin --profile web add github:mmzm0808/dsh-ventus-plugins
@@ -221,7 +235,7 @@ dsh-ventus-plugins/
 ├── lib/
 │   ├── index.js            # host 聚合：逐个 ctx.plugin 挂载 10 个子插件（agent-teams 除外）
 │   └── client.js           # client 合并 bundle（build-client.mjs 生成，勿手改）
-├── vendor/                 # 11 个子插件的运行时产物（自包含，无外部插件依赖）
+├── vendor/                 # 14 个子插件的运行时产物（自包含，无外部插件依赖）
 │   └── node_modules/       # junction 依赖链：第三方 → profile node_modules
 └── scripts/
     ├── build-client.mjs    # client 合并构建脚本
@@ -234,7 +248,7 @@ dsh-ventus-plugins/
 ```js
 const subPlugins = {
   'dsh-better-sidebar': require('../vendor/dsh-better-sidebar/lib/index.js'),
-  // ... 11 个子插件
+  // ... 14 个子插件
 }
 export function apply(ctx) {
   for (const [id, plugin] of Object.entries(subPlugins)) {

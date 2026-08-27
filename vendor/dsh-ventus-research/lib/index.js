@@ -6,7 +6,7 @@ import { getCurrentBenchRoot, registerBenchTools } from './tools.js';
 /** 稳定 cordis 插件名（匹配 cordis.patch.yml insert id）。 */
 export const name = 'dsh-ventus-research';
 /** 必需服务：工具注册（webServer 可选，见 apply——headless 无 HTTP 时跳过 sign 路由）。 */
-export const inject = ['tools'];
+export const inject = ['tools', 'webServer'];
 export const Config = z.object({
     tolClasses: z.dict(z.object({
         pass: z.number().min(0),
