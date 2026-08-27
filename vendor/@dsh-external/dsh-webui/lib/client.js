@@ -285316,6 +285316,37 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 				]
 			});
 		}
+		/** 序号条横向滚动位置（模块作用域：组件重挂 / 整条重渲染后仍可读回）。 */
+		let savedNavScrollLeft = 0;
+		/**
+		* 轮次序号条（吸顶，CSS 见 styles.ts）。
+		* 思考流入时整个 DrawerPanel 高频重渲染，序号条的 scrollLeft 会被清零，
+		* 表现为「底部横向滑块一拖就跳回最左端」。这里 onScroll 记下位置，每次
+		* 渲染后在绘制前恢复——清零与恢复落在同一帧内，滑块不再跳。
+		*/
+		function ReasoningNav({ count, activeIndex, onJump }) {
+			const navRef = (0, react.useRef)(null);
+			(0, react.useLayoutEffect)(() => {
+				const el = navRef.current;
+				if (el !== null && savedNavScrollLeft > 0 && el.scrollLeft !== savedNavScrollLeft) el.scrollLeft = savedNavScrollLeft;
+			});
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+				className: "dts__reasoning-nav",
+				role: "tablist",
+				"aria-label": "jump",
+				ref: navRef,
+				onScroll: (event) => {
+					savedNavScrollLeft = event.currentTarget.scrollLeft;
+				},
+				children: Array.from({ length: count }, (_, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+					type: "button",
+					className: "dts__reasoning-nav-item",
+					"data-active": activeIndex === index || void 0,
+					onClick: () => onJump(index),
+					children: index + 1
+				}, index))
+			});
+		}
 		/** Classified reasoning blocks with per-category headings and jump targets. */
 		function ReasoningGroups({ items, activeIndex, jumpToCategory }) {
 			const groups = (0, react.useMemo)(() => groupReasoning(items), [items]);
@@ -285487,17 +285518,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										children: ["思考中 · ", formatDuration$1(elapsed)]
 									})]
 								}),
-								reasoning.length > 1 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-									className: "dts__reasoning-nav",
-									role: "tablist",
-									"aria-label": "jump",
-									children: reasoning.map((item, index) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-										type: "button",
-										className: "dts__reasoning-nav-item",
-										"data-active": activeIndex === index || void 0,
-										onClick: () => jumpTo(index),
-										children: index + 1
-									}, index))
+								reasoning.length > 1 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ReasoningNav, {
+									count: reasoning.length,
+									activeIndex,
+									onJump: jumpTo
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)(ReasoningGroups, {
 									items: reasoning,
@@ -286689,6 +286713,17 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
   overflow-x: auto;
   padding-bottom: 2px;
   scrollbar-width: thin;
+  /* 吸顶：滚动思考正文时序号条始终钉在可视区顶部。负外边距把背景
+     拉满到 scroll 容器内边距之外，正文从条下穿过时不透出。 */
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  margin: 0 -16px;
+  padding-top: 2px;
+  padding-left: 16px;
+  padding-right: 16px;
+  background: var(--dsw-alias-bg-layer-1, #fff);
+  box-shadow: 0 1px 0 var(--dsw-alias-border-base, rgba(127,127,127,.16));
 }
 
 .dts__reasoning-nav-item {
