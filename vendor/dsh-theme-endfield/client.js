@@ -2593,6 +2593,14 @@ function apply(ctx) {
          ancestor, so they OUT-SPECIFY the contour transparency rules above
          and win while the sheet is mounted; when the mode is transparent
          neither class exists and the sheet runs straight through. */
+      /* 悬浮侧边栏吞没修复：官方 rail 层（_sidebarCol）自身画不透明背景
+         （--dsw-specific-sidebar-fill），它画在玻璃 root 层之下，把对话区
+         完全挡住——玻璃 blur 的只是 rail 自己的背景，看起来就是一块不透明
+         板盖住对话区（实测 rail 展开 281px 盖掉对话区 225px）。玻璃模式下
+         让 rail 层透明，玻璃 root 层才真正透出/模糊背后内容。 */
+      body.theme-endfield-surface-glass [class$='_sidebarCol'] {
+        background: transparent !important;
+      }
       body.theme-endfield-surface-glass [class$='_sidebarCol'] [class*='_root'] {
         /* 毛玻璃质感：35% 蓝灰半透明 + 顶部反光；backdrop-filter
            模糊背后一切内容（对话区消息文字，防止透出混淆），canvas
