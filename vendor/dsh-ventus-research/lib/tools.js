@@ -725,7 +725,7 @@ export function registerBenchTools(ctx, env) {
                         additionalProperties: false,
                         properties: {
                             total: { type: 'integer', required: true },
-                            byStatus: { type: 'object', required: true },
+                            byStatus: { type: 'object', additionalProperties: true, required: true },
                         },
                     },
                     evidenceTotal: { type: 'integer' },
