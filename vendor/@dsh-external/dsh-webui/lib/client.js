@@ -292527,7 +292527,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 				top: pos.y,
 				left: pos.x
 			},
-			zIndex: 9400,
+			zIndex: 0,
 			cursor: dragging ? "grabbing" : "grab",
 			userSelect: "none",
 			touchAction: "none",
