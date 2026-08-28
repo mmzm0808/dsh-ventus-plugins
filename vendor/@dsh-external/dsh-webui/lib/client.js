@@ -331484,7 +331484,12 @@ body[data-ds-dark-theme] .team-gen-card{background:var(--dsw-static-neutral-blui
    无阴影、不裁剪），真正有视觉实体的是内部两类独立卡片 —— 顶部概览条
    .team-hud-bar 与每张角色卡 .team-card。这样角色卡不再被一个大外框"包裹"，
    视觉上是一组并列的独立卡片（用户明确要求：卡片不要被主卡片套住）。 */
-.team-hud{position:fixed;z-index:40;display:flex;flex-direction:column;gap:8px;box-sizing:border-box;border:none;background:none;box-shadow:none;overflow:visible;animation:team-fade-in .24s ease}
+/* z-index:0 垫底语义（实测决定，勿改回 40）：
+   composerHero 是 relative z-1 层叠上下文，输入框四个浮窗的 z-20 相对它，
+   根层叠上下文里 hero z-1 天然高于胶囊 z-0——浮窗盖过胶囊（用户要求）。
+   对话消息区无层叠上下文，胶囊 portal 到 body 后序同层，仍盖住消息。
+   官方 modal / 侧边栏窗口 / 详情卡（z1001+）仍盖过胶囊（不挡窗口的语义不变）。 */
+.team-hud{position:fixed;z-index:0;display:flex;flex-direction:column;gap:8px;box-sizing:border-box;border:none;background:none;box-shadow:none;overflow:visible;animation:team-fade-in .24s ease}
 /* 折叠态用 translateX(-50%) 做水平居中，但入场动画 dsh-modal-slide-in 也写 transform，
    动画终态会把内联的 translateX 覆盖掉（实测被解析成 translateY(24px)、居中失效）。
    折叠态改用 margin-inline:auto + inset 定位居中，并关掉该动画，彻底避开 transform 冲突。 */
@@ -331563,7 +331568,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 
 /* HUD 收起后的小胶囊（同样去玻璃，static 不透明底） */
 /* 收起胶囊：贴对话区右上角，28px 高（行内小按钮规格）便于点击，不遮挡正文 */
-.team-pill{position:fixed;z-index:40;display:inline-flex;align-items:center;gap:6px;height:28px;max-width:min(280px,42vw);padding:0 12px;border-radius:14px;font-size:12px;color:var(--dsw-alias-label-secondary,#bbb);cursor:pointer;white-space:nowrap;overflow:hidden;animation:team-fade-in .2s ease;transition:border-color .2s ease}
+.team-pill{position:fixed;z-index:0;display:inline-flex;align-items:center;gap:6px;height:28px;max-width:min(280px,42vw);padding:0 12px;border-radius:14px;font-size:12px;color:var(--dsw-alias-label-secondary,#bbb);cursor:pointer;white-space:nowrap;overflow:hidden;animation:team-fade-in .2s ease;transition:border-color .2s ease}
 .team-pill:hover{border-color:color-mix(in srgb,var(--dsw-alias-state-business-primary,#4176e6) 55%,transparent)}
 .team-pill>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
 
