@@ -8,7 +8,7 @@
  *
  * 两条执行通道：
  *  - llm 直跑：ctx.llm.stream，可精确指定 provider/model；无工具。
- *  - subagent：ctx.subagents.start（需要 agent 上下文），有完整工具能力；模型继承父会话。
+ *  - subagent：ctx.subagents.start（需要 agent 上下文），有完整工具能力；支持角色/团队模型覆盖（agentOptions）。
  *
  * 流式增量：每 ~500ms 把当前步累积输出（截断）写进 run.json 的 steps[i].output，
  * 对话流 HUD 直接轮询快照即可看到实时进度，无需额外 SSE 通道。
@@ -326,7 +326,7 @@ export class TeamEngine {
         const channel = this.pickChannel(planned.role.executor, context);
         const warnings = [];
         if (channel === 'subagent') {
-            warnings.push('subagent 通道的模型继承父会话，团队/角色模型设置不生效');
+            warnings.push('subagent 通道使用角色/团队模型设置（未解析出绑定模型时继承父会话）');
         }
         else if (planned.role.executor === 'subagent') {
             warnings.push('无 agent 上下文，已降级为 llm 直跑（本步无工具能力）');
@@ -460,7 +460,7 @@ export class TeamEngine {
         const timer = setTimeout(() => stepController.abort(), globals.timeoutSec * 1000);
         try {
             if (channel === 'subagent') {
-                const text = await this.invokeSubagent(`${system}\n\n---\n\n${userPrompt}`, label, context, stepController.signal, toolFilter, { onDelta, onTodos: (todos) => { this.patchStep(runId, stepIndex, { todos }); } });
+                const text = await this.invokeSubagent(`${system}\n\n---\n\n${userPrompt}`, label, context, stepController.signal, binding, toolFilter, { onDelta, onTodos: (todos) => { this.patchStep(runId, stepIndex, { todos }); } });
                 onDelta(text);
                 return text;
             }
@@ -541,11 +541,13 @@ export class TeamEngine {
         return out;
     }
     /**
-     * subagent 通道：完整 agent（有工具），模型继承父会话。
+     * subagent 通道：完整 agent（有工具）。模型默认继承父会话；
+     * binding 非空（provider/model 已解析）时经 `agentOptions` 覆盖为角色/团队绑定的
+     * provider/model/maxTokens，空 binding 保持继承父会话（不传 agentOptions）。
      * `toolFilter` 非空时经 `subagents.start({ toolFilter })` 真实限制子 agent 的工具可见性
      * （被限制的工具从子 agent 提示词消失且拒绝执行）；provider 不支持该能力时降级为不限制。
      */
-    async invokeSubagent(prompt, label, context, signal, toolFilter, 
+    async invokeSubagent(prompt, label, context, signal, binding, toolFilter, 
     /** 过程流出口：子会话的思考/正文增量实时转发（写步骤快照）。 */
     handlers) {
         const runtime = this.subagents();
@@ -557,12 +559,22 @@ export class TeamEngine {
         const parent = context.exec?.agent;
         if (parent === undefined)
             throw new TeamError('当前无 agent 上下文，无法派发 subagent', 'no_agent', 409);
+        // binding 空判断与 runStep 的解析口径一致：provider/model 皆空视为未绑定
+        // （继承默认），不传 agentOptions；否则显式覆盖为角色/团队解析出的模型。
+        const agentOptions = binding.provider !== '' && binding.model !== ''
+            ? {
+                provider: binding.provider,
+                model: binding.model,
+                ...(binding.maxTokens !== undefined ? { maxTokens: binding.maxTokens } : {}),
+            }
+            : null;
         const request = {
             parent,
             prompt: [{ type: 'text', text: prompt }],
             label,
             signal,
             ...(toolFilter !== null ? { toolFilter } : {}),
+            ...(agentOptions !== null ? { agentOptions } : {}),
         };
         let run;
         try {
@@ -570,8 +582,12 @@ export class TeamEngine {
         }
         catch (error) {
             // provider 不支持 toolFilter 能力时（capability 校验拒绝）降级重试一次，不限制工具。
+            // agentOptions 仍需保留，否则降级路径会退回继承父会话模型。
             if (toolFilter !== null) {
-                run = await runtime.start(names[0], { parent, prompt: request.prompt, label, signal });
+                run = await runtime.start(names[0], {
+                    parent, prompt: request.prompt, label, signal,
+                    ...(agentOptions !== null ? { agentOptions } : {}),
+                });
             }
             else {
                 throw error;

@@ -131,6 +131,28 @@ export function findClaim(state, id) {
 export function findConvention(state, id) {
     return state.conventions.find(c => c.id === id);
 }
+/** 某 claim 最近一次裁决的 verdict（无裁决返回 undefined）。 */
+export function latestVerdict(state, claimId) {
+    const entries = state.adjudications.filter(a => a.claim === claimId);
+    return entries.length === 0 ? undefined : entries[entries.length - 1].verdict;
+}
+/** 裁决前置诊断（纯函数）：返回 { reason, detail } 阻止原因；null 表示可裁决。 */
+export function adjudicationBlock(state, claimId) {
+    const claim = findClaim(state, claimId);
+    if (claim === undefined)
+        return { reason: 'NO_CLAIM', detail: `claim ${claimId} 不存在` };
+    if (claim.status !== 'evidenced') {
+        const next = claim.status === 'verified' ? '先用 rb_evidence 收集证据'
+            : claim.status === 'derived' ? '先用 rb_verify 数值验证'
+            : claim.status === 'needs-review' || claim.status === 'mismatch' ? '先 review-fix（rb_derive 重推导）或重验证'
+            : '无下一步动作（状态机出口见 rb_state）';
+        return { reason: 'STATUS_BLOCKED', detail: `claim ${claimId} 状态为 ${claim.status}，需 evidenced 才能裁决；${next}` };
+    }
+    const evs = state.evidence.filter(e => e.claimId === claimId);
+    if (evs.length === 0)
+        return { reason: 'NO_EVIDENCE', detail: `claim ${claimId} 尚无证据条目，先用 rb_evidence 补充证据（stance 建议 support/limit/counter）再裁决` };
+    return null;
+}
 /** 文件 SHA-256（资产登记用）。 */
 export function sha256File(file) {
     const data = readFileSync(file);

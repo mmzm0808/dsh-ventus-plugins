@@ -331211,6 +331211,13 @@ body[data-ds-dark-theme] .team-canvas-layer{background:var(--dsw-static-neutral-
 .team-canvas-zoom{position:absolute;right:14px;bottom:14px;z-index:50;display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--dsw-alias-border-l2,rgba(255,255,255,.14));border-radius:12px;background:var(--dsw-specific-menu,var(--dsw-alias-bg-layer-2,#16181d));box-shadow:var(--dsw-shadow-lv2,0 6px 24px rgba(0,0,0,.35))}
 .team-canvas-zoom-val{min-width:40px;text-align:center;font-size:11px;font-family:ui-monospace,SFMono-Regular,monospace;color:var(--dsw-alias-label-secondary,#bbb)}
 .team-canvas-empty{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:var(--dsw-alias-label-tertiary,#888);pointer-events:none}
+/* 右键框选矩形（world 坐标内，跟随缩放平移；半透明主题色 + 主题色描边） */
+.team-marquee{position:absolute;z-index:15;border:1px solid var(--dsw-alias-state-business-primary,#4176e6);background:color-mix(in srgb,var(--dsw-alias-state-business-primary,#4176e6) 14%,transparent);pointer-events:none}
+/* 画布顶部悬浮提示（并行组 / 回环等操作的反馈，自动消失） */
+.team-board-hint{position:absolute;left:50%;top:12px;z-index:60;transform:translateX(-50%);max-width:min(520px,80%);padding:5px 14px;border:1px solid color-mix(in srgb,var(--dsw-alias-state-business-primary,#4176e6) 45%,transparent);border-radius:12px;background:color-mix(in srgb,var(--dsw-alias-state-business-primary,#4176e6) 16%,transparent);box-shadow:var(--dsw-shadow-lv2,0 6px 24px rgba(0,0,0,.35));font-size:12px;line-height:18px;color:var(--dsw-alias-state-business-primary,#4176e6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+/* 画布右键菜单（多选后：删除选中节点 / 取消多选） */
+.team-ctx-menu{position:fixed;z-index:80;display:flex;flex-direction:column;align-items:stretch;gap:4px;min-width:170px;padding:6px;border:1px solid var(--dsw-alias-border-l2,rgba(255,255,255,.14));border-radius:10px;background:var(--dsw-specific-menu,var(--dsw-alias-bg-layer-2,#16181d));box-shadow:var(--dsw-shadow-lv2,0 6px 24px rgba(0,0,0,.35));animation:team-pop-in 140ms cubic-bezier(.2,.8,.2,1)}
+.team-ctx-menu .team-btn{width:100%;text-align:left;border:none;border-radius:6px;background:none}
 /* 壳子无边框窗口右上角悬浮「最小化/最大化/关闭」（约 138×28，z-index 高于页面
    全部内容）。全屏画布顶栏铺到屏幕右缘，「退出画布」会被三按钮压住——右侧
    预留 150px（与 shell-titlebar.ts / browser/styles.ts 同一常量）。 */
@@ -332392,7 +332399,15 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		*
 		* 连线：从卡片**左右两侧的垂直中点**出发（就近侧自动选择），走三次贝塞尔，
 		* 不再从头像位置直线穿过卡片本体。连线可点选，选中后在中点浮出操作条
-		* （切换方向 / 删除）。
+		* （切换方向 / 转为并行组 / 删除）。
+		*
+		* 画布编辑（写回走 Panel 的 onPatchChain → saveChain，保存后 chainGraph 自动重算）：
+		*  - 右键框选多选：空白处右键按住拖出选框（半透明主题色矩形），松开选中框内
+		*    节点（多节点主题色描边）；整组拖动一次提交全部位置，右键菜单可批量删除。
+		*  - Ctrl（⌘）+ 左键拖拽 = 创建回环边：从节点 A 拖到前面已执行过的节点 B，
+		*    松手后在 A 的步骤后追加 loop 步（backTo = B 的步骤索引）。
+		*  - 选中关联线后点「转为并行组」：把两个端点角色在当前选中链中合并为并行组
+		*    （需是相邻的两个 role 步）。
 		*
 		* 性能：拖拽期间只更新一个 ref + 一次 setState（节点 transform），松手才提交一次
 		* POST；缩放/平移只改 CSS transform，不触发布局重算。
@@ -332423,7 +332438,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		/** 连线层 svg 相对节点包围盒的外扩留白（连线会甩到卡片外侧）。 */
 		const EDGE_PAD = 400;
 		/** 关系画布。 */
-		function TeamBoard({ team, chain, chainOrder, linkFrom, selectedRoleId, linksByRole, toolbar, onOpenRole, onSelectRole, onRemoveRole, onStartLink, onFinishLink, onRemoveLink, onFlipLink, onCommitPositions, maxLoopIterations = 5, snapToGrid = false }) {
+		function TeamBoard({ team, chain, chainOrder, linkFrom, selectedRoleId, linksByRole, toolbar, onOpenRole, onSelectRole, onRemoveRole, onStartLink, onFinishLink, onRemoveLink, onFlipLink, onCommitPositions, maxLoopIterations = 5, snapToGrid = false, onPatchChain, onRemoveRoles }) {
 			const viewportRef = (0, react.useRef)(null);
 			const [viewport, setViewport] = (0, react.useState)({
 				w: 1200,
@@ -332447,6 +332462,16 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const [activeLink, setActiveLink] = (0, react.useState)(null);
 			/** 连线模式下光标的 world 坐标（画预览线）。 */
 			const [ghost, setGhost] = (0, react.useState)(null);
+			/** 右键框选矩形（world 坐标对角两点；null = 未在框选）。 */
+			const [marquee, setMarquee] = (0, react.useState)(null);
+			/** 多选节点 id（右键框选所得；空数组 = 未多选）。 */
+			const [multiSel, setMultiSel] = (0, react.useState)([]);
+			/** 右键上下文菜单的屏幕坐标（null = 关闭）。 */
+			const [menu, setMenu] = (0, react.useState)(null);
+			/** 回环边创建预览线（Ctrl+拖拽中：起点角色 → 光标）。 */
+			const [loopGhost, setLoopGhost] = (0, react.useState)(null);
+			/** 顶部悬浮提示（并行组 / 回环等操作的反馈，自动消失）。 */
+			const [hint, setHint] = (0, react.useState)(null);
 			/** 最新位置（拖拽 up 回调读它，避免闭包拿到旧值——旧实现因此丢位置）。 */
 			const posRef = (0, react.useRef)({});
 			/** 刚结束一次拖拽的时间戳：随后的 click 要吞掉，否则松手就打开编辑弹窗。 */
@@ -332462,6 +332487,21 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			(0, react.useEffect)(() => {
 				snapRef.current = snapToGrid;
 			}, [snapToGrid]);
+			/** 多选 / 当前链 / 写回回调的最新值（指针按下建立的闭包里读，避免过期）。 */
+			const multiSelRef = (0, react.useRef)([]);
+			(0, react.useEffect)(() => {
+				multiSelRef.current = multiSel;
+			}, [multiSel]);
+			const chainRef = (0, react.useRef)(chain);
+			(0, react.useEffect)(() => {
+				chainRef.current = chain;
+			}, [chain]);
+			const patchChainRef = (0, react.useRef)(onPatchChain);
+			(0, react.useEffect)(() => {
+				patchChainRef.current = onPatchChain;
+			}, [onPatchChain]);
+			/** 悬浮提示自动消失的定时器。 */
+			const hintTimerRef = (0, react.useRef)(0);
 			(0, react.useEffect)(() => {
 				zoomRef.current = zoom;
 			}, [zoom]);
@@ -332494,6 +332534,10 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				setActiveLink(null);
 				setDragging(null);
 				setLocalSelected(null);
+				setMultiSel([]);
+				setMarquee(null);
+				setMenu(null);
+				setLoopGhost(null);
 			}, [team.id]);
 			(0, react.useEffect)(() => {
 				setLocalSelected(null);
@@ -332679,6 +332723,17 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					y: sy - wy * next
 				});
 			}, []);
+			/** 顶部悬浮提示（成功 / 失败反馈共用，约 2.6 秒后自动消失）。 */
+			const showHint = (0, react.useCallback)((text) => {
+				setHint(text);
+				window.clearTimeout(hintTimerRef.current);
+				hintTimerRef.current = window.setTimeout(() => {
+					setHint(null);
+				}, 2600);
+			}, []);
+			(0, react.useEffect)(() => () => {
+				window.clearTimeout(hintTimerRef.current);
+			}, []);
 			(0, react.useEffect)(() => {
 				const host = viewportRef.current;
 				if (host === null) return;
@@ -332698,16 +332753,66 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					host.removeEventListener("wheel", onWheel);
 				};
 			}, [zoomAt]);
-			const startDrag = (0, react.useCallback)((roleId) => (event) => {
-				if (event.button !== 0) return;
-				event.preventDefault();
-				event.stopPropagation();
-				const node = byId.get(roleId);
-				if (node === void 0) return;
-				const start = toWorld(event.clientX, event.clientY);
-				const grabX = start.x - node.x;
-				const grabY = start.y - node.y;
+			/** 角色展示名（提示文案用）。 */
+			const nameOf = (0, react.useCallback)((roleId) => {
+				return byId.get(roleId)?.role.name ?? roleId;
+			}, [byId]);
+			/** 命中检测：world 坐标落在哪张节点卡内（回环目标的判定）。 */
+			const hitRoleAt = (0, react.useCallback)((point) => {
+				for (const node of placed) if (point.x >= node.x && point.x <= node.x + 250 && point.y >= node.y && point.y <= node.y + 188) return node.role.id;
+				return null;
+			}, [placed]);
+			/** 写回回环边：在 A 的步骤后追加 loop 步（backTo = B 所在步骤的索引）。 */
+			const commitLoop = (0, react.useCallback)((fromId, toId) => {
+				const currentChain = chainRef.current;
+				if (currentChain === null) return;
+				const steps = currentChain.steps;
+				const idxFrom = steps.findIndex((step) => step.kind === "role" && step.roleId === fromId);
+				const idxTo = steps.findIndex((step) => step.kind === "parallel" ? step.roleIds.includes(toId) : step.kind === "role" ? step.roleId === toId : false);
+				if (idxFrom < 0 || idxTo < 0) {
+					showHint("目标角色不在当前协作链中");
+					return;
+				}
+				if (idxTo >= idxFrom) {
+					showHint("回环目标需在该角色之前已执行");
+					return;
+				}
+				const newSteps = [
+					...steps.slice(0, idxFrom + 1),
+					{
+						kind: "loop",
+						roleId: fromId,
+						backTo: idxTo
+					},
+					...steps.slice(idxFrom + 1)
+				];
+				patchChainRef.current?.((chain) => ({
+					...chain,
+					steps: newSteps
+				}));
+				showHint(`已添加回环：${nameOf(fromId)} ↻ 回到 ${nameOf(toId)}`);
+			}, [showHint, nameOf]);
+			/**
+			* 回环边创建（Ctrl/⌘ + 左键从节点 A 拖到前面已执行过的节点 B）：
+			* 拖拽期间画橙色预览虚线（复用 ghostPath 样式），松开后写入协作链。
+			*/
+			const beginLoopDrag = (0, react.useCallback)((roleId, clientX, clientY) => {
+				const currentChain = chainRef.current;
+				if (currentChain === null) {
+					showHint("需先选择一条协作链（顶部下拉）");
+					return;
+				}
+				if (currentChain.steps.findIndex((step) => step.kind === "role" && step.roleId === roleId) < 0) {
+					showHint("该角色不在当前协作链中（并行组内的角色暂不支持）");
+					return;
+				}
+				const start = toWorld(clientX, clientY);
 				let moved = false;
+				let target = null;
+				setLoopGhost({
+					from: roleId,
+					to: start
+				});
 				const move = (e) => {
 					const point = toWorld(e.clientX, e.clientY);
 					if (!moved) {
@@ -332716,21 +332821,142 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 						moved = true;
 						setDragging(roleId);
 					}
+					target = hitRoleAt(point);
+					setLoopGhost({
+						from: roleId,
+						to: point
+					});
+				};
+				const up = () => {
+					window.removeEventListener("pointermove", move);
+					window.removeEventListener("pointerup", up);
+					window.removeEventListener("pointercancel", up);
+					setLoopGhost(null);
+					setDragging(null);
+					if (!moved || target === null) return;
+					commitLoop(roleId, target);
+				};
+				window.addEventListener("pointermove", move);
+				window.addEventListener("pointerup", up);
+				window.addEventListener("pointercancel", up);
+			}, [
+				toWorld,
+				showHint,
+				commitLoop,
+				hitRoleAt
+			]);
+			/** 把一条关联线的两个端点角色在当前选中链里合并为并行组（需相邻的两个 role 步）。 */
+			const convertLinkToParallel = (0, react.useCallback)((linkIndex) => {
+				const link = team.directLinks[linkIndex];
+				if (link === void 0) return;
+				const currentChain = chainRef.current;
+				if (currentChain === null) {
+					showHint("需先选择一条协作链（顶部下拉）");
+					return;
+				}
+				const a = link.from;
+				const b = link.to;
+				const steps = currentChain.steps;
+				const idxA = steps.findIndex((step) => step.kind === "role" && step.roleId === a);
+				const idxB = steps.findIndex((step) => step.kind === "role" && step.roleId === b);
+				if (idxA < 0 || idxB < 0) {
+					showHint("两个角色都需要已加入当前协作链");
+					return;
+				}
+				if (Math.abs(idxA - idxB) !== 1) {
+					showHint("两个角色需在协作链中相邻");
+					return;
+				}
+				const first = Math.min(idxA, idxB);
+				const second = Math.max(idxA, idxB);
+				const stepFirst = steps[first];
+				const stepSecond = steps[second];
+				if (stepFirst.kind !== "role" || stepSecond.kind !== "role") return;
+				const newSteps = [
+					...steps.slice(0, first),
+					{
+						kind: "parallel",
+						roleIds: [stepFirst.roleId, stepSecond.roleId]
+					},
+					...steps.slice(second + 1)
+				];
+				patchChainRef.current?.((chain) => ({
+					...chain,
+					steps: newSteps
+				}));
+				setActiveLink(null);
+				showHint(`已转为并行组：${nameOf(a)} + ${nameOf(b)}`);
+			}, [
+				team,
+				showHint,
+				nameOf
+			]);
+			const startDrag = (0, react.useCallback)((roleId) => (event) => {
+				if (event.button !== 0) return;
+				event.preventDefault();
+				event.stopPropagation();
+				if (event.ctrlKey || event.metaKey) {
+					beginLoopDrag(roleId, event.clientX, event.clientY);
+					return;
+				}
+				const node = byId.get(roleId);
+				if (node === void 0) return;
+				const start = toWorld(event.clientX, event.clientY);
+				const grabX = start.x - node.x;
+				const grabY = start.y - node.y;
+				const multi = multiSelRef.current;
+				const group = multi.includes(roleId) ? [...multi] : null;
+				const groupStart = group === null ? null : group.map((id) => ({
+					id,
+					pos: { ...posRef.current[id] }
+				}));
+				const groupGrab = {
+					x: posRef.current[roleId].x,
+					y: posRef.current[roleId].y
+				};
+				let moved = false;
+				const move = (e) => {
+					const point = toWorld(e.clientX, e.clientY);
+					if (!moved) {
+						const scale = zoomRef.current;
+						if (Math.abs(point.x - start.x) * scale < DRAG_THRESHOLD && Math.abs(point.y - start.y) * scale < DRAG_THRESHOLD) return;
+						moved = true;
+						setDragging(roleId);
+						if (group === null && multi.length > 0) setMultiSel([]);
+					}
 					const raw = {
 						x: Math.round(point.x - grabX),
 						y: Math.round(point.y - grabY)
 					};
-					const next = snapRef.current ? {
+					const target = snapRef.current ? {
 						x: snapValue(raw.x),
 						y: snapValue(raw.y)
 					} : raw;
+					if (groupStart === null) {
+						posRef.current = {
+							...posRef.current,
+							[roleId]: target
+						};
+						setLocal((previous) => ({
+							...previous,
+							[roleId]: target
+						}));
+						return;
+					}
+					const dx = target.x - groupGrab.x;
+					const dy = target.y - groupGrab.y;
+					const updates = {};
+					for (const member of groupStart) updates[member.id] = {
+						x: member.pos.x + dx,
+						y: member.pos.y + dy
+					};
 					posRef.current = {
 						...posRef.current,
-						[roleId]: next
+						...updates
 					};
 					setLocal((previous) => ({
 						...previous,
-						[roleId]: next
+						...updates
 					}));
 				};
 				const up = () => {
@@ -332740,7 +332966,11 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					setDragging(null);
 					if (moved) {
 						draggedAtRef.current = Date.now();
-						onCommitPositions({ ...posRef.current });
+						if (groupStart !== null) {
+							const out = {};
+							for (const member of groupStart) out[member.id] = posRef.current[member.id];
+							onCommitPositions(out);
+						} else onCommitPositions({ ...posRef.current });
 					}
 				};
 				window.addEventListener("pointermove", move);
@@ -332749,17 +332979,75 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			}, [
 				byId,
 				toWorld,
-				onCommitPositions
+				onCommitPositions,
+				beginLoopDrag
+			]);
+			const beginMarquee = (0, react.useCallback)((event) => {
+				event.preventDefault();
+				setActiveLink(null);
+				setMenu(null);
+				const start = toWorld(event.clientX, event.clientY);
+				let moved = false;
+				const move = (e) => {
+					const point = toWorld(e.clientX, e.clientY);
+					if (!moved) {
+						const scale = zoomRef.current;
+						if (Math.abs(point.x - start.x) * scale < DRAG_THRESHOLD && Math.abs(point.y - start.y) * scale < DRAG_THRESHOLD) return;
+						moved = true;
+					}
+					setMarquee({
+						x0: start.x,
+						y0: start.y,
+						x1: point.x,
+						y1: point.y
+					});
+				};
+				const up = (e) => {
+					window.removeEventListener("pointermove", move);
+					window.removeEventListener("pointerup", up);
+					window.removeEventListener("pointercancel", up);
+					if (!moved) {
+						if (multiSelRef.current.length > 0) setMenu({
+							x: e.clientX,
+							y: e.clientY
+						});
+						return;
+					}
+					const point = toWorld(e.clientX, e.clientY);
+					const x = Math.min(start.x, point.x);
+					const y = Math.min(start.y, point.y);
+					const w = Math.abs(point.x - start.x);
+					const h = Math.abs(point.y - start.y);
+					const picked = placed.filter((node) => x < node.x + 250 && x + w > node.x && y < node.y + 188 && y + h > node.y).map((node) => node.role.id);
+					setMarquee(null);
+					setMultiSel(picked);
+					if (picked.length > 0) showHint(`已选中 ${picked.length} 个角色（拖拽移动整组）`);
+				};
+				window.addEventListener("pointermove", move);
+				window.addEventListener("pointerup", up);
+				window.addEventListener("pointercancel", up);
+			}, [
+				toWorld,
+				placed,
+				showHint
 			]);
 			const startPan = (0, react.useCallback)((event) => {
+				if (event.button === 2) {
+					beginMarquee(event);
+					return;
+				}
 				if (event.button !== 0 && event.button !== 1) return;
 				setActiveLink(null);
+				setMenu(null);
 				const originX = event.clientX;
 				const originY = event.clientY;
 				const base = { ...panRef.current };
 				const host = viewportRef.current;
 				host?.setAttribute("data-panning", "true");
+				let moved = false;
 				const move = (e) => {
+					if (!moved && Math.abs(e.clientX - originX) < DRAG_THRESHOLD && Math.abs(e.clientY - originY) < DRAG_THRESHOLD) return;
+					moved = true;
 					setPan({
 						x: base.x + (e.clientX - originX),
 						y: base.y + (e.clientY - originY)
@@ -332770,11 +333058,12 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					window.removeEventListener("pointerup", up);
 					window.removeEventListener("pointercancel", up);
 					host?.removeAttribute("data-panning");
+					if (!moved) setMultiSel([]);
 				};
 				window.addEventListener("pointermove", move);
 				window.addEventListener("pointerup", up);
 				window.addEventListener("pointercancel", up);
-			}, []);
+			}, [beginMarquee]);
 			(0, react.useEffect)(() => {
 				if (linkFrom === "") {
 					setGhost(null);
@@ -332790,6 +333079,34 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					host.removeEventListener("pointermove", move);
 				};
 			}, [linkFrom, toWorld]);
+			/** 右键菜单：点击外部关闭（捕获阶段监听，节点自身的 stopPropagation 挡不住）。 */
+			(0, react.useEffect)(() => {
+				if (menu === null) return;
+				const close = (event) => {
+					const el = event.target;
+					if (el !== null && typeof el.closest === "function" && el.closest(".team-ctx-menu") !== null) return;
+					setMenu(null);
+				};
+				document.addEventListener("pointerdown", close, true);
+				return () => {
+					document.removeEventListener("pointerdown", close, true);
+				};
+			}, [menu]);
+			/** 有选中态（多选或右键菜单打开）时 Esc 只取消选中，不退出全屏画布。 */
+			const hasSelection = multiSel.length > 0 || menu !== null;
+			(0, react.useEffect)(() => {
+				if (!hasSelection) return;
+				const onKey = (event) => {
+					if (event.key !== "Escape") return;
+					event.stopPropagation();
+					setMultiSel([]);
+					setMenu(null);
+				};
+				document.addEventListener("keydown", onKey, true);
+				return () => {
+					document.removeEventListener("keydown", onKey, true);
+				};
+			}, [hasSelection]);
 			/**
 			* 选中链的接力图：普通 role/synthesize 步把相邻角色连成接力路径；
 			* parallel 步从上一层级的每个出口角色扇出到组内每个角色、再汇合到下一层级；
@@ -332871,11 +333188,23 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const linkFromNode = linking ? byId.get(linkFrom) : void 0;
 			/** 生效选中：本地单击覆盖优先，否则用父组件的 selectedRoleId。 */
 			const effectiveSelectedId = localSelected ?? selectedRoleId;
-			/** 单击节点（未构成拖拽的点击）：选中该角色，给主题色描边高亮。 */
+			const multiSet = (0, react.useMemo)(() => new Set(multiSel), [multiSel]);
+			/** 批量删除选中节点（右键菜单项；Panel 侧一次确认 + 一次保存）。 */
+			const handleBatchRemove = () => {
+				const ids = [...multiSel];
+				setMenu(null);
+				setMultiSel([]);
+				if (ids.length > 0) onRemoveRoles?.(ids);
+			};
+			/** 单击节点（未构成拖拽的点击）：多选态 = 切换组内/外成员；否则单选该角色。 */
 			const handleSelectRole = (0, react.useCallback)((roleId) => {
+				if (multiSel.length > 0) {
+					setMultiSel((previous) => previous.includes(roleId) ? previous.filter((id) => id !== roleId) : [...previous, roleId]);
+					return;
+				}
 				setLocalSelected(roleId);
 				onSelectRole?.(roleId);
-			}, [onSelectRole]);
+			}, [multiSel.length, onSelectRole]);
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: "team-canvas",
 				children: [toolbar !== void 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
@@ -332887,6 +333216,9 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					style: gridStyle,
 					"data-linking": linking || void 0,
 					onPointerDown: startPan,
+					onContextMenu: (event) => {
+						event.preventDefault();
+					},
 					children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: "team-canvas-world",
@@ -333032,9 +333364,33 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 											className: "team-edge",
 											"data-kind": "ghost",
 											d: ghostPath(linkFromNode, ghost)
-										}) : null
+										}) : null,
+										loopGhost !== null ? (() => {
+											const fromNode = byId.get(loopGhost.from);
+											if (fromNode === void 0) return null;
+											return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", {
+												className: "team-edge",
+												d: ghostPath(fromNode, loopGhost.to),
+												markerEnd: "url(#team-arrow-loop)",
+												style: {
+													stroke: LOOP_COLOR,
+													strokeWidth: 2,
+													strokeDasharray: "5 4",
+													opacity: .95
+												}
+											});
+										})() : null
 									]
 								}),
+								marquee !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									className: "team-marquee",
+									style: {
+										left: Math.min(marquee.x0, marquee.x1),
+										top: Math.min(marquee.y0, marquee.y1),
+										width: Math.abs(marquee.x1 - marquee.x0),
+										height: Math.abs(marquee.y1 - marquee.y0)
+									}
+								}) : null,
 								activeLink !== null ? renderLinkTools({
 									link: team.directLinks[activeLink],
 									index: activeLink,
@@ -333043,44 +333399,92 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 									onRemove: (index) => {
 										setActiveLink(null);
 										onRemoveLink(index);
-									}
-								}) : null,
-								placed.map((node) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-									className: "team-board-node",
-									"data-dragging": dragging === node.role.id || void 0,
-									style: {
-										left: node.x,
-										top: node.y,
-										width: 250,
-										height: 188,
-										zIndex: dragging === node.role.id ? 30 : effectiveSelectedId === node.role.id ? 20 : 10
 									},
-									onPointerDown: (event) => event.stopPropagation(),
-									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(RoleCard, {
-										role: node.role,
-										teamModel: team.model,
-										selected: effectiveSelectedId === node.role.id,
-										linking: linkFrom === node.role.id,
-										linkMode: linking,
-										chainIndex: chainOrder[node.role.id] ?? null,
-										links: linksByRole[node.role.id] ?? [],
-										onSelect: () => {
-											if (Date.now() - draggedAtRef.current < 220) return;
-											handleSelectRole(node.role.id);
+									onToParallel: convertLinkToParallel,
+									chainActive: chain !== null
+								}) : null,
+								placed.map((node) => {
+									const selected = multiSel.length > 0 ? multiSet.has(node.role.id) : effectiveSelectedId === node.role.id;
+									return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+										className: "team-board-node",
+										"data-dragging": dragging === node.role.id || void 0,
+										style: {
+											left: node.x,
+											top: node.y,
+											width: 250,
+											height: 188,
+											zIndex: dragging === node.role.id ? 30 : selected ? 20 : 10
 										},
-										onOpen: () => {
-											if (Date.now() - draggedAtRef.current < 220) return;
-											onOpenRole(node.role.id);
+										onPointerDown: (event) => event.stopPropagation(),
+										onContextMenu: (event) => {
+											if (multiSel.length === 0) return;
+											event.preventDefault();
+											event.stopPropagation();
+											setMenu({
+												x: event.clientX,
+												y: event.clientY
+											});
 										},
-										onRemove: () => onRemoveRole(node.role.id),
-										onStartLink: () => onStartLink(node.role.id),
-										onFinishLink: () => onFinishLink(node.role.id),
-										onRemoveLink,
-										onDragPointerDown: startDrag(node.role.id)
-									})
-								}, node.role.id))
+										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(RoleCard, {
+											role: node.role,
+											teamModel: team.model,
+											selected,
+											linking: linkFrom === node.role.id,
+											linkMode: linking,
+											chainIndex: chainOrder[node.role.id] ?? null,
+											links: linksByRole[node.role.id] ?? [],
+											onSelect: () => {
+												if (Date.now() - draggedAtRef.current < 220) return;
+												handleSelectRole(node.role.id);
+											},
+											onOpen: () => {
+												if (Date.now() - draggedAtRef.current < 220) return;
+												onOpenRole(node.role.id);
+											},
+											onRemove: () => onRemoveRole(node.role.id),
+											onStartLink: () => onStartLink(node.role.id),
+											onFinishLink: () => onFinishLink(node.role.id),
+											onRemoveLink,
+											onDragPointerDown: startDrag(node.role.id)
+										})
+									}, node.role.id);
+								})
 							]
 						}),
+						hint !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+							className: "team-board-hint",
+							role: "status",
+							children: hint
+						}) : null,
+						menu !== null ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+							className: "team-ctx-menu",
+							role: "menu",
+							style: {
+								left: menu.x,
+								top: menu.y
+							},
+							onPointerDown: (event) => event.stopPropagation(),
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+								type: "button",
+								className: "team-btn team-btn-danger",
+								role: "menuitem",
+								onClick: handleBatchRemove,
+								children: [
+									"删除选中节点（",
+									multiSel.length,
+									"）"
+								]
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: "team-btn",
+								role: "menuitem",
+								onClick: () => {
+									setMultiSel([]);
+									setMenu(null);
+								},
+								children: "取消多选"
+							})]
+						}) : null,
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: "team-canvas-zoom",
 							onPointerDown: (event) => event.stopPropagation(),
@@ -333222,8 +333626,8 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				}
 			};
 		}
-		/** 关联中点的操作条（切换方向 / 删除）。 */
-		function renderLinkTools({ link, index, byId, onFlip, onRemove }) {
+		/** 关联中点的操作条（切换方向 / 转为并行组 / 删除）。 */
+		function renderLinkTools({ link, index, byId, onFlip, onRemove, onToParallel, chainActive }) {
 			if (link === void 0) return null;
 			const from = byId.get(link.from);
 			const to = byId.get(link.to);
@@ -333239,18 +333643,29 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					top: mid.y
 				},
 				onPointerDown: (event) => event.stopPropagation(),
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-					type: "button",
-					className: "team-btn",
-					title: link.kind === "directed" ? "改为双向" : "改为单向（from → to）",
-					onClick: () => onFlip(index),
-					children: link.kind === "directed" ? "→ 单向" : "↔ 双向"
-				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-					type: "button",
-					className: "team-btn team-btn-danger",
-					onClick: () => onRemove(index),
-					children: "删除连线"
-				})]
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "team-btn",
+						title: link.kind === "directed" ? "改为双向" : "改为单向（from → to）",
+						onClick: () => onFlip(index),
+						children: link.kind === "directed" ? "→ 单向" : "↔ 双向"
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "team-btn",
+						disabled: !chainActive,
+						title: chainActive ? "把两个端点角色在当前协作链中合并为并行组（需相邻）" : "需先在顶部选择一条协作链",
+						onClick: () => onToParallel(index),
+						children: "转为并行组"
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "team-btn team-btn-danger",
+						onClick: () => onRemove(index),
+						children: "删除连线"
+					})
+				]
 			});
 		}
 		/** 路径数值格式化（避免超长小数塞满 DOM）。 */
@@ -333267,10 +333682,14 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		*    行后（插入点用主题色线条指示）；
 		*  - ↑↓ 按钮：触屏 / 不习惯拖拽时的保底（HTML5 DnD 在触屏上不可用）。
 		*/
-		/** 步骤展示名。 */
+		/** 步骤展示名（并行组 / 回环也参与路径展示）。 */
 		function stepName(step, roles) {
-			if (step.kind === "synthesize") return "主脑整合";
-			return roles.find((role) => role.id === step.roleId)?.name ?? step.roleId;
+			switch (step.kind) {
+				case "synthesize": return "主脑整合";
+				case "role": return roles.find((role) => role.id === step.roleId)?.name ?? step.roleId;
+				case "parallel": return `并行[${step.roleIds.map((id) => roles.find((role) => role.id === id)?.name ?? id).join(" + ")}]`;
+				case "loop": return `${roles.find((role) => role.id === step.roleId)?.name ?? step.roleId} ↻回环(→步骤 ${step.backTo + 1})`;
+			}
 		}
 		/** 链条行卡片 + 行内编辑。 */
 		function ChainEditor({ chain, roles, open, onToggleOpen, onSave, onRemove, onRun }) {
@@ -334869,6 +335288,24 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					roles: team.roles.filter((r) => r.id !== roleId)
 				});
 			};
+			/** 批量删除角色（画布多选后右键菜单；一次确认 + 一次保存）。 */
+			const removeRoles = async (roleIds) => {
+				if (team === null || roleIds.length === 0) return;
+				const names = roleIds.map((id) => team.roles.find((r) => r.id === id)?.name ?? id).join("、");
+				if (!await dlg.confirm({
+					title: `删除选中的 ${roleIds.length} 个角色？`,
+					message: `将删除：${names}。引用它们的链步骤与关联也会被移除。`,
+					confirmLabel: "删除",
+					danger: true
+				})) return;
+				const removed = new Set(roleIds);
+				setEditingRoleId((current) => removed.has(current) ? "" : current);
+				setSelectedRoleId((current) => removed.has(current) ? "" : current);
+				await saveTeam$1({
+					...team,
+					roles: team.roles.filter((role) => !removed.has(role.id))
+				});
+			};
 			const addRole = async () => {
 				if (team === null) return;
 				const name = await dlg.prompt({
@@ -335079,7 +335516,18 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				}
 			};
 			const currentChain = team?.chains.find((chain) => chain.id === chainId) ?? null;
-			/** 选中链里每个角色的步序号（1-based；核心整合步算在 core 角色上）。 */
+			/** 画布编辑协作链（并行组 / 回环）写回：对最新链应用补丁后保存。 */
+			const patchChain = (0, react.useCallback)((patch) => {
+				if (team === null || currentChain === null) return;
+				const next = patch(currentChain);
+				if (next === currentChain) return;
+				saveChain(next);
+			}, [
+				team,
+				currentChain,
+				saveChain
+			]);
+			/** 选中链里每个角色的步序号（1-based；并行组内各角色同号；核心整合步算在 core 角色上）。 */
 			const chainOrder = (0, react.useMemo)(() => {
 				const map = {};
 				if (team === null || currentChain === null) return map;
@@ -335092,6 +335540,11 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 							map[id] = step;
 							step += 1;
 						}
+						continue;
+					}
+					if (item.kind === "parallel") {
+						for (const id of item.roleIds) map[id] = step;
+						step += 1;
 						continue;
 					}
 					map[item.roleId] = step;
@@ -335701,7 +336154,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 									})]
 								}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									className: "team-pop-hint",
-									children: "拖卡片移动 · 双击开详情 · 空白拖拽平移 · Ctrl+滚轮缩放 · 右键连线删除"
+									children: "拖卡片移动 · 双击开详情 · 空白拖拽平移 · Ctrl+滚轮缩放 · 右键框选多选 · Ctrl拖拽建回环 · 点线右键删除"
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 									type: "button",
@@ -335730,6 +336183,10 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 							},
 							onCommitPositions: (positions) => {
 								commitPositions(positions);
+							},
+							onPatchChain: patchChain,
+							onRemoveRoles: (roleIds) => {
+								removeRoles(roleIds);
 							},
 							snapToGrid: snapGrid
 						})

@@ -5,7 +5,7 @@
  *   verdict(err, band)      — 三向分流（PASS / WARN / FAIL）
  *   gateNoVerify(claim)     — 硬闸门（无 verify_ref 或未裁决不得写 tex）
  *   gateConvention(a, b)    — 口径拒绝（跨口径比较直接拒绝）
- * 外加 claim 8 态状态机的合法迁移表。
+ * 外加 claim 9 态状态机的合法迁移表。
  */
 /**
  * 三向分流（设计稿 4.3）：err <= pass → PASS；err <= warn → WARN；否则 FAIL。
@@ -20,9 +20,9 @@ export function verdict(err, band) {
     return 'FAIL';
 }
 /** 硬闸门（设计稿 4.3）：必须存在 verify_ref 且已人工裁决才放行写 tex。 */
-export function gateNoVerify(claim) {
+export function gateNoVerify(claim, verdict) {
     const ref = claim.verifyRef;
-    if (ref !== undefined && ref !== null && ref !== '' && claim.status === 'adjudicated')
+    if (ref !== undefined && ref !== null && ref !== '' && claim.status === 'adjudicated' && verdict !== 'rejected')
         return 'PASS';
     return 'GATE_NO_VERIFY';
 }
@@ -46,7 +46,7 @@ const TRANSITIONS = {
     evidenced: { adjudicate: 'adjudicated' },
     adjudicated: { publish: 'published' },
     published: { supersede: 'superseded' },
-    superseded: {},
+    superseded: { derive: 'derived' },
 };
 /** 合法迁移返回新状态；非法动作返回 null（调用方据此拒绝并报错）。 */
 export function transition(from, action) {

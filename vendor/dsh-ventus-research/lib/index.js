@@ -1,5 +1,5 @@
 import z from 'schemastery';
-import { findClaim, localIso, pushOpLog, readState, writeState } from './state.js';
+import { adjudicationBlock, findClaim, latestVerdict, localIso, pushOpLog, readState, writeState } from './state.js';
 import { transition } from './gates.js';
 import { signatureTokens } from './token.js';
 import { getCurrentBenchRoot, registerBenchTools } from './tools.js';
@@ -95,19 +95,35 @@ async function stateHandler(req, res) {
         topic: state.topic,
         root: state.root,
         trust: state.briefingCache !== undefined ? 'high' : 'low',
+        lastOpened: state.lastOpened ?? null,
         stats: { total: state.claims.length, byStatus },
-        claims: state.claims.map(c => ({
-            id: c.id, version: c.version, status: c.status, text: c.text,
-            conventionId: c.conventionId, tolClass: c.tolClass,
-            deriveRef: c.deriveRef, verifyRef: c.verifyRef,
-            evidenceRefs: c.evidenceRefs, texRef: c.texRef, frozen: c.frozen,
-        })),
+        claims: state.claims.map(c => {
+            const evs = state.evidence.filter(e => e.claimId === c.id);
+            return {
+                id: c.id, version: c.version, status: c.status, text: c.text,
+                conventionId: c.conventionId, tolClass: c.tolClass,
+                deriveRef: c.deriveRef, verifyRef: c.verifyRef,
+                evidenceRefs: c.evidenceRefs, texRef: c.texRef, frozen: c.frozen,
+                supersededBy: c.supersededBy ?? null,
+                evidenceCount: evs.length,
+                pendingStanceCount: evs.filter(e => e.stance === 'pending').length,
+                latestVerdict: latestVerdict(state, c.id) ?? null,
+            };
+        }),
         evidence: state.evidence.map(e => ({
             id: e.id, claimId: e.claimId, source: e.source, year: e.year, stance: e.stance, link: e.link ?? null,
         })),
         adjudications: state.adjudications.map(a => ({
             claim: a.claim, verdict: a.verdict, by: a.by, at: a.at, note: a.note,
         })),
+        recentOps: state.opsLog.slice(-8).map(o => ({
+            at: o.at, action: o.action, by: o.by,
+            ...(o.claimId === undefined ? {} : { claimId: o.claimId }),
+            ...(o.detail === undefined ? {} : { detail: o.detail }),
+        })),
+        recentBuilds: state.buildLog.slice(-3),
+        assetsCount: state.assets.length,
+        pendingMemoryCount: state.pendingMemory.length,
     }));
 }
 /** POST /research-bench/adjudicate — 工作台人工裁决（signature token 校验，与 rb_adjudicate 同语义）。 */
@@ -151,20 +167,32 @@ async function adjudicateHandler(req, res) {
     }
     const claim = findClaim(state, claimId);
     if (claim === undefined) {
-        fail(`claim ${claimId} 不存在`);
+        res.end(JSON.stringify({ ok: false, error: `claim ${claimId} 不存在`, reason: 'NO_CLAIM' }));
         return;
     }
-    if (claim.status !== 'evidenced') {
-        fail(`claim ${claimId} 状态为 ${claim.status}，需 evidenced 才能裁决`);
+    const block = adjudicationBlock(state, claimId);
+    if (block !== null) {
+        // claim 卡住（状态未到 evidenced / 无证据）：允许人工用 note 记录标注说明（写入 opsLog，不视为裁决）。
+        if (note !== undefined && note.trim() !== '') {
+            pushOpLog(state, 'rb_adjudicate_blocked', 'human', note.trim(), claimId);
+            writeState(root, state);
+            res.end(JSON.stringify({ ok: false, error: `${block.reason}: ${block.detail}（已记录人工标注：${note.trim()}）`, reason: block.reason, detail: block.detail, note_recorded: true }));
+            return;
+        }
+        res.end(JSON.stringify({ ok: false, error: `${block.reason}: ${block.detail}`, reason: block.reason, detail: block.detail }));
         return;
     }
     if (!signatureTokens.consume(token, claimId, claim.version)) {
-        fail('NEEDS_HUMAN_SIGNATURE: 令牌缺失/过期/不匹配');
+        res.end(JSON.stringify({ ok: false, error: 'NEEDS_HUMAN_SIGNATURE: 令牌缺失/过期/不匹配', reason: 'NEEDS_HUMAN_SIGNATURE' }));
         return;
     }
     state.adjudications.push({
         claim: claimId, verdict, by: 'human', at: localIso(), ...(note === undefined ? {} : { note }),
     });
+    // 人工签字裁决即视为对该 claim 全部证据的人工确认（含 pending stance）。
+    for (const ev of state.evidence)
+        if (ev.claimId === claimId)
+            ev.verifiedBy = 'human';
     const next = transition(claim.status, 'adjudicate');
     if (next === null) {
         fail(`claim ${claimId} 状态不允许裁决`);

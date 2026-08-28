@@ -22,6 +22,9 @@ test('gateNoVerify 硬闸门：无 verifyRef 或未裁决 → GATE_NO_VERIFY', (
     assert.equal(gateNoVerify({ verifyRef: '', status: 'adjudicated' }), 'GATE_NO_VERIFY');
     assert.equal(gateNoVerify({ verifyRef: 'data/verify_C-014.json', status: 'verified' }), 'GATE_NO_VERIFY');
     assert.equal(gateNoVerify({ verifyRef: 'data/verify_C-014.json', status: 'adjudicated' }), 'PASS');
+    assert.equal(gateNoVerify({ verifyRef: 'data/verify_C-014.json', status: 'adjudicated' }, 'accepted'), 'PASS');
+    assert.equal(gateNoVerify({ verifyRef: 'data/verify_C-014.json', status: 'adjudicated' }, 'limited'), 'PASS');
+    assert.equal(gateNoVerify({ verifyRef: 'data/verify_C-014.json', status: 'adjudicated' }, 'rejected'), 'GATE_NO_VERIFY');
 });
 test('gateConvention 口径拒绝：未声明或两侧不同 → CONVENTION_MISMATCH', () => {
     assert.equal(gateConvention('cv-np-cell', 'cv-np-cell'), 'PASS');
@@ -49,6 +52,10 @@ test('transition 状态机旁路', () => {
     assert.equal(transition('needs-review', 'verify-pass'), 'verified');
     assert.equal(transition('mismatch', 'review-fix'), 'derived');
     assert.equal(transition('mismatch', 'verify-pass'), 'verified');
+});
+test('transition superseded 可重入', () => {
+    assert.equal(transition('superseded', 'derive'), 'derived');
+    assert.equal(transition('superseded', 'adjudicate'), null);
 });
 test('transition 非法迁移返回 null', () => {
     assert.equal(transition('draft', 'publish'), null);

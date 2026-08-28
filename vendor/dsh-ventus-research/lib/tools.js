@@ -16,7 +16,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { defineTool } from '@deepseek-ai/dsh-tools';
 import { gateNoVerify, transition, verdict } from './gates.js';
-import { createEmptyState, ensureTopicDirs, findClaim, findConvention, localIso, nextAssetId, nextEvidenceId, pushOpLog, readState, scanAssets, sha256File, topicRoot, writeState, } from './state.js';
+import { adjudicationBlock, createEmptyState, ensureTopicDirs, findClaim, findConvention, latestVerdict, localIso, nextAssetId, nextEvidenceId, pushOpLog, readState, scanAssets, sha256File, topicRoot, writeState, } from './state.js';
 import { signatureTokens } from './token.js';
 /** 当前课题根目录（rb_open 设置；DSH 重启后需重新 rb_open）。 */
 let currentRoot = null;
@@ -99,6 +99,18 @@ function parseVerifyError(payload) {
         return { err: worst, detail: `数组逐项相对误差取最大 = ${worst}` };
     }
     return { err: null, detail: 'verify JSON 无法解析出误差：需包含 err / relative_error / (result+expected) / (results+expected) 之一' };
+}
+/** rb_state 用：卡住 claim 分析（需人工介入或前置缺失）。 */
+function blockedReason(state, claim) {
+    if (claim.status === 'needs-review' || claim.status === 'mismatch')
+        return 'WARN/FAIL 旁路：需 review-fix（rb_derive 重推导）或 rb_verify 重验证';
+    if (claim.status === 'verified')
+        return '已验证但缺证据：用 rb_evidence 补证据卡';
+    if (claim.status === 'evidenced' && state.evidence.filter(e => e.claimId === claim.id).length === 0)
+        return '状态 evidenced 但无证据条目：先用 rb_evidence 补证据';
+    if (claim.status === 'adjudicated' && latestVerdict(state, claim.id) === 'rejected')
+        return '已裁决 rejected：被 gateNoVerify 挡在 rb_paper 之外，需重推导/重验证后重新裁决';
+    return null;
 }
 /** 注册全部 7 个工具；返回各注册的 disposer。 */
 export function registerBenchTools(ctx, env) {
@@ -219,8 +231,10 @@ export function registerBenchTools(ctx, env) {
                 state.claims.push(claim);
             }
             else {
-                if (claim.frozen)
+                if (claim.frozen && claim.status !== 'superseded')
                     return { ok: false, error: `claim ${claimId} 已冻结（${claim.status}），需先解除冻结或新建版本` };
+                if (claim.status === 'superseded')
+                    claim.frozen = false; // superseded 可重入：解冻并重开一轮生命周期
                 claim.version += 1;
                 claim.text = args.text?.trim() ?? claim.text;
                 if (args.convention_id !== undefined)
@@ -473,7 +487,7 @@ export function registerBenchTools(ctx, env) {
     })));
     disposers.push(ctx.tools.register(defineTool({
         name: 'rb_adjudicate',
-        description: '观点—证据—裁决（人工裁决点）。校验一次性 signature token（POST /research-bench/sign 获取，5 分钟有效、单次使用）。无 token 返回 NEEDS_HUMAN_SIGNATURE。成功则 claim 进入 adjudicated 并冻结。前置：claim 需为 evidenced 且其全部证据 stance 已人工确认。',
+        description: '观点—证据—裁决（人工裁决点）。校验一次性 signature token（POST /research-bench/sign 获取，5 分钟有效、单次使用）。无 token 返回 NEEDS_HUMAN_SIGNATURE。前置：claim 需为 evidenced 且已有证据条目（无证据返回 NO_EVIDENCE）。claim 卡住时（状态未到 evidenced / 无证据）可传 note 记录人工标注说明，写入 opsLog（note_recorded=true，不视为裁决）。成功则 claim 进入 adjudicated 并冻结，该 claim 全部证据视为人工确认（verifiedBy=human）。',
         parameters: {
             claim_id: { type: 'string', required: true, description: 'claim 编号（需为 evidenced）。' },
             verdict: { type: 'string', required: true, description: 'accepted / limited / rejected。' },
@@ -489,6 +503,9 @@ export function registerBenchTools(ctx, env) {
                     claim_id: { type: 'string' },
                     verdict: { type: 'string' },
                     status: { type: 'string' },
+                    reason: { type: 'string' },
+                    detail: { type: 'string' },
+                    note_recorded: { type: 'boolean' },
                     error: { type: 'string' },
                 },
             },
@@ -504,17 +521,25 @@ export function registerBenchTools(ctx, env) {
             if (state === null)
                 return needOpen();
             const claimId = args.claim_id.trim();
-            const claim = findClaim(state, claimId);
-            if (claim === undefined)
-                return { ok: false, error: `claim ${claimId} 不存在` };
-            if (claim.status !== 'evidenced')
-                return { ok: false, error: `claim ${claimId} 状态为 ${claim.status}，需 evidenced 才能裁决` };
             const verdictValue = args.verdict.trim();
             if (verdictValue !== 'accepted' && verdictValue !== 'limited' && verdictValue !== 'rejected') {
-                return { ok: false, error: `verdict 必须是 accepted/limited/rejected，得到 ${verdictValue}` };
+                return { ok: false, error: `verdict 必须是 accepted/limited/rejected，得到 ${verdictValue}`, reason: 'BAD_VERDICT' };
+            }
+            const claim = findClaim(state, claimId);
+            if (claim === undefined)
+                return { ok: false, error: `claim ${claimId} 不存在`, reason: 'NO_CLAIM' };
+            const block = adjudicationBlock(state, claimId);
+            if (block !== null) {
+                // claim 卡住（状态未到 evidenced / 无证据）：允许人工用 note 记录标注说明（写入 opsLog，不视为裁决）。
+                if (args.note !== undefined && args.note.trim() !== '') {
+                    pushOpLog(state, 'rb_adjudicate_blocked', 'human', args.note.trim(), claimId);
+                    writeState(currentRoot, state);
+                    return { ok: false, error: `${block.reason}: ${block.detail}（已记录人工标注：${args.note.trim()}）`, reason: block.reason, detail: block.detail, note_recorded: true };
+                }
+                return { ok: false, error: `${block.reason}: ${block.detail}`, reason: block.reason, detail: block.detail };
             }
             if (!signatureTokens.consume(args.signature_token.trim(), claimId, claim.version)) {
-                return { ok: false, error: 'NEEDS_HUMAN_SIGNATURE: 签名令牌缺失/过期/不匹配。请人类用户在浏览器访问 POST /research-bench/sign {claim_id, revision} 获取一次性令牌后再试。' };
+                return { ok: false, error: 'NEEDS_HUMAN_SIGNATURE: 签名令牌缺失/过期/不匹配。请人类用户在浏览器访问 POST /research-bench/sign {claim_id, revision} 获取一次性令牌后再试。', reason: 'NEEDS_HUMAN_SIGNATURE' };
             }
             state.adjudications.push({
                 claim: claimId,
@@ -523,12 +548,17 @@ export function registerBenchTools(ctx, env) {
                 at: localIso(),
                 ...(args.note === undefined ? {} : { note: args.note }),
             });
+            // 人工签字裁决即视为对该 claim 全部证据的人工确认（含 pending stance）。
+            for (const ev of state.evidence)
+                if (ev.claimId === claimId)
+                    ev.verifiedBy = 'human';
             const target = transition(claim.status, 'adjudicate');
             if (target === null)
                 return { ok: false, error: `claim ${claimId} 状态 ${claim.status} 不允许裁决` };
             claim.status = target;
             claim.frozen = true;
-            pushOpLog(state, 'rb_adjudicate', 'ai', `verdict=${verdictValue}`, claimId);
+            const pending = state.evidence.filter(e => e.claimId === claimId && e.stance === 'pending');
+            pushOpLog(state, 'rb_adjudicate', 'ai', `verdict=${verdictValue}${pending.length > 0 ? `（${pending.length} 条证据 stance 原为 pending，签字已确认）` : ''}`, claimId);
             writeState(currentRoot, state);
             return { ok: true, claim_id: claimId, verdict: verdictValue, status: claim.status };
         },
@@ -575,7 +605,7 @@ export function registerBenchTools(ctx, env) {
                     blocked.push(`${claimId}（不存在）`);
                     continue;
                 }
-                const gate = gateNoVerify(claim);
+                const gate = gateNoVerify(claim, latestVerdict(state, claim.id));
                 if (gate !== 'PASS') {
                     blocked.push(`${claimId}（${gate}：${claim.status}）`);
                     continue;
@@ -675,6 +705,73 @@ export function registerBenchTools(ctx, env) {
             pushOpLog(state, 'rb_memory_sync', 'ai', `facts=${facts.length}`);
             writeState(currentRoot, state);
             return { ok: true, pending: state.pendingMemory.length, hint: '（请在记忆面板人工确认后写入 dsh-memory）' };
+        },
+    })));
+    disposers.push(ctx.tools.register(defineTool({
+        name: 'rb_state',
+        description: '科研工作台状态诊断（只读，不依赖 webServer）。返回当前课题的 claim 状态分布（byStatus）、证据统计（含 stance 待确认数）、最近裁决记录、最近操作日志、卡住 claim 分析（WARN/FAIL 旁路、缺证据、rejected 被闸门挡住等）、未登记资产数与待确认记忆数。',
+        parameters: {},
+        output: {
+            schema: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    ok: { type: 'boolean', required: true },
+                    topic: { type: 'string' },
+                    root: { type: 'string' },
+                    trust: { type: 'string' },
+                    stats: {
+                        type: 'object',
+                        additionalProperties: false,
+                        properties: {
+                            total: { type: 'integer', required: true },
+                            byStatus: { type: 'object', required: true },
+                        },
+                    },
+                    evidenceTotal: { type: 'integer' },
+                    evidencePendingStance: { type: 'integer' },
+                    recentAdjudications: { type: 'array' },
+                    recentOps: { type: 'array' },
+                    blocked: { type: 'array' },
+                    pendingAssets: { type: 'integer' },
+                    pendingMemory: { type: 'integer' },
+                    error: { type: 'string' },
+                },
+            },
+            render: (_args, value) => [{
+                type: 'text',
+                text: value.ok
+                    ? `rb_state ${value.topic}：claims=${value.stats.total}，证据=${value.evidenceTotal}（pending stance ${value.evidencePendingStance}），卡住 ${value.blocked.length} 条，待确认记忆 ${value.pendingMemory} 条`
+                    : `rb_state 失败：${value.error}`,
+            }],
+        },
+        async execute(args, exec) {
+            const state = loadCurrentState();
+            if (state === null)
+                return needOpen();
+            const byStatus = {};
+            for (const claim of state.claims)
+                byStatus[claim.status] = (byStatus[claim.status] ?? 0) + 1;
+            const blocked = [];
+            for (const claim of state.claims) {
+                const reason = blockedReason(state, claim);
+                if (reason !== null)
+                    blocked.push(`${claim.id} v${claim.version} ${claim.status}：${reason}`);
+            }
+            return {
+                ok: true,
+                topic: state.topic,
+                root: state.root,
+                trust: state.briefingCache !== undefined ? 'high' : 'low',
+                stats: { total: state.claims.length, byStatus },
+                evidenceTotal: state.evidence.length,
+                evidencePendingStance: state.evidence.filter(e => e.stance === 'pending').length,
+                recentAdjudications: state.adjudications.slice(-5).map(a => ({ claim: a.claim, verdict: a.verdict, by: a.by, at: a.at })),
+                recentOps: state.opsLog.slice(-8).map(o => ({ at: o.at, action: o.action, by: o.by, ...(o.claimId === undefined ? {} : { claimId: o.claimId }), ...(o.detail === undefined ? {} : { detail: o.detail }) })),
+                blocked,
+                pendingAssets: scanAssets(currentRoot, state).length,
+                pendingMemory: state.pendingMemory.length,
+            };
         },
     })));
     return disposers;
