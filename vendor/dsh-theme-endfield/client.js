@@ -3817,12 +3817,32 @@ function apply(ctx) {
             syncSurface()
           }
           const pageStyle = { maxWidth: '640px', padding: '4px 0 16px' }
+          /* 四组分类标题（设置项优化）：编号 + 中文名，主题色强调。 */
+          const groupTitle = (no, name) => R.createElement('div', {
+            key: 'group-title-' + no,
+            style: {
+              display: 'flex', alignItems: 'center', gap: '8px',
+              marginTop: no === '01' ? '0' : '22px', paddingBottom: '6px',
+              borderBottom: '1px solid var(--dsw-alias-border-l1)',
+              color: 'var(--edge-accent, var(--dsw-alias-state-business-primary))',
+              fontSize: '12px', fontWeight: 600, letterSpacing: '0.14em',
+            },
+          }, [
+            R.createElement('span', { key: 'mark', 'aria-hidden': 'true',
+              style: { width: '4px', height: '13px', flex: '0 0 auto', background: 'currentColor', borderRadius: '2px' } }),
+            R.createElement('span', { key: 'txt' }, no + ' ' + name),
+          ])
+
           // These rows are passed as an ARRAY, so each one needs a stable key or
           // React logs a key warning for the whole list on every render.
           return R.createElement('div', { style: pageStyle }, [
-            /* Palette first: it repaints the whole UI, so it is the row a user
-               looks for, and every switch below is rendered in its colour. */
-            R.createElement('div', { key: 'palette', style: rowStyle },
+R.createElement('div', { key: 'group-01' }, [
+groupTitle('01', '主题'),
+R.createElement('div', { key: 'theme', style: rowStyle },
+              R.createElement('span', { style: labelStyle }, '终末地主题：' + (enabled ? '开启' : '关闭')),
+              R.createElement('button', { type: 'button', onClick: toggleTheme, style: btnStyleFor(enabled) }, enabled ? '关闭主题' : '开启主题')
+            ),
+R.createElement('div', { key: 'palette', style: rowStyle },
               R.createElement('span', { style: labelStyle },
                 '主题配色：' + (palette === 'wuling' ? '武陵青' : '谷地黄'),
                 R.createElement('span', { style: hintStyle },
@@ -3851,7 +3871,14 @@ function apply(ctx) {
                 }, palette === 'wuling' ? '切换谷地黄' : '切换武陵青')
               )
             ),
-            R.createElement('div', { key: 'contour', style: rowStyle },
+R.createElement('div', { key: 'radius', style: rowStyle },
+              R.createElement('span', { style: labelStyle }, '主题圆角：' + (mode === 'round' ? '圆角' : '直角')),
+              R.createElement('button', { type: 'button', onClick: toggleMode, style: btnStyleFor(mode === 'round') }, mode === 'round' ? '切换直角' : '切换圆角')
+            ),
+]),
+R.createElement('div', { key: 'group-02' }, [
+groupTitle('02', '背景'),
+R.createElement('div', { key: 'contour', style: rowStyle },
               R.createElement('span', { style: labelStyle },
                 '等高线背景：' + (contourOn ? '开启' : '关闭'),
                 R.createElement('span', { style: hintStyle },
@@ -3861,7 +3888,7 @@ function apply(ctx) {
               ),
               R.createElement('button', { type: 'button', onClick: toggleContour, style: btnStyleFor(contourOn) }, contourOn ? '关闭背景' : '开启背景')
             ),
-            R.createElement('div', { key: 'contour-anim', style: rowStyle },
+R.createElement('div', { key: 'contour-anim', style: rowStyle },
               R.createElement('span', { style: labelStyle },
                 '动态等高线：' + (contourAnim ? '开启' : '关闭'),
                 R.createElement('span', { style: hintStyle },
@@ -3881,7 +3908,7 @@ function apply(ctx) {
                 title: contourOn ? '' : '请先开启等高线背景',
               }, contourAnim ? '切为静态' : '开启动态')
             ),
-            R.createElement('div', { key: 'surface', style: rowStyle },
+R.createElement('div', { key: 'surface', style: rowStyle },
               R.createElement('span', { style: labelStyle },
                 '侧边栏表面：' + (surface === 'glass' ? '玻璃' : surface === 'solid' ? '自定义纯色' : '透明'),
                 R.createElement('span', { style: hintStyle },
@@ -3940,11 +3967,11 @@ function apply(ctx) {
                 }, surfaceConv ? '已开启' : '已关闭')
               )
               : null,
-            R.createElement('div', { key: 'watermark', style: rowStyle },
+R.createElement('div', { key: 'watermark', style: rowStyle },
               R.createElement('span', { style: labelStyle }, '背景水印：' + (wmOn ? '开启' : '关闭')),
               R.createElement('button', { type: 'button', onClick: toggleWm, style: btnStyleFor(wmOn) }, wmOn ? '关闭水印' : '开启水印')
             ),
-            R.createElement('div', { key: 'watermark-persist', style: rowStyle },
+R.createElement('div', { key: 'watermark-persist', style: rowStyle },
               R.createElement('span', { style: labelStyle },
                 '水印保持显示：' + (wmPersist ? '开启' : '关闭'),
                 R.createElement('span', { style: hintStyle },
@@ -3960,7 +3987,10 @@ function apply(ctx) {
                 title: wmOn ? '' : '请先开启背景水印',
               }, wmPersist ? '仅新建页' : '保持显示')
             ),
-            R.createElement('div', { key: 'loader', style: rowStyle },
+]),
+R.createElement('div', { key: 'group-03' }, [
+groupTitle('03', '动画'),
+R.createElement('div', { key: 'loader', style: rowStyle },
               R.createElement('span', { style: labelStyle },
                 '启动加载动画：' + (loaderOn ? '开启' : '关闭'),
                 R.createElement('span', { style: hintStyle },
@@ -3983,7 +4013,10 @@ function apply(ctx) {
             /* 雷霆大字（娱乐模式，默认关闭）：任务开始/结束时屏幕中央显示
                「任务开始」/「任务完成」白色粗体大字，3 秒后自动消失，点击
                任意处可立即关闭。动画子开关控制「大缩小砸入」入场效果。 */
-            R.createElement('div', { key: 'thunder', style: rowStyle },
+]),
+R.createElement('div', { key: 'group-04' }, [
+groupTitle('04', '娱乐'),
+R.createElement('div', { key: 'thunder', style: rowStyle },
               R.createElement('span', { style: labelStyle },
                 '雷霆大字：' + (thunderOn ? '开启' : '关闭'),
                 R.createElement('span', { style: hintStyle },
@@ -4003,7 +4036,7 @@ function apply(ctx) {
                 R.createElement('button', { type: 'button', onClick: toggleThunder, style: btnStyleFor(thunderOn) }, thunderOn ? '关闭大字' : '开启大字')
               )
             ),
-            R.createElement('div', { key: 'thunder-anim', style: { ...rowStyle, paddingLeft: '16px' } },
+R.createElement('div', { key: 'thunder-anim', style: { ...rowStyle, paddingLeft: '16px' } },
               R.createElement('span', { style: labelStyle },
                 '大字入场动画：' + (thunderAnim ? '开启' : '关闭'),
                 R.createElement('span', { style: hintStyle },
@@ -4020,14 +4053,8 @@ function apply(ctx) {
                 title: thunderOn ? '' : '请先开启雷霆大字',
               }, thunderAnim ? '关闭动画' : '开启动画')
             ),
-            R.createElement('div', { key: 'theme', style: rowStyle },
-              R.createElement('span', { style: labelStyle }, '终末地主题：' + (enabled ? '开启' : '关闭')),
-              R.createElement('button', { type: 'button', onClick: toggleTheme, style: btnStyleFor(enabled) }, enabled ? '关闭主题' : '开启主题')
-            ),
-            R.createElement('div', { key: 'radius', style: rowStyle },
-              R.createElement('span', { style: labelStyle }, '主题圆角：' + (mode === 'round' ? '圆角' : '直角')),
-              R.createElement('button', { type: 'button', onClick: toggleMode, style: btnStyleFor(mode === 'round') }, mode === 'round' ? '切换直角' : '切换圆角')
-            ),
+])
+        
           ])
         }
       )
