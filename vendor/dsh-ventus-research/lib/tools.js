@@ -26,6 +26,46 @@ const DEFAULT_TOL = {
     B: { pass: 1e-2, warn: 5e-2 },
     C: { pass: 1e-1, warn: 5e-1 },
 };
+
+/** research 工具：子代理运行结果读取（兼容 DSH SubagentRunLike 的 text 字段）。 */
+async function runOutput(run) {
+    if (typeof run.text === 'string')
+        return run.text;
+    if (typeof run.result === 'string')
+        return run.result;
+    try {
+        const snap = run.getSnapshot?.();
+        if (typeof snap === 'string')
+            return snap;
+    }
+    catch { /* ignore */ }
+    return '[子代理未返回文本]';
+}
+
+/** research 工具：按模式组装子代理任务书（中文，要求末尾输出【结论摘要】）。 */
+function buildResearchPrompt(mode, topic, task, briefing, state) {
+    const claims = state.claims.map(c => `- ${c.id} v${c.version} ${c.status}：${c.text.slice(0, 120)}`).join('\n') || '（暂无 claims）';
+    const evidence = state.evidence.slice(-5).map(e => `- ${e.id} ${e.claimId} stance=${e.stance} ${e.source.slice(0, 60)}`).join('\n') || '（暂无证据）';
+    const header = `你是科研助手子代理，负责「${mode}」模式。课题：${topic}\n\n【课题简报】\n${briefing}\n\n【现有 claims】\n${claims}\n\n【现有证据（最近 5 条）】\n${evidence}\n`;
+    const tail = `\n\n【纪律】1. 中文输出；2. 引用原文需注明出处；3. 结论区分「已证实/推测/待验证」；4. 最后一行必须以【结论摘要】开头，输出 ≤500 字精华（结论、证据、下一步），供主会话引用。`;
+    switch (mode) {
+        case 'setup':
+            return header + `\n【任务】按 briefing 复核课题状态，列出：已确立事实、缺失环节、建议的下一步科研动作。产出可直接复用的结论清单。` + tail;
+        case 'discuss':
+            return header + `\n【任务】围绕以下议题展开学术研讨：${task || '（用户未指定议题，围绕课题核心问题展开）'}\n要求：1. 给出清晰结论（支持/反对/存疑，附理由）；2. 指出分歧点与可验证路径；3. 如需要数值/文献核验，明确列出。` + tail;
+        case 'literature':
+            return header + `\n【任务】资料搜集：${task || '（用户未指定，围绕课题相关文献）'}\n要求：1. 用搜索工具检索相关文献/资料；2. 提取关键论点并标注出处；3. 与课题 claims 对照，标注支持/反驳关系；4. 登记为可核验的引证清单。` + tail;
+        case 'code':
+            return header + `\n【任务】代码分析：${task || '（用户未指定脚本）'}\n要求：1. 先读脚本理解结构与关键参数；2. 如有数据可复现则运行核验（可用 run_code 等工具）；3. 指出与课题结论一致/冲突之处；4. 给出结论的可信度评估。` + tail;
+        case 'draft':
+            return header + `\n【任务】论文初稿：把验证通过（adjudicated 且非 rejected）的 claims 组织成论文初稿骨架（引言/方法/结果/讨论/结论），每个 claim 附带其证据与验证信息。产出初稿全文（可长）。` + tail;
+        case 'review':
+            return header + `\n【任务】论文/结论审查：${task || '（用户未指定审查对象，审查课题当前 claims 与产出）'}\n要求：1. 逐条审查证据链完整性（claim→验证→证据→结论）；2. 找出逻辑漏洞、未验证假设、引证错误；3. 每条问题给出严重度（高/中/低）与修改建议。` + tail;
+        default:
+            return header + tail;
+    }
+}
+
 /** 从 exec 取会话工作区目录；拿不到返回 null。 */
 function cwdOf(exec) {
     return exec.agent?.session?.header?.cwd ?? null;
@@ -774,6 +814,119 @@ export function registerBenchTools(ctx, env) {
             };
         },
     })));
+
+    // ── 科研助手（用户友好入口）：自然语言引导 + 子代理执行，取代记忆 rb_* 命令名 ──
+    disposers.push(ctx.tools.register(defineTool({
+        name: 'research',
+        description: '科研助手（科研工作台统一入口）。把用户的研究需求（立项/研讨/资料搜集/代码分析/论文初稿/论文审查）作为子代理执行，结果压缩精华写入课题 notes/ 并返回摘要。使用流程：模型收到科研需求后，第一步用 ask_user_question 向用户展示六个模式（label + hint 如下），用户选定后带 mode 调用本工具；用户已明确说要做的事可跳过询问。六个模式：setup=立项/恢复课题（topic 必填）；discuss=学术研讨（task 描述议题）；literature=资料搜集（task 描述查什么，可用搜索工具）；code=代码分析（task 含脚本路径）；draft=论文初稿（从验证通过的 claims 组织）；review=论文审查（task 含审查对象）。未立项时自动按当前目录名立项。',
+        parameters: {
+            mode: { type: 'string', description: '模式：setup | discuss | literature | code | draft | review' },
+            topic: { type: 'string', description: '课题名（setup 必填；其他模式缺省用当前工作目录名）' },
+            task: { type: 'string', description: '用户需求原文 / 任务描述' },
+        },
+        output: {
+            schema: {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    ok: { type: 'boolean', required: true },
+                    mode: { type: 'string' },
+                    topic: { type: 'string' },
+                    summary: { type: 'string' },
+                    noteFile: { type: 'string' },
+                    briefing: { type: 'string' },
+                    error: { type: 'string' },
+                },
+            },
+            render: (_args, value) => [{ type: 'text', text: value.summary ?? value.error ?? String(value.ok) }],
+        },
+        async execute(args, exec) {
+            const cwd = cwdOf(exec);
+            if (cwd === null)
+                return { ok: false, error: '无法确定会话工作区目录（exec.agent.session.header.cwd）' };
+            const mode = typeof args.mode === 'string' ? args.mode.trim() : '';
+            const task = typeof args.task === 'string' ? args.task.trim() : '';
+            if (mode === '') {
+                return {
+                    ok: false,
+                    error: '请先用 ask_user_question 向用户展示科研助手六个模式（label + hint）：'
+                        + 'setup=立项/恢复课题；discuss=学术研讨；literature=资料搜集；'
+                        + 'code=代码分析；draft=论文初稿；review=论文审查。用户选定后带 mode 重新调用本工具。',
+                };
+            }
+            if (!['setup', 'discuss', 'literature', 'code', 'draft', 'review'].includes(mode))
+                return { ok: false, error: `未知模式 ${mode}（可选 setup/discuss/literature/code/draft/review）` };
+            // 确立课题：未开课题时自动立项（topic 缺省用当前目录末段）。
+            let topic = typeof args.topic === 'string' ? args.topic.trim() : '';
+            if (currentRoot === null || topic !== '') {
+                if (topic === '') {
+                    const seg = cwd.replace(/[\\/]+$/, '').split(/[\\/]/).pop() ?? 'research';
+                    topic = seg === '' ? 'research' : seg;
+                }
+                const root = topicRoot(cwd, topic);
+                let state = readState(root);
+                if (state === null) {
+                    ensureTopicDirs(root);
+                    state = createEmptyState(topic, root);
+                    writeState(root, state);
+                }
+                currentRoot = root;
+                state.lastOpened = localIso();
+                pushOpLog(state, 'research_auto_open', 'ai', `mode=${mode}`);
+                writeState(root, state);
+            }
+            const state = loadCurrentState();
+            if (state === null)
+                return { ok: false, error: '课题状态读取失败（当前课题根目录异常）' };
+            topic = state.topic;
+            const notesDir = join(state.root, 'notes');
+            mkdirSync(notesDir, { recursive: true });
+            // 组装子代理任务书。
+            const briefing = state.briefingCache ?? buildBriefing(state, state.briefingCache !== undefined ? 'high' : 'low', scanAssets(state.root, state));
+            const prompt = buildResearchPrompt(mode, topic, task, briefing, state);
+            const runtime = ctx.subagents;
+            if (runtime === undefined || runtime === null || typeof runtime.start !== 'function')
+                return { ok: false, error: 'subagents 服务不可用（需在 agent 对话上下文中调用本工具才能派发子代理）' };
+            if (exec.agent === undefined || exec.agent === null)
+                return { ok: false, error: '当前无 agent 上下文，无法派发子代理；请在对话中调用本工具' };
+            const ts = localIso().replace(/[:T]/g, '-').slice(0, 19);
+            const noteFile = join(notesDir, `${mode}-${ts}.md`);
+            let run;
+            try {
+                run = await runtime.start('default', {
+                    parent: exec.agent,
+                    prompt: [{ type: 'text', text: prompt }],
+                    label: `科研助手·${mode}`,
+                    signal: exec.signal,
+                });
+            }
+            catch (err) {
+                return { ok: false, error: `子代理派发失败：${err instanceof Error ? err.message : String(err)}` };
+            }
+            // 等待子代理完成并取回文本。
+            const text = await runOutput(run);
+            // 压缩精华：优先取【结论摘要】标记，否则取尾部 600 字。
+            const marker = text.lastIndexOf('【结论摘要】');
+            const summary = marker >= 0
+                ? text.slice(marker).replace(/【结论摘要】\s*/, '').trim().slice(0, 1500)
+                : text.slice(-600).trim();
+            try {
+                writeFileSync(noteFile, text, 'utf8');
+            }
+            catch { /* 写盘失败不阻断返回 */ }
+            pushOpLog(state, `research_${mode}`, 'subagent', task.slice(0, 120), undefined);
+            writeState(currentRoot, state);
+            return {
+                ok: true,
+                mode,
+                topic,
+                summary: `科研助手·${mode} 完成（课题 ${topic}）。\n${summary}\n（完整产出：${noteFile}）`,
+                noteFile,
+                briefing,
+            };
+        },
+    })));
+
     return disposers;
 }
 /** 设置当前课题根（index.ts 用 /research-bench/sign 也可用）。 */

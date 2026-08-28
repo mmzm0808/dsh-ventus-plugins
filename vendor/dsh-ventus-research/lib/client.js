@@ -768,8 +768,20 @@ window.__ModuleLoader__.load({
 						children: "加载中…"
 					}),
 					data?.ok === false && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-						style: emptyStyle,
-						children: data.error ?? "未打开课题（先用 rb_open 立项）"
+						style: { ...emptyStyle, textAlign: 'left', lineHeight: 1.9 },
+						children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { style: { fontSize: 14, fontWeight: 600, color: 'var(--dsw-alias-label-primary)', marginBottom: 6 }, children: "科研助手使用引导" }),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { children: "还没有科研课题。直接在对话里说你要做的事，AI 会自动立项并作为子代理执行，结果精华会沉淀回对话：" }),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("ul", { style: { margin: '8px 0 0 18px', padding: 0 }, children: [
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: "「立个课题：<名字>」—— 立项/恢复课题" }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: "「研讨一下 <议题>」—— 学术研讨" }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: "「查一下 <主题> 的相关文献」—— 资料搜集" }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: "「分析一下 <脚本路径>」—— 代码分析" }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: "「写论文初稿」—— 论文初稿" }),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("li", { children: "「审查这篇论文」—— 论文审查" })
+							] }),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { style: { marginTop: 8, color: 'var(--dsw-alias-label-tertiary)' }, children: "课题建立后，研讨结论会自动沉淀为 claim，证据/论文进度在这里可视化。" })
+						] })
 					}),
 					data?.ok === true && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
