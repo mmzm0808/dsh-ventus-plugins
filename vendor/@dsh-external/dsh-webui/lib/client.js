@@ -336815,7 +336815,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			const running = step.status === "running";
 			const timeText = step.startedAt !== void 0 ? `${formatDuration(elapsedOf(step.startedAt, step.finishedAt, now))} ${running ? "进行中" : stepStatusText(step.status)}` : stepStatusText(step.status);
 			const model = shortModel(step.modelUsed);
-			const inherited = step.channel === "subagent";
+			const inherited = step.channel === "subagent" && step.modelSource === void 0;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: "team-card team-surface",
 				"data-status": step.status,
