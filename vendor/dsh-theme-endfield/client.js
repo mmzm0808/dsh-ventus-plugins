@@ -2412,8 +2412,11 @@ function apply(ctx) {
       }
       /* persist 水印锚定：对话列成为定位祖先（absolute inset0 的水印精确
          居中于对话区宽）与独立层叠上下文（zIndex -1 的水印在列背景之上、
-         内容之下）。position:relative 无偏移，不影响官方布局。 */
-      [class$='_centerCol'] {
+         内容之下）。position:relative 无偏移，不影响官方布局。
+         ⚠ 必须 :has(> 水印) 门控（对齐上游）：无条件 isolation 会让 centerCol
+         成为 z-auto 层叠上下文，把输入框浮窗（z-9500）困在里面，而团队胶囊
+         （z-0 根层叠）按 z-0 > z-auto 排序赢过浮窗——实测胶囊盖住浮窗。 */
+      [class$='_centerCol']:has(> [data-endfield-watermark]) {
         position: relative !important;
         isolation: isolate !important;
       }
