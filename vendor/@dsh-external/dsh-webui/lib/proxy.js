@@ -59,7 +59,22 @@ function installFetchHook() {
     const g = globalThis;
     if (g[ORIGINAL_FETCH] && typeof g[ORIGINAL_FETCH] === 'function')
         return;
-    const original = globalThis.fetch.bind(globalThis);
+    /* 污染免疫：Electron 会话残留（ELECTRON_RUN_AS_NODE=1）会让 Node 暴露一个
+       损坏的 scopedFetch 作为 globalThis.fetch（内部引用未初始化的 fetchBase），
+       所有 fetch 调用（llm 模型请求、usage 等）全部报 fetchBase is not a function。
+       这里优先从 undici 取原生 fetch 作为 original，并**把 globalThis.fetch 覆盖回
+       undici 原生**（一劳永逸：无论注入发生在何时，本钩子执行后全局 fetch 复原）。 */
+    const ud = loadUndici();
+    const healthy = (ud !== null && typeof ud.fetch === 'function')
+        ? ud.fetch.bind(ud)
+        : (globalThis.fetch !== null && typeof globalThis.fetch === 'function' && globalThis.fetch.name !== 'scopedFetch'
+            ? globalThis.fetch.bind(globalThis)
+            : null);
+    const original = healthy ?? globalThis.fetch.bind(globalThis);
+    // 复原全局 fetch（覆盖掉 scopedFetch 污染），后续代理选择层基于健康 fetch 包装。
+    if (healthy !== null && globalThis.fetch !== healthy) {
+        Object.defineProperty(globalThis, 'fetch', { value: healthy, configurable: true, writable: true });
+    }
     Object.defineProperty(globalThis, ORIGINAL_FETCH, { value: original, configurable: true });
     globalThis.fetch = function (input, init) {
         const state = proxyState;
