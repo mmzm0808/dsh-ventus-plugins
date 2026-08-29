@@ -62,14 +62,18 @@ function installFetchHook() {
     /* 污染免疫：Electron 会话残留（ELECTRON_RUN_AS_NODE=1）会让 Node 暴露一个
        损坏的 scopedFetch 作为 globalThis.fetch（内部引用未初始化的 fetchBase），
        所有 fetch 调用（llm 模型请求、usage 等）全部报 fetchBase is not a function。
-       这里优先从 undici 取原生 fetch 作为 original，并**把 globalThis.fetch 覆盖回
-       undici 原生**（一劳永逸：无论注入发生在何时，本钩子执行后全局 fetch 复原）。 */
+       优先取 Node 启动早期（--require preload）捕获的原生 fetch（capture-fetch.cjs
+       存于 Symbol.for('dsh.pristineFetch')）——它永远健康，不依赖 undici 包；
+       其次从 undici 动态加载；最后才接受当前全局 fetch（排除 scopedFetch）。 */
+    const pristine = g[Symbol.for('dsh.pristineFetch')];
     const ud = loadUndici();
-    const healthy = (ud !== null && typeof ud.fetch === 'function')
-        ? ud.fetch.bind(ud)
-        : (globalThis.fetch !== null && typeof globalThis.fetch === 'function' && globalThis.fetch.name !== 'scopedFetch'
-            ? globalThis.fetch.bind(globalThis)
-            : null);
+    let healthy = null;
+    if (pristine !== undefined && typeof pristine === 'function' && pristine.name !== 'scopedFetch')
+        healthy = pristine;
+    else if (ud !== null && typeof ud.fetch === 'function')
+        healthy = ud.fetch.bind(ud);
+    else if (globalThis.fetch !== null && typeof globalThis.fetch === 'function' && globalThis.fetch.name !== 'scopedFetch')
+        healthy = globalThis.fetch.bind(globalThis);
     const original = healthy ?? globalThis.fetch.bind(globalThis);
     // 复原全局 fetch（覆盖掉 scopedFetch 污染），后续代理选择层基于健康 fetch 包装。
     if (healthy !== null && globalThis.fetch !== healthy) {
