@@ -305,6 +305,8 @@ function apply(ctx) {
       if (watermarkEl.style.top !== top) watermarkEl.style.top = top
       if (watermarkEl.style.transform !== tx) watermarkEl.style.transform = tx
     }
+    const WATERMARK_TRACK_FPS = 15
+    let watermarkLastTrack = -1
     const watermarkRafLoop = () => {
       // Only the hero placement is measured per frame; persist mode is pure CSS, so
       // the loop must stop when the mode changes rather than spin for nothing.
@@ -312,7 +314,15 @@ function apply(ctx) {
         watermarkRaf = null
         return
       }
-      positionWatermark()
+      // Throttled tracking: the hero centre only moves with layout changes (sidebar
+      // fold, resize, route switch), which never need 60 Hz measurement. 15 Hz keeps
+      // the mark locked on while cutting getBoundingClientRect (forced layout) cost
+      // by 4x.
+      const now = (typeof performance !== 'undefined' && typeof performance.now === 'function') ? performance.now() : Date.now()
+      if (watermarkLastTrack < 0 || now - watermarkLastTrack >= 1000 / WATERMARK_TRACK_FPS) {
+        watermarkLastTrack = now
+        positionWatermark()
+      }
       watermarkRaf = (typeof requestAnimationFrame === 'function') ? requestAnimationFrame(watermarkRafLoop) : null
     }
     const styleWatermark = (el, mode) => {
@@ -437,15 +447,26 @@ function apply(ctx) {
        later is in its temporal dead zone during apply() — and `typeof` does NOT
        protect against a TDZ ReferenceError the way it does for an undeclared name. */
     let contourSyncHook = () => {}
-    if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined' && document.body) {
-      watermarkObserver = new MutationObserver(() => {
+    /* The subtree observer fires on EVERY DOM change (streaming tokens, sidebar
+       tree re-renders, HUD polls). Flushing the watermark/contour reconciliation
+       per mutation forces a synchronous layout each time; a short coalescing
+       delay batches them into one pass. Visuals are unaffected — the marks only
+       re-verify their mount point, which does not change faster than 200 ms. */
+    let watermarkSyncTimer = null
+    let watermarkSyncPending = false
+    const scheduleWatermarkSync = () => {
+      watermarkSyncPending = true
+      if (watermarkSyncTimer !== null) return
+      watermarkSyncTimer = setTimeout(() => {
+        watermarkSyncTimer = null
+        if (!watermarkSyncPending) return
+        watermarkSyncPending = false
         syncWatermarkVisibility()
-        // The app frame does not exist during early boot and is replaced on some
-        // route changes, so the layer has to be able to (re)attach later. This
-        // fires on every DOM change on the page, including every streaming token,
-        // so the hook's first act is an O(1) "still attached?" check.
         contourSyncHook()
-      })
+      }, 200)
+    }
+    if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined' && document.body) {
+      watermarkObserver = new MutationObserver(scheduleWatermarkSync)
       watermarkObserver.observe(document.body, { childList: true, subtree: true })
     }
 
@@ -560,7 +581,7 @@ function apply(ctx) {
     const CONTOUR_STEP = 10     // grid pitch in px; 10 measured as the cost/detail knee
     const CONTOUR_LEVELS = 20
     const CONTOUR_SPAN = 1.45   // levels span [-SPAN, +SPAN]
-    const CONTOUR_FIELD_FPS = 24 // the field is the expensive half; 24 reads as fluid
+    const CONTOUR_FIELD_FPS = 15 // the field is the expensive half; 15 keeps the slow drift fluid while halving extract cost
     /* Speck rejection. Marching squares legitimately produces two kinds of debris
        that read as "mysterious little dots" rather than terrain:
 
