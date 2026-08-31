@@ -1123,7 +1123,7 @@ function apply(ctx) {
         if (bctx) {
           const bw = contourBlurCv.width
           bctx.clearRect(0, 0, bw, contourBlurCv.height)
-          bctx.filter = 'blur(24px)'
+          bctx.filter = 'blur(10px)'
           try {
             bctx.drawImage(contourLineCv, 0, 0, Math.min(bw, w), h, 0, 0, bw, contourBlurCv.height)
           } catch { /* 跨域/异常时跳过模糊层 */ }
@@ -2369,8 +2369,8 @@ function apply(ctx) {
           linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 30%, transparent 55%),
           linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 25%),
           color-mix(in srgb, #14171c 35%, transparent) !important;
-        backdrop-filter: blur(24px) saturate(1.4);
-        -webkit-backdrop-filter: blur(24px) saturate(1.4);
+        backdrop-filter: blur(10px) saturate(1.4);
+        -webkit-backdrop-filter: blur(10px) saturate(1.4);
       }
       /* 亮色表面玻璃：浅色底（主题浅 #e8e8e2 半透明）+ 顶部微暗渐变，
          文字黑在浅底上清晰可读（暗色规则是深底白字，亮色不可复用）。 */
@@ -2379,8 +2379,8 @@ function apply(ctx) {
           linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.015) 30%, transparent 55%),
           linear-gradient(90deg, rgba(0, 0, 0, 0.03), transparent 25%),
           color-mix(in srgb, #e8e8e2 55%, transparent) !important;
-        backdrop-filter: blur(24px) saturate(1.15);
-        -webkit-backdrop-filter: blur(24px) saturate(1.15);
+        backdrop-filter: blur(10px) saturate(1.15);
+        -webkit-backdrop-filter: blur(10px) saturate(1.15);
       }
       /* 右侧栏（详情列）玻璃：等高线已铺满视口宽，展开时磨砂透出花纹，
          与左侧栏一致的玻璃观感。 */
@@ -2389,8 +2389,8 @@ function apply(ctx) {
           linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 30%, transparent 55%),
           linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 25%),
           color-mix(in srgb, #14171c 22%, transparent) !important;
-        backdrop-filter: blur(24px) saturate(1.4);
-        -webkit-backdrop-filter: blur(24px) saturate(1.4);
+        backdrop-filter: blur(10px) saturate(1.4);
+        -webkit-backdrop-filter: blur(10px) saturate(1.4);
       }
       /* better-sidebar 右侧面板玻璃：与左侧栏一致的毛玻璃质感。
          .pane（内容区）官方实色 bg-base 会盖住面板玻璃——一并透明，
@@ -2401,8 +2401,8 @@ function apply(ctx) {
           linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 30%, transparent 55%),
           linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 25%),
           color-mix(in srgb, #14171c 22%, transparent) !important;
-        backdrop-filter: blur(24px) saturate(1.4);
-        -webkit-backdrop-filter: blur(24px) saturate(1.4);
+        backdrop-filter: blur(10px) saturate(1.4);
+        -webkit-backdrop-filter: blur(10px) saturate(1.4);
       }
       body.theme-endfield-surface-glass [data-dsh-panel-host] [class*="pane"] {
         background: transparent !important;
