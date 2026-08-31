@@ -294138,7 +294138,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "done-pill-rest",
-				order: 32,
+				order: 33,
 				label: "休息时间提醒"
 			}, () => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ReminderRow, {
 				titleText: "休息时间提醒",
@@ -294148,7 +294148,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "done-pill-late",
-				order: 33,
+				order: 34,
 				label: "凌晨注意休息"
 			}, () => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ReminderRow, {
 				titleText: "凌晨注意休息",
@@ -294158,13 +294158,13 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "done-pill-scale",
-				order: 34,
+				order: 35,
 				label: "胶囊大小"
 			}, PillScaleRow));
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "done-pill-font",
-				order: 35,
+				order: 36,
 				label: "胶囊字体"
 			}, PillFontRow));
 		}
@@ -336921,6 +336921,57 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		const LINGER_MS = 15e3;
 		/** 展开态持久化键。 */
 		const EXPAND_KEY = "dsh-webui.team.hud.expanded";
+		/** 团队显示胶囊开关（默认显示，独立于对话完成胶囊）。 */
+		const TEAM_PILL_ENABLED_KEY = "dsh.webui.teamPill.enabled";
+		function createTeamPillEnabledStore() {
+			let value = true;
+			try {
+				const raw = window.localStorage.getItem(TEAM_PILL_ENABLED_KEY);
+				if (raw === "0" || raw === "false") value = false;
+			} catch {}
+			const listeners = /* @__PURE__ */ new Set();
+			return {
+				get: () => value,
+				set(next) {
+					value = next;
+					try {
+						window.localStorage.setItem(TEAM_PILL_ENABLED_KEY, next ? "1" : "0");
+					} catch {}
+					for (const fn of [...listeners]) fn(next);
+				},
+				subscribe(fn) {
+					listeners.add(fn);
+					return () => listeners.delete(fn);
+				}
+			};
+		}
+		const teamPillEnabledStore = createTeamPillEnabledStore();
+		/** 通用设置行：团队运行完成后的状态胶囊显隐开关。 */
+		function TeamPillRow() {
+			const [on, setOn] = (0, react.useState)(teamPillEnabledStore.get());
+			(0, react.useEffect)(() => teamPillEnabledStore.subscribe(setOn), []);
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				style: rowStyle,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					style: rowTextStyle,
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+						style: rowTitleStyle,
+						children: "团队显示胶囊"
+					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+						style: rowDescStyle,
+						children: "团队运行完成后在对话区显示状态胶囊；关闭后不显示团队悬浮胶囊"
+					})]
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+					type: "button",
+					role: "switch",
+					"aria-checked": on,
+					"aria-label": "团队显示胶囊",
+					onClick: () => teamPillEnabledStore.set(!teamPillEnabledStore.get()),
+					style: switchStyle(on),
+					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { style: knobStyle(on) })
+				})]
+			});
+		}
 		/** 对话滚动容器候选选择器（取第一个命中的可见元素）。 */
 		const CONVERSATION_SELECTORS = [
 			"[data-conversation-scroll]",
@@ -337124,6 +337175,8 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			/** 打开的详情卡：step=角色执行详情（跟随轮询实时刷新），final=最终交付物全文。 */
 			const [viewing, setViewing] = (0, react.useState)(null);
 			const [collapsedPill, setCollapsedPill] = (0, react.useState)(false);
+			const [teamPillEnabled, setTeamPillEnabled] = (0, react.useState)(() => teamPillEnabledStore.get());
+			(0, react.useEffect)(() => teamPillEnabledStore.subscribe(setTeamPillEnabled), []);
 			const lingerTimer = (0, react.useRef)(0);
 			const hudRef = (0, react.useRef)(null);
 			/** 任意侧边栏窗口/modal/全屏遮罩打开时，隐藏 HUD（避免胶囊盖住设置页/侧边栏弹窗）。 */
@@ -337246,6 +337299,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			}, []);
 			if (shown.length === 0) return null;
 			if (windowOpen) return null;
+			if (!active && !teamPillEnabled) return null;
 			const fbAnchor = collapsedAnchor();
 			const fbCol = contentColumn();
 			const fbLeft = fbAnchor !== null ? fbAnchor.colLeft : fbCol !== null ? Math.max(0, fbCol.left) : 0;
@@ -337275,7 +337329,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				bottom: fbBottom,
 				top: "auto"
 			};
-			if (collapsedPill && !active) {
+			if (teamPillEnabled && collapsedPill && !active) {
 				const run = shown[0];
 				const pillStyle = layout !== null ? {
 					left: layout.colLeft,
@@ -337790,6 +337844,12 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					})
 				}, TeamToggle));
 			});
+			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
+				name: "settings.general.item",
+				id: "team-display-pill",
+				order: 32,
+				label: "团队显示胶囊"
+			}, TeamPillRow));
 			ctx.effect(() => {
 				const holder = document.createElement("div");
 				holder.dataset.plugin = "@dsh-external/dsh-webui";
