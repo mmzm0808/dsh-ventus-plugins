@@ -286941,6 +286941,7 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			lenNode: "webui-po-len-node",
 			lenNodeOn: "webui-po-len-node-on",
 			lenLabel: "webui-po-len-label",
+			select: "webui-po-select",
 			stop: "webui-po-stop",
 			generate: "webui-po-generate",
 			undo: "webui-po-undo"
@@ -286978,6 +286979,10 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 .webui-po-len-node:hover{border-color:var(--dsw-alias-state-business-primary)}
 .webui-po-len-node-on{border-color:var(--dsw-alias-state-business-primary);background:var(--dsw-alias-state-business-primary);transform:translate(-50%,-50%) scale(1.15)}
 .webui-po-len-label{font-size:11px;line-height:16px;color:var(--dsw-alias-label-caption);white-space:nowrap}
+/* 输出语言下拉框：与开关行右侧控件同高，主题化边框/底色。 */
+.webui-po-select{flex:none;max-width:140px;height:26px;padding:0 6px;border:1px solid var(--dsw-alias-border-l2);border-radius:8px;background:var(--dsw-specific-menu);color:var(--dsw-alias-label-primary);font-size:12px;font-family:inherit;cursor:pointer;outline:none;transition:border-color .15s}
+.webui-po-select:hover{border-color:var(--dsw-alias-label-tertiary)}
+.webui-po-select:focus-visible{border-color:var(--dsw-alias-state-business-primary)}
 .webui-po-status{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--dsw-alias-border-l2);font-size:12px;line-height:18px;color:var(--dsw-alias-label-primary);flex-wrap:nowrap}
 .webui-po-status-text{display:inline-flex;align-items:center;gap:6px;flex:1 1 auto;min-width:0}
 .webui-po-status-text>span{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -287048,8 +287053,27 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 		const VERIFY_KEY = "dsh-webui:prompt-optimize:verify-browser";
 		/** 「优化时注入工作区记忆」开关的 localStorage 键。 */
 		const MEMORY_KEY = "dsh-webui:prompt-optimize:inject-memory";
+		/** 「输出语言」下拉框的 localStorage 键。 */
+		const LANGUAGE_KEY = "dsh-webui:prompt-optimize:language";
 		/** 撤回栈层数：5 次优化 + 栈底原始版本。 */
 		const HISTORY_LIMIT = 6;
+		/** 输出语言选项（选项文字全用中文；顺序固定，前面五个是常用语种）。 */
+		const LANGUAGES = [
+			"简体中文",
+			"繁体中文",
+			"英文",
+			"日文",
+			"韩文",
+			"法文",
+			"德文",
+			"西班牙文",
+			"俄文",
+			"阿拉伯文",
+			"葡萄牙文",
+			"意大利文",
+			"越南文",
+			"泰文"
+		];
 		/** 从 localStorage 读开关状态；缺省值在首次（从未点过）时生效。 */
 		function readFlag$1(key, fallback) {
 			try {
@@ -287082,6 +287106,14 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 			const [setTarget, setSetTarget] = (0, react.useState)(() => readFlag$1(TARGET_KEY, true));
 			const [verifyWithBrowser, setVerifyWithBrowser] = (0, react.useState)(() => readFlag$1(VERIFY_KEY, false));
 			const [injectMemory, setInjectMemory] = (0, react.useState)(() => readFlag$1(MEMORY_KEY, true));
+			const [language, setLanguage] = (0, react.useState)(() => {
+				try {
+					const raw = window.localStorage.getItem(LANGUAGE_KEY);
+					return raw !== null && LANGUAGES.includes(raw) ? raw : "简体中文";
+				} catch {
+					return "简体中文";
+				}
+			});
 			/**
 			* 撤回栈：每次优化前把当前草稿压栈（最多 HISTORY_LIMIT 层）。
 			* 溢出时丢弃最老的中间版本但**永久保留栈底的原始输入**，所以连续退到底
@@ -287184,7 +287216,8 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 							setTarget,
 							verifyWithBrowser,
 							lengthMode,
-							memoryText
+							memoryText,
+							language
 						}),
 						signal: controller.signal
 					});
@@ -287344,6 +287377,28 @@ XID_Start XIDS`.split(/\s/).map((p) => [w(p), p]));
 										className: clsx$1(css$2.switch, injectMemory && css$2.switchOn),
 										onClick: toggleMemory,
 										children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { className: clsx$1(css$2.knob, injectMemory && css$2.knobOn) })
+									})]
+								}),
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									className: css$2.option,
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+										className: css$2.optionLabel,
+										children: "输出语言"
+									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("select", {
+										className: css$2.select,
+										"aria-label": "优化结果输出语言",
+										value: language,
+										onChange: (event) => {
+											const next = event.target.value;
+											setLanguage(next);
+											try {
+												window.localStorage.setItem(LANGUAGE_KEY, next);
+											} catch {}
+										},
+										children: LANGUAGES.map((lang) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("option", {
+											value: lang,
+											children: lang
+										}, lang))
 									})]
 								}),
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -294138,7 +294193,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "done-pill-rest",
-				order: 33,
+				order: 32,
 				label: "休息时间提醒"
 			}, () => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ReminderRow, {
 				titleText: "休息时间提醒",
@@ -294148,7 +294203,7 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "done-pill-late",
-				order: 34,
+				order: 33,
 				label: "凌晨注意休息"
 			}, () => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ReminderRow, {
 				titleText: "凌晨注意休息",
@@ -294158,13 +294213,13 @@ div:has(> [data-conversation-scroll]) > :not([data-conversation-scroll]) {
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "done-pill-scale",
-				order: 35,
+				order: 34,
 				label: "胶囊大小"
 			}, PillScaleRow));
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "done-pill-font",
-				order: 36,
+				order: 35,
 				label: "胶囊字体"
 			}, PillFontRow));
 		}
@@ -336921,57 +336976,6 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 		const LINGER_MS = 15e3;
 		/** 展开态持久化键。 */
 		const EXPAND_KEY = "dsh-webui.team.hud.expanded";
-		/** 团队显示胶囊开关（默认显示，独立于对话完成胶囊）。 */
-		const TEAM_PILL_ENABLED_KEY = "dsh.webui.teamPill.enabled";
-		function createTeamPillEnabledStore() {
-			let value = true;
-			try {
-				const raw = window.localStorage.getItem(TEAM_PILL_ENABLED_KEY);
-				if (raw === "0" || raw === "false") value = false;
-			} catch {}
-			const listeners = /* @__PURE__ */ new Set();
-			return {
-				get: () => value,
-				set(next) {
-					value = next;
-					try {
-						window.localStorage.setItem(TEAM_PILL_ENABLED_KEY, next ? "1" : "0");
-					} catch {}
-					for (const fn of [...listeners]) fn(next);
-				},
-				subscribe(fn) {
-					listeners.add(fn);
-					return () => listeners.delete(fn);
-				}
-			};
-		}
-		const teamPillEnabledStore = createTeamPillEnabledStore();
-		/** 通用设置行：团队运行完成后的状态胶囊显隐开关。 */
-		function TeamPillRow() {
-			const [on, setOn] = (0, react.useState)(teamPillEnabledStore.get());
-			(0, react.useEffect)(() => teamPillEnabledStore.subscribe(setOn), []);
-			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-				style: rowStyle,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					style: rowTextStyle,
-					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-						style: rowTitleStyle,
-						children: "团队显示胶囊"
-					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-						style: rowDescStyle,
-						children: "团队运行完成后在对话区显示状态胶囊；关闭后不显示团队悬浮胶囊"
-					})]
-				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-					type: "button",
-					role: "switch",
-					"aria-checked": on,
-					"aria-label": "团队显示胶囊",
-					onClick: () => teamPillEnabledStore.set(!teamPillEnabledStore.get()),
-					style: switchStyle(on),
-					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { style: knobStyle(on) })
-				})]
-			});
-		}
 		/** 对话滚动容器候选选择器（取第一个命中的可见元素）。 */
 		const CONVERSATION_SELECTORS = [
 			"[data-conversation-scroll]",
@@ -337175,8 +337179,6 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			/** 打开的详情卡：step=角色执行详情（跟随轮询实时刷新），final=最终交付物全文。 */
 			const [viewing, setViewing] = (0, react.useState)(null);
 			const [collapsedPill, setCollapsedPill] = (0, react.useState)(false);
-			const [teamPillEnabled, setTeamPillEnabled] = (0, react.useState)(() => teamPillEnabledStore.get());
-			(0, react.useEffect)(() => teamPillEnabledStore.subscribe(setTeamPillEnabled), []);
 			const lingerTimer = (0, react.useRef)(0);
 			const hudRef = (0, react.useRef)(null);
 			/** 任意侧边栏窗口/modal/全屏遮罩打开时，隐藏 HUD（避免胶囊盖住设置页/侧边栏弹窗）。 */
@@ -337299,7 +337301,6 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 			}, []);
 			if (shown.length === 0) return null;
 			if (windowOpen) return null;
-			if (!active && !teamPillEnabled) return null;
 			const fbAnchor = collapsedAnchor();
 			const fbCol = contentColumn();
 			const fbLeft = fbAnchor !== null ? fbAnchor.colLeft : fbCol !== null ? Math.max(0, fbCol.left) : 0;
@@ -337329,7 +337330,7 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 				bottom: fbBottom,
 				top: "auto"
 			};
-			if (teamPillEnabled && collapsedPill && !active) {
+			if (collapsedPill && !active) {
 				const run = shown[0];
 				const pillStyle = layout !== null ? {
 					left: layout.colLeft,
@@ -337844,12 +337845,6 @@ body[data-ds-dark-theme] .team-cards-wrap .team-card{background:var(--dsw-alias-
 					})
 				}, TeamToggle));
 			});
-			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
-				name: "settings.general.item",
-				id: "team-display-pill",
-				order: 32,
-				label: "团队显示胶囊"
-			}, TeamPillRow));
 			ctx.effect(() => {
 				const holder = document.createElement("div");
 				holder.dataset.plugin = "@dsh-external/dsh-webui";

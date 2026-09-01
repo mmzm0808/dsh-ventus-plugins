@@ -33252,206 +33252,206 @@ globalThis.__dshChunks__["editor"] = (require) => {
 		document.head.appendChild(tag);
 	}
 	var sidebar_module_css_default = {
-		"gitRowSelected": "yL8ocG_gitRowSelected",
-		"gitLogRef": "yL8ocG_gitLogRef",
-		"explorerBody": "yL8ocG_explorerBody",
-		"editorPptxButton": "yL8ocG_editorPptxButton",
-		"explorerError": "yL8ocG_explorerError",
-		"paneCard": "yL8ocG_paneCard",
-		"gitDiffHunk": "yL8ocG_gitDiffHunk",
-		"tabList": "yL8ocG_tabList",
-		"explorerDir": "yL8ocG_explorerDir",
-		"browserBlockedTitle": "yL8ocG_browserBlockedTitle",
-		"browserInput": "yL8ocG_browserInput",
-		"terminalBannerUrl": "yL8ocG_terminalBannerUrl",
-		"gitConfirmDesc": "yL8ocG_gitConfirmDesc",
-		"panelBody": "yL8ocG_panelBody",
-		"editorCm": "yL8ocG_editorCm",
-		"explorerSymlink": "yL8ocG_explorerSymlink",
-		"editor": "yL8ocG_editor",
-		"tabBar": "yL8ocG_tabBar",
-		"editorTreeToggleActive": "yL8ocG_editorTreeToggleActive",
-		"editorPlaceholder": "yL8ocG_editorPlaceholder",
-		"paneDrop": "yL8ocG_paneDrop",
-		"selectionPopup": "yL8ocG_selectionPopup",
-		"mermaidHeader": "yL8ocG_mermaidHeader",
-		"splitCol": "yL8ocG_splitCol",
-		"tabTitle": "yL8ocG_tabTitle",
-		"editorTreeSearch": "yL8ocG_editorTreeSearch",
-		"gitSection": "yL8ocG_gitSection",
-		"terminalRepairCommand": "yL8ocG_terminalRepairCommand",
-		"gitDiffExpand": "yL8ocG_gitDiffExpand",
-		"gitCommitButton": "yL8ocG_gitCommitButton",
-		"explorerBroken": "yL8ocG_explorerBroken",
-		"gitBadge": "yL8ocG_gitBadge",
-		"sandboxStatusOn": "yL8ocG_sandboxStatusOn",
-		"tabBarPlus": "yL8ocG_tabBarPlus",
-		"editorPdfFrame": "yL8ocG_editorPdfFrame",
-		"terminalBanner": "yL8ocG_terminalBanner",
-		"editorImageWrap": "yL8ocG_editorImageWrap",
-		"gitName": "yL8ocG_gitName",
-		"gitLogSubject": "yL8ocG_gitLogSubject",
-		"panelHidden": "yL8ocG_panelHidden",
-		"tabClose": "yL8ocG_tabClose",
-		"terminalDepsCommandRow": "yL8ocG_terminalDepsCommandRow",
-		"explorerRoot": "yL8ocG_explorerRoot",
-		"explorerRef": "yL8ocG_explorerRef",
-		"orphanedType": "yL8ocG_orphanedType",
-		"splitChild": "yL8ocG_splitChild",
-		"panel": "yL8ocG_panel",
-		"editorStatus": "yL8ocG_editorStatus",
-		"mermaidWrap": "yL8ocG_mermaidWrap",
-		"iconButton": "yL8ocG_iconButton",
-		"browserBlockedActions": "yL8ocG_browserBlockedActions",
-		"mermaidModalHint": "yL8ocG_mermaidModalHint",
-		"editorModeButton": "yL8ocG_editorModeButton",
-		"terminalRetry": "yL8ocG_terminalRetry",
-		"gitDiffFilePath": "yL8ocG_gitDiffFilePath",
-		"browserBlocked": "yL8ocG_browserBlocked",
-		"gitDiffFileOld": "yL8ocG_gitDiffFileOld",
-		"editorTreePanelFull": "yL8ocG_editorTreePanelFull",
-		"editorModeToggle": "yL8ocG_editorModeToggle",
-		"terminalDepsNote": "yL8ocG_terminalDepsNote",
-		"gitError": "yL8ocG_gitError",
-		"explorerHidden": "yL8ocG_explorerHidden",
-		"gitDiffTabTitle": "yL8ocG_gitDiffTabTitle",
-		"tabBadge": "yL8ocG_tabBadge",
-		"editorSearchHint": "yL8ocG_editorSearchHint",
-		"browser": "yL8ocG_browser",
-		"gitLink": "yL8ocG_gitLink",
-		"mermaidCode": "yL8ocG_mermaidCode",
-		"gitDiffCode": "yL8ocG_gitDiffCode",
-		"gitDiffMetaText": "yL8ocG_gitDiffMetaText",
-		"gitLogLine2": "yL8ocG_gitLogLine2",
-		"producedChip": "yL8ocG_producedChip",
-		"gitHeader": "yL8ocG_gitHeader",
-		"editorCmHidden": "yL8ocG_editorCmHidden",
-		"editorBinary": "yL8ocG_editorBinary",
-		"paneContent": "yL8ocG_paneContent",
-		"explorerSelected": "yL8ocG_explorerSelected",
-		"editorSearchResult": "yL8ocG_editorSearchResult",
-		"dropOverlay": "yL8ocG_dropOverlay",
-		"pane": "yL8ocG_pane",
-		"editorError": "yL8ocG_editorError",
-		"editorPdfDragShieldActive": "yL8ocG_editorPdfDragShieldActive",
-		"panelResize": "yL8ocG_panelResize",
-		"mermaidCopy": "yL8ocG_mermaidCopy",
-		"gitDiffFile": "yL8ocG_gitDiffFile",
 		"cornerHandle": "yL8ocG_cornerHandle",
-		"editorTreeResize": "yL8ocG_editorTreeResize",
-		"explorerRow": "yL8ocG_explorerRow",
+		"terminalDepsTitle": "yL8ocG_terminalDepsTitle",
+		"gitLink": "yL8ocG_gitLink",
+		"producedChip": "yL8ocG_producedChip",
+		"gitDiffCtx": "yL8ocG_gitDiffCtx",
+		"sandboxStatusOn": "yL8ocG_sandboxStatusOn",
+		"tabList": "yL8ocG_tabList",
+		"editorCmHidden": "yL8ocG_editorCmHidden",
+		"editorMain": "yL8ocG_editorMain",
+		"mermaidWrap": "yL8ocG_mermaidWrap",
+		"explorerName": "yL8ocG_explorerName",
+		"git": "yL8ocG_git",
+		"gitRow": "yL8ocG_gitRow",
+		"gitCommitButton": "yL8ocG_gitCommitButton",
+		"browserBar": "yL8ocG_browserBar",
+		"editorImageWrap": "yL8ocG_editorImageWrap",
+		"tabBarDrop": "yL8ocG_tabBarDrop",
+		"explorerSelected": "yL8ocG_explorerSelected",
+		"toggleButton": "yL8ocG_toggleButton",
+		"gitBadge": "yL8ocG_gitBadge",
+		"tabTitle": "yL8ocG_tabTitle",
+		"terminalDepsActions": "yL8ocG_terminalDepsActions",
+		"editorPdfStage": "yL8ocG_editorPdfStage",
+		"editorPdfFrame": "yL8ocG_editorPdfFrame",
+		"panel": "yL8ocG_panel",
+		"gitDiffHunk": "yL8ocG_gitDiffHunk",
+		"splitChild": "yL8ocG_splitChild",
+		"panelBody": "yL8ocG_panelBody",
+		"gitHeader": "yL8ocG_gitHeader",
+		"editorPdf": "yL8ocG_editorPdf",
+		"gitDiffMetaText": "yL8ocG_gitDiffMetaText",
+		"editorBinary": "yL8ocG_editorBinary",
+		"editorHtml": "yL8ocG_editorHtml",
+		"explorerSymlink": "yL8ocG_explorerSymlink",
+		"explorerRoot": "yL8ocG_explorerRoot",
+		"browserBlockedActions": "yL8ocG_browserBlockedActions",
+		"terminal": "yL8ocG_terminal",
+		"terminalBannerUrl": "yL8ocG_terminalBannerUrl",
+		"terminalRetry": "yL8ocG_terminalRetry",
+		"explorerRef": "yL8ocG_explorerRef",
+		"terminalRepairCommand": "yL8ocG_terminalRepairCommand",
+		"browser": "yL8ocG_browser",
+		"gitPlaceholder": "yL8ocG_gitPlaceholder",
+		"gitLogLine1": "yL8ocG_gitLogLine1",
+		"browserStart": "yL8ocG_browserStart",
+		"bottomClose": "yL8ocG_bottomClose",
+		"panelResize": "yL8ocG_panelResize",
+		"dirtyDot": "yL8ocG_dirtyDot",
+		"gitRowSelected": "yL8ocG_gitRowSelected",
+		"explorerDir": "yL8ocG_explorerDir",
+		"editorTreePanel": "yL8ocG_editorTreePanel",
+		"gitLogMeta": "yL8ocG_gitLogMeta",
+		"terminalDepsCommandRow": "yL8ocG_terminalDepsCommandRow",
+		"sandboxAction": "yL8ocG_sandboxAction",
+		"tabBoundaryError": "yL8ocG_tabBoundaryError",
+		"editorPdfDragShieldActive": "yL8ocG_editorPdfDragShieldActive",
 		"editorHeader": "yL8ocG_editorHeader",
+		"editorBody": "yL8ocG_editorBody",
+		"iconButton": "yL8ocG_iconButton",
+		"explorerError": "yL8ocG_explorerError",
+		"explorerCopied": "yL8ocG_explorerCopied",
+		"gitDiffTab": "yL8ocG_gitDiffTab",
+		"editorMd": "yL8ocG_editorMd",
+		"pane": "yL8ocG_pane",
+		"editorModeToggle": "yL8ocG_editorModeToggle",
+		"editorModeActive": "yL8ocG_editorModeActive",
+		"gitDiffFile": "yL8ocG_gitDiffFile",
+		"gitLogSubject": "yL8ocG_gitLogSubject",
+		"toggleCluster": "yL8ocG_toggleCluster",
+		"explorer": "yL8ocG_explorer",
+		"mermaidHeader": "yL8ocG_mermaidHeader",
+		"tabClose": "yL8ocG_tabClose",
 		"gitDiff": "yL8ocG_gitDiff",
+		"editorPathInput": "yL8ocG_editorPathInput",
+		"splitRow": "yL8ocG_splitRow",
+		"gitDiffLine": "yL8ocG_gitDiffLine",
+		"selectionPopup": "yL8ocG_selectionPopup",
+		"mermaidModal": "yL8ocG_mermaidModal",
+		"gitDiffHunkHeader": "yL8ocG_gitDiffHunkHeader",
+		"orphanedType": "yL8ocG_orphanedType",
+		"editorModeButton": "yL8ocG_editorModeButton",
+		"editorError": "yL8ocG_editorError",
+		"tabBar": "yL8ocG_tabBar",
+		"editorSearchHint": "yL8ocG_editorSearchHint",
+		"gitDiffTabTitle": "yL8ocG_gitDiffTabTitle",
+		"gitDiffMeta": "yL8ocG_gitDiffMeta",
 		"bottomResizeActive": "yL8ocG_bottomResizeActive",
 		"tab": "yL8ocG_tab",
-		"mermaidError": "yL8ocG_mermaidError",
-		"terminalDepsBanner": "yL8ocG_terminalDepsBanner",
-		"editorTreePanel": "yL8ocG_editorTreePanel",
-		"dividerActive": "yL8ocG_dividerActive",
-		"gitPlaceholder": "yL8ocG_gitPlaceholder",
-		"dirtyDot": "yL8ocG_dirtyDot",
-		"tabActive": "yL8ocG_tabActive",
-		"editorMd": "yL8ocG_editorMd",
-		"gitLogLine1": "yL8ocG_gitLogLine1",
-		"producedMore": "yL8ocG_producedMore",
-		"editorPdfDragShield": "yL8ocG_editorPdfDragShield",
-		"editorPdfFrameBlocked": "yL8ocG_editorPdfFrameBlocked",
-		"gitLogRow": "yL8ocG_gitLogRow",
-		"workbench": "yL8ocG_workbench",
-		"mermaidModalButton": "yL8ocG_mermaidModalButton",
-		"dropRight": "yL8ocG_dropRight",
-		"browserStart": "yL8ocG_browserStart",
-		"editorPathInput": "yL8ocG_editorPathInput",
+		"gitDiffExpand": "yL8ocG_gitDiffExpand",
+		"gitCommitInput": "yL8ocG_gitCommitInput",
+		"sandboxStatus": "yL8ocG_sandboxStatus",
+		"editorTreeDock": "yL8ocG_editorTreeDock",
 		"dropLeft": "yL8ocG_dropLeft",
-		"editorBody": "yL8ocG_editorBody",
-		"explorerName": "yL8ocG_explorerName",
-		"editorBinaryNotice": "yL8ocG_editorBinaryNotice",
-		"mermaidInfo": "yL8ocG_mermaidInfo",
-		"toggleButton": "yL8ocG_toggleButton",
-		"editorPdf": "yL8ocG_editorPdf",
-		"bottomPanelHidden": "yL8ocG_bottomPanelHidden",
-		"git": "yL8ocG_git",
-		"gitRowMain": "yL8ocG_gitRowMain",
-		"boundaryError": "yL8ocG_boundaryError",
-		"editorHtml": "yL8ocG_editorHtml",
-		"dsh-row-in": "yL8ocG_dsh-row-in",
-		"gitLogMeta": "yL8ocG_gitLogMeta",
-		"explorer": "yL8ocG_explorer",
-		"sandboxDot": "yL8ocG_sandboxDot",
-		"explorerEmpty": "yL8ocG_explorerEmpty",
-		"terminalDepsTitle": "yL8ocG_terminalDepsTitle",
+		"terminalWrap": "yL8ocG_terminalWrap",
+		"paneEmptyCards": "yL8ocG_paneEmptyCards",
+		"dropUp": "yL8ocG_dropUp",
 		"bottomPanel": "yL8ocG_bottomPanel",
-		"mermaidModal": "yL8ocG_mermaidModal",
-		"tabBarDrop": "yL8ocG_tabBarDrop",
+		"editorPdfDragShield": "yL8ocG_editorPdfDragShield",
+		"mermaidModalStage": "yL8ocG_mermaidModalStage",
+		"gitDiffFilePath": "yL8ocG_gitDiffFilePath",
+		"producedLabel": "yL8ocG_producedLabel",
+		"editorDownloadLink": "yL8ocG_editorDownloadLink",
+		"gitConfirmDesc": "yL8ocG_gitConfirmDesc",
+		"editorSearchInput": "yL8ocG_editorSearchInput",
+		"producedRow": "yL8ocG_producedRow",
+		"gitLogRow": "yL8ocG_gitLogRow",
+		"mermaidCode": "yL8ocG_mermaidCode",
+		"gitEmpty": "yL8ocG_gitEmpty",
+		"editorInfoBar": "yL8ocG_editorInfoBar",
+		"panelResizeActive": "yL8ocG_panelResizeActive",
+		"dropOverlay": "yL8ocG_dropOverlay",
+		"gitSectionHeader": "yL8ocG_gitSectionHeader",
+		"gitDiffFileTag": "yL8ocG_gitDiffFileTag",
+		"gitDiffHunkSection": "yL8ocG_gitDiffHunkSection",
+		"dropDown": "yL8ocG_dropDown",
+		"mermaidBody": "yL8ocG_mermaidBody",
+		"mermaidModalToolbar": "yL8ocG_mermaidModalToolbar",
+		"editor": "yL8ocG_editor",
+		"editorStatus": "yL8ocG_editorStatus",
+		"gitBranchSelect": "yL8ocG_gitBranchSelect",
+		"editorTitle": "yL8ocG_editorTitle",
+		"explorerHeader": "yL8ocG_explorerHeader",
+		"gitError": "yL8ocG_gitError",
+		"browserFrame": "yL8ocG_browserFrame",
+		"bottomResize": "yL8ocG_bottomResize",
+		"mermaidInfo": "yL8ocG_mermaidInfo",
+		"paneContent": "yL8ocG_paneContent",
+		"browserBlocked": "yL8ocG_browserBlocked",
+		"browserBlockedDesc": "yL8ocG_browserBlockedDesc",
+		"mermaidMarkdown": "yL8ocG_mermaidMarkdown",
+		"gitDiffAdd": "yL8ocG_gitDiffAdd",
+		"gitLogRef": "yL8ocG_gitLogRef",
+		"terminalBanner": "yL8ocG_terminalBanner",
+		"terminalDepsBanner": "yL8ocG_terminalDepsBanner",
+		"explorerHidden": "yL8ocG_explorerHidden",
+		"gitDiffTabHeader": "yL8ocG_gitDiffTabHeader",
+		"paneDrop": "yL8ocG_paneDrop",
+		"dividerActive": "yL8ocG_dividerActive",
+		"paneTabHidden": "yL8ocG_paneTabHidden",
+		"paneCard": "yL8ocG_paneCard",
+		"editorPdfToolbar": "yL8ocG_editorPdfToolbar",
+		"editorTreeToggleActive": "yL8ocG_editorTreeToggleActive",
+		"browserBlockedButton": "yL8ocG_browserBlockedButton",
+		"mermaidModalHint": "yL8ocG_mermaidModalHint",
+		"browserMessage": "yL8ocG_browserMessage",
+		"terminalDepsHint": "yL8ocG_terminalDepsHint",
+		"explorerBroken": "yL8ocG_explorerBroken",
+		"panelHidden": "yL8ocG_panelHidden",
 		"dividerCol": "yL8ocG_dividerCol",
 		"split": "yL8ocG_split",
-		"dropDown": "yL8ocG_dropDown",
-		"sandboxStatusText": "yL8ocG_sandboxStatusText",
-		"editorPdfToolbar": "yL8ocG_editorPdfToolbar",
-		"editorTitle": "yL8ocG_editorTitle",
-		"browserBar": "yL8ocG_browserBar",
-		"editorPdfStage": "yL8ocG_editorPdfStage",
-		"terminalWrap": "yL8ocG_terminalWrap",
-		"gitRow": "yL8ocG_gitRow",
-		"bottomClose": "yL8ocG_bottomClose",
-		"gitDiffTabHeader": "yL8ocG_gitDiffTabHeader",
-		"gitDiffCtx": "yL8ocG_gitDiffCtx",
-		"gitDiffAdd": "yL8ocG_gitDiffAdd",
-		"sandboxStatusOff": "yL8ocG_sandboxStatusOff",
-		"explorerHeader": "yL8ocG_explorerHeader",
-		"editorDownloadLink": "yL8ocG_editorDownloadLink",
-		"browserBlockedButton": "yL8ocG_browserBlockedButton",
-		"mermaidMarkdown": "yL8ocG_mermaidMarkdown",
-		"gitCommit": "yL8ocG_gitCommit",
-		"dropUp": "yL8ocG_dropUp",
-		"browserMessage": "yL8ocG_browserMessage",
-		"browserBlockedDesc": "yL8ocG_browserBlockedDesc",
-		"dropCenter": "yL8ocG_dropCenter",
-		"terminalDepsHint": "yL8ocG_terminalDepsHint",
-		"paneEmptyCards": "yL8ocG_paneEmptyCards",
-		"tabBoundaryError": "yL8ocG_tabBoundaryError",
-		"gitDiffTab": "yL8ocG_gitDiffTab",
+		"gitSection": "yL8ocG_gitSection",
+		"gitDiffCode": "yL8ocG_gitDiffCode",
+		"explorerEmpty": "yL8ocG_explorerEmpty",
 		"gitDiffNum": "yL8ocG_gitDiffNum",
-		"mermaidBody": "yL8ocG_mermaidBody",
 		"gitDiffDel": "yL8ocG_gitDiffDel",
-		"gitCommitInput": "yL8ocG_gitCommitInput",
-		"gitLogHash": "yL8ocG_gitLogHash",
-		"producedRow": "yL8ocG_producedRow",
-		"toggleCluster": "yL8ocG_toggleCluster",
-		"producedLabel": "yL8ocG_producedLabel",
-		"editorMain": "yL8ocG_editorMain",
-		"editorDocxZoomRange": "yL8ocG_editorDocxZoomRange",
-		"gitSectionHeader": "yL8ocG_gitSectionHeader",
-		"gitLogMore": "yL8ocG_gitLogMore",
-		"editorModeActive": "yL8ocG_editorModeActive",
-		"dividerRow": "yL8ocG_dividerRow",
-		"editorSearchInput": "yL8ocG_editorSearchInput",
-		"browserFrame": "yL8ocG_browserFrame",
-		"editorStatusError": "yL8ocG_editorStatusError",
-		"gitEmpty": "yL8ocG_gitEmpty",
-		"mermaidModalToolbar": "yL8ocG_mermaidModalToolbar",
-		"gitDiffMeta": "yL8ocG_gitDiffMeta",
-		"sandboxStatus": "yL8ocG_sandboxStatus",
-		"editorInfoBar": "yL8ocG_editorInfoBar",
-		"paneTab": "yL8ocG_paneTab",
-		"bottomResize": "yL8ocG_bottomResize",
-		"sandboxAction": "yL8ocG_sandboxAction",
-		"editorTreeDock": "yL8ocG_editorTreeDock",
-		"paneTabHidden": "yL8ocG_paneTabHidden",
+		"mermaidModalButton": "yL8ocG_mermaidModalButton",
+		"editorPptxButton": "yL8ocG_editorPptxButton",
+		"terminalDepsNote": "yL8ocG_terminalDepsNote",
+		"browserInput": "yL8ocG_browserInput",
+		"editorCm": "yL8ocG_editorCm",
+		"gitLogLine2": "yL8ocG_gitLogLine2",
 		"divider": "yL8ocG_divider",
-		"editorImage": "yL8ocG_editorImage",
-		"terminalDepsActions": "yL8ocG_terminalDepsActions",
-		"mermaidModalStage": "yL8ocG_mermaidModalStage",
-		"splitRow": "yL8ocG_splitRow",
-		"panelResizeActive": "yL8ocG_panelResizeActive",
-		"gitDiffFileTag": "yL8ocG_gitDiffFileTag",
-		"gitDiffHunkHeader": "yL8ocG_gitDiffHunkHeader",
-		"gitDiffHunkSection": "yL8ocG_gitDiffHunkSection",
+		"sandboxStatusOff": "yL8ocG_sandboxStatusOff",
+		"editorPdfFrameBlocked": "yL8ocG_editorPdfFrameBlocked",
+		"editorPlaceholder": "yL8ocG_editorPlaceholder",
+		"editorBinaryNotice": "yL8ocG_editorBinaryNotice",
+		"explorerRow": "yL8ocG_explorerRow",
+		"gitName": "yL8ocG_gitName",
 		"editorBanner": "yL8ocG_editorBanner",
-		"gitDiffLine": "yL8ocG_gitDiffLine",
-		"terminal": "yL8ocG_terminal",
-		"gitBranchSelect": "yL8ocG_gitBranchSelect",
-		"explorerCopied": "yL8ocG_explorerCopied"
+		"browserBlockedTitle": "yL8ocG_browserBlockedTitle",
+		"boundaryError": "yL8ocG_boundaryError",
+		"editorDocxZoomRange": "yL8ocG_editorDocxZoomRange",
+		"gitDiffFileOld": "yL8ocG_gitDiffFileOld",
+		"gitRowMain": "yL8ocG_gitRowMain",
+		"producedMore": "yL8ocG_producedMore",
+		"mermaidError": "yL8ocG_mermaidError",
+		"gitLogMore": "yL8ocG_gitLogMore",
+		"explorerBody": "yL8ocG_explorerBody",
+		"sandboxStatusText": "yL8ocG_sandboxStatusText",
+		"tabBadge": "yL8ocG_tabBadge",
+		"sandboxDot": "yL8ocG_sandboxDot",
+		"dropRight": "yL8ocG_dropRight",
+		"tabActive": "yL8ocG_tabActive",
+		"editorSearchResult": "yL8ocG_editorSearchResult",
+		"editorStatusError": "yL8ocG_editorStatusError",
+		"editorTreeResize": "yL8ocG_editorTreeResize",
+		"mermaidCopy": "yL8ocG_mermaidCopy",
+		"tabBarPlus": "yL8ocG_tabBarPlus",
+		"workbench": "yL8ocG_workbench",
+		"editorTreePanelFull": "yL8ocG_editorTreePanelFull",
+		"gitLogHash": "yL8ocG_gitLogHash",
+		"dropCenter": "yL8ocG_dropCenter",
+		"gitCommit": "yL8ocG_gitCommit",
+		"paneTab": "yL8ocG_paneTab",
+		"editorTreeSearch": "yL8ocG_editorTreeSearch",
+		"editorImage": "yL8ocG_editorImage",
+		"splitCol": "yL8ocG_splitCol",
+		"dividerRow": "yL8ocG_dividerRow",
+		"dsh-row-in": "yL8ocG_dsh-row-in",
+		"bottomPanelHidden": "yL8ocG_bottomPanelHidden"
 	};
 	//#endregion
 	//#region src/client/SandboxStatusBar.tsx
@@ -34105,8 +34105,17 @@ globalThis.__dshChunks__["editor"] = (require) => {
 		const html = viewerId === "html";
 		/** The markdown source the preview renders (draft wins over saved content). */
 		const mdText = draft ?? content ?? "";
-		/** Lines loaded so far (end of the last segment); null = windowed mode off. */
+		const [winStart, setWinStart] = (0, react.useState)(0);
 		const [loadedEnd, setLoadedEnd] = (0, react.useState)(null);
+		const segRefs = (0, react.useRef)(/* @__PURE__ */ new Map());
+		const scrollTopRef = (0, react.useRef)(0);
+		const lastWinStartRef = (0, react.useRef)(0);
+		const resizeTimerRef = (0, react.useRef)(null);
+		const gridFloor = (n) => Math.max(0, Math.floor(n / MD_LOAD_STEP_LINES) * MD_LOAD_STEP_LINES);
+		const gridCeil = (n) => {
+			if (mdLines === null) return n;
+			return Math.min(mdLines.length, Math.ceil(n / MD_LOAD_STEP_LINES) * MD_LOAD_STEP_LINES);
+		};
 		/** The preview source split into lines, or null when the file is small
 		*  enough to render whole (incremental mode off). */
 		const mdLines = (0, react.useMemo)(() => {
@@ -34125,15 +34134,18 @@ globalThis.__dshChunks__["editor"] = (require) => {
 			}
 			const el = mdRef.current;
 			const visible = el !== null ? Math.max(10, Math.ceil(el.clientHeight / MD_LINE_HEIGHT)) : 20;
-			setLoadedEnd(Math.min(mdLines.length, visible * 2));
+			lastWinStartRef.current = 0;
+			setWinStart(0);
+			setLoadedEnd(gridCeil(Math.min(mdLines.length, visible * 2)));
 		}, [mdLines]);
-		/** Segments covering [0, loadedEnd), boundary-aligned to blank lines so
-		*  prose/headings stay intact (each segment renders independently; only
-		*  the appended tail mounts new DOM — loaded segments are never re-rendered). */
+		/** Segments covering [winStart, loadedEnd), tail-aligned to blank lines so
+		*  prose/headings stay intact. Each segment renders independently keyed by
+		*  its start line — appending a tail or prepending a head mounts only the
+		*  new segment, never re-renders the loaded ones. */
 		const mdSegments = (0, react.useMemo)(() => {
 			if (mdLines === null || loadedEnd === null) return null;
 			const segs = [];
-			let start = 0;
+			let start = winStart;
 			while (start < loadedEnd) {
 				let end = Math.min(start + MD_LOAD_STEP_LINES, loadedEnd);
 				if (end < mdLines.length) {
@@ -34142,25 +34154,94 @@ globalThis.__dshChunks__["editor"] = (require) => {
 						break;
 					}
 				}
-				segs.push(mdLines.slice(start, end).join("\n"));
+				segs.push({
+					start,
+					end,
+					text: mdLines.slice(start, end).join("\n")
+				});
 				start = end;
 			}
 			return segs;
-		}, [mdLines, loadedEnd]);
-		/** Append one more segment when the user scrolls within a viewport of the
-		*  loaded bottom. The scroll position itself is never touched — appending
-		*  only grows scrollHeight below it. */
+		}, [
+			mdLines,
+			winStart,
+			loadedEnd
+		]);
+		/** Scroll handling: append below, extend above (with pre-paint scroll
+		*  compensation), never touch the scroll position while just scrolling. */
 		const handleMdScroll = (0, react.useCallback)((event) => {
 			hidePopup();
 			const el = event.currentTarget;
+			scrollTopRef.current = el.scrollTop;
 			if (mdLines === null || loadedEnd === null) return;
-			if (loadedEnd >= mdLines.length) return;
-			if (el.scrollHeight - el.scrollTop - el.clientHeight < el.clientHeight) setLoadedEnd((end) => end === null ? end : Math.min(mdLines.length, end + MD_LOAD_STEP_LINES));
+			if (el.scrollHeight - el.scrollTop - el.clientHeight < el.clientHeight && loadedEnd < mdLines.length) {
+				setLoadedEnd((end) => end === null ? end : gridCeil(Math.min(mdLines.length, end + MD_LOAD_STEP_LINES)));
+				return;
+			}
+			if (el.scrollTop < el.clientHeight && winStart > 0) setWinStart((prev) => gridFloor(Math.max(0, prev - MD_LOAD_STEP_LINES)));
 		}, [
 			mdLines,
 			loadedEnd,
+			winStart,
 			hidePopup
 		]);
+		/** Pre-paint scroll compensation when the window head moves up: the newly
+		*  mounted leading segments push content down, so restore the reader's
+		*  position by their measured height — runs before paint, no flicker. */
+		(0, react.useLayoutEffect)(() => {
+			if (winStart === lastWinStartRef.current) return;
+			const prevStart = lastWinStartRef.current;
+			lastWinStartRef.current = winStart;
+			const el = mdRef.current;
+			if (el === null || winStart >= prevStart) return;
+			let added = 0;
+			for (const seg of mdSegments ?? []) if (seg.start >= winStart && seg.start < prevStart) {
+				const segEl = segRefs.current.get(seg.start);
+				if (segEl !== void 0) added += segEl.offsetHeight;
+			}
+			if (added > 0) el.scrollTop = scrollTopRef.current + added;
+		}, [winStart, mdSegments]);
+		/** Width changes (sidebar drag / window resize) reflow the preview lines,
+		*  so the cached segments no longer match the visible content: drop the
+		*  cache down to the current viewport window (2× visible lines around the
+		*  scroll position) and restore the scroll proportion after the re-render
+		*  — the reader stays at the same content, no flash to the top. */
+		(0, react.useEffect)(() => {
+			if (mdLines === null) return;
+			const onResize = () => {
+				if (resizeTimerRef.current !== null) window.clearTimeout(resizeTimerRef.current);
+				resizeTimerRef.current = window.setTimeout(() => {
+					resizeTimerRef.current = null;
+					const el = mdRef.current;
+					if (el === null) return;
+					const span = el.scrollHeight - el.clientHeight;
+					const p = span > 0 ? el.scrollTop / span : 0;
+					const topLine = Math.round(p * mdLines.length);
+					const visible = Math.max(10, Math.ceil(el.clientHeight / MD_LINE_HEIGHT));
+					const nextStart = gridFloor(Math.max(0, topLine - visible));
+					const nextEnd = gridCeil(Math.min(mdLines.length, topLine + visible));
+					lastWinStartRef.current = nextStart;
+					setWinStart(nextStart);
+					setLoadedEnd(nextEnd);
+					requestAnimationFrame(() => {
+						const span2 = el.scrollHeight - el.clientHeight;
+						if (span2 > 0) el.scrollTop = p * span2;
+					});
+				}, 150);
+			};
+			window.addEventListener("resize", onResize);
+			let ro = null;
+			const mdEl = mdRef.current;
+			if (typeof ResizeObserver !== "undefined" && mdEl !== null) {
+				ro = new ResizeObserver(onResize);
+				ro.observe(mdEl);
+			}
+			return () => {
+				window.removeEventListener("resize", onResize);
+				ro?.disconnect();
+				if (resizeTimerRef.current !== null) window.clearTimeout(resizeTimerRef.current);
+			};
+		}, [mdLines]);
 		/** md/mermaid block split for the preview (mermaid fences lift out). Split
 		*  only in preview mode: edit-mode keystrokes must not re-scan the source. */
 		const mdBlocks = (0, react.useMemo)(() => markdown && mode === "preview" ? splitMermaidBlocks(mdText) : [], [
@@ -34297,13 +34378,19 @@ globalThis.__dshChunks__["editor"] = (require) => {
 				}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.MarkdownText, {
 					text: mdText,
 					codeLabels
-				}) : mdSegments !== null && mdSegments.map((segment, index) => hasMermaid ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(LazyMermaidMarkdown, {
-					text: segment,
-					codeLabels
-				}, index) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.MarkdownText, {
-					text: segment,
-					codeLabels
-				}, index))
+				}) : mdSegments !== null && mdSegments.map((segment) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+					ref: (el) => {
+						if (el !== null) segRefs.current.set(segment.start, el);
+						else segRefs.current.delete(segment.start);
+					},
+					children: hasMermaid ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(LazyMermaidMarkdown, {
+						text: segment.text,
+						codeLabels
+					}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.MarkdownText, {
+						text: segment.text,
+						codeLabels
+					})
+				}, segment.start))
 			}),
 			html && mode === "preview" && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(SandboxStatusBar, {
 				sandboxed: !htmlNoSandbox,

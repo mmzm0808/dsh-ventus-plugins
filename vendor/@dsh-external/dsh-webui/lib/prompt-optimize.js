@@ -12,11 +12,11 @@ const OPTIMIZE_TIMEOUT_MS = 90_000;
  *   约原文 1.5–2 倍。
  * @param memoryText - 当前工作区记忆文本（可选）：优化时结合实际记忆，避免
  *   文不对题或过度优化。
+ * @param language - 优化结果输出语言（中文语种名，如「英文」）。
  */
-function optimizeSystem(setTarget, verifyWithBrowser, lengthMode, memoryText) {
+function optimizeSystem(setTarget, verifyWithBrowser, lengthMode, memoryText, language) {
     const rules = [
-        'Keep the user\'s original intent and task essence — do not change what they are asking for.',
-        'Answer in the SAME language as the user\'s prompt.',
+        `Answer in ${language ?? '简体中文'}.`,
         'Fill in missing context, goal, constraints, input/output format, and success criteria where helpful.',
         'Make the structure clear and unambiguous; highlight the key points.',
     ];
@@ -101,6 +101,10 @@ async function handle(ctx, req, res) {
     const lengthMode = body.lengthMode === 'short' || body.lengthMode === 'long' ? body.lengthMode : 'medium';
     // 当前工作区记忆（前端已拉取；可选）。
     const memoryText = typeof body.memoryText === 'string' ? body.memoryText.trim() : '';
+    // 输出语言（中文语种名，如「英文」）：非法值回退默认。
+    const language = typeof body.language === 'string' && body.language.trim() !== ''
+        ? body.language.trim()
+        : '简体中文';
     if (provider === '' || model === '' || text === '') {
         json(res, 400, { ok: false, error: 'provider / model / text 不能为空' });
         return;
@@ -134,7 +138,7 @@ async function handle(ctx, req, res) {
         res.write(`data: ${JSON.stringify(payload)}\n\n`);
     };
     try {
-        const system = optimizeSystem(setTarget, verifyWithBrowser, lengthMode, memoryText);
+        const system = optimizeSystem(setTarget, verifyWithBrowser, lengthMode, memoryText, language);
         const options = {
             provider,
             model,

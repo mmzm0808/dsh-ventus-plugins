@@ -72,7 +72,7 @@ function installFetchHook() {
         healthy = pristine;
     else if (ud !== null && typeof ud.fetch === 'function')
         healthy = ud.fetch.bind(ud);
-    else if (globalThis.fetch !== null && typeof globalThis.fetch === 'function' && globalThis.fetch.name !== 'scopedFetch')
+    else if (typeof globalThis.fetch === 'function' && globalThis.fetch.name !== 'scopedFetch')
         healthy = globalThis.fetch.bind(globalThis);
     const original = healthy ?? globalThis.fetch.bind(globalThis);
     // 复原全局 fetch（覆盖掉 scopedFetch 污染），后续代理选择层基于健康 fetch 包装。
