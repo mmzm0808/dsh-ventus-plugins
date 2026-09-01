@@ -7129,7 +7129,18 @@ function loadUndici() {
 function installFetchHook() {
 	const g = globalThis;
 	if (g[ORIGINAL_FETCH] && typeof g[ORIGINAL_FETCH] === "function") return;
-	const original = globalThis.fetch.bind(globalThis);
+	const pristine = g[Symbol.for("dsh.pristineFetch")];
+	const ud = loadUndici();
+	let healthy = null;
+	if (pristine !== void 0 && typeof pristine === "function" && pristine.name !== "scopedFetch") healthy = pristine;
+	else if (ud !== null && typeof ud.fetch === "function") healthy = ud.fetch.bind(ud);
+	else if (typeof globalThis.fetch === "function" && globalThis.fetch.name !== "scopedFetch") healthy = globalThis.fetch.bind(globalThis);
+	const original = healthy ?? globalThis.fetch.bind(globalThis);
+	if (healthy !== null && globalThis.fetch !== healthy) Object.defineProperty(globalThis, "fetch", {
+		value: healthy,
+		configurable: true,
+		writable: true
+	});
 	Object.defineProperty(globalThis, ORIGINAL_FETCH, {
 		value: original,
 		configurable: true
@@ -7530,6 +7541,7 @@ async function fetchBrowserWsUrl(port, timeoutMs = 5e3) {
 				if (info && typeof info.webSocketDebuggerUrl === "string") return info.webSocketDebuggerUrl;
 			}
 		} catch (e) {
+			console.log(`[cdp] fetch failed: ${String(e?.message ?? e)} | fetch=${typeof fetch === "function" ? fetch.name || "(anon)" : typeof fetch} | pristine=${typeof globalThis[Symbol.for("dsh.pristineFetch")] === "function" ? "set" : "missing"}`);
 			lastErr = e;
 		}
 		await sleep(100);
