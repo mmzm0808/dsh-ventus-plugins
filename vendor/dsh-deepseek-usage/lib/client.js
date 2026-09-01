@@ -11690,7 +11690,7 @@ window.__ModuleLoader__.load({
 				"aria-label": "关闭",
 				disabled: busy,
 				onClick: props.onClose
-			}, "✕")), (0, react.createElement)("div", { style: bodyStyle }, phase === "loading" && (0, react.createElement)("div", { style: hintStyle }, "正在检查更新…"), ready && list?.bundled === false && (0, react.createElement)("div", { style: remoteLineStyle }, "独立安装的 dsh-deepseek-usage 无整合包更新功能，请安装 dsh-ventus-plugins 整合包。"), ready && isBundled && remoteVersion === null && (0, react.createElement)("div", { style: remoteLineStyle }, "无法连接 GitHub（远程版本未知）。仍可勾选已列出的插件尝试更新，执行时可能失败。"), ready && isBundled && remoteVersion !== null && (0, react.createElement)("div", { style: remoteLineStyle }, (0, react.createElement)("div", null, `远程最新 v${remoteVersion}${localVersion === null ? "" : `（本地 v${localVersion}${localVersion !== remoteVersion ? "，有更新" : "，已是最新"}）`}`), (list?.remote?.message ?? "") !== "" && (0, react.createElement)("div", null, list?.remote?.message)), ready && plugins.length > 0 && (0, react.createElement)("div", { style: { display: "flex", gap: "8px", marginTop: "2px" } }, (0, react.createElement)("button", { type: "button", style: { height: "28px", border: "1px solid var(--dsw-alias-border-l1, rgba(255,255,255,0.08))", borderRadius: "14px", padding: "0 12px", fontSize: "12px", color: "var(--dsw-alias-label-primary, #e6e9f0)", background: "var(--dsw-alias-bg-layer-1, rgba(255,255,255,0.04))", cursor: "pointer" }, onClick: () => setChecked(new Set(plugins.map((p) => p.id))) }, "完整安装"), (0, react.createElement)("button", { type: "button", style: { height: "28px", border: "1px solid var(--dsw-alias-border-l1, rgba(255,255,255,0.08))", borderRadius: "14px", padding: "0 12px", fontSize: "12px", color: "var(--dsw-alias-label-primary, #e6e9f0)", background: "var(--dsw-alias-bg-layer-1, rgba(255,255,255,0.04))", cursor: "pointer" }, onClick: () => setChecked(new Set(plugins.filter((p) => p.installed).map((p) => p.id))) }, "最小安装（保留已装）")), ready && plugins.length > 0 && (0, react.createElement)("div", { style: {
+			}, "✕")), (0, react.createElement)("div", { style: bodyStyle }, phase === "loading" && (0, react.createElement)("div", { style: hintStyle }, "正在检查更新…"), ready && list?.bundled === false && (0, react.createElement)("div", { style: remoteLineStyle }, "独立安装的 dsh-deepseek-usage 无整合包更新功能，请安装 dsh-ventus-plugins 整合包。"), ready && isBundled && remoteVersion === null && (0, react.createElement)("div", { style: remoteLineStyle }, "无法连接 GitHub（远程版本未知）。仍可勾选已列出的插件尝试更新，执行时可能失败。"), ready && isBundled && remoteVersion !== null && (0, react.createElement)("div", { style: remoteLineStyle }, (0, react.createElement)("div", null, `远程最新 v${remoteVersion}${localVersion === null ? "" : `（本地 v${localVersion}${localVersion !== remoteVersion ? "，有更新" : "，已是最新"}）`}`), (list?.remote?.message ?? "") !== "" && (0, react.createElement)("div", null, list?.remote?.message)), ready && plugins.length > 0 && (0, react.createElement)("div", { style: {
 				display: "flex",
 				flexDirection: "column",
 				gap: "6px"
@@ -11722,7 +11722,7 @@ window.__ModuleLoader__.load({
 					...badgeStyle$1,
 					color: badge.color
 				} }, badge.text));
-			})), applying && (0, react.createElement)("div", { style: hintStyle }, "正在下载并安装选中项，请稍候…"), phase === "done" && result !== null && (0, react.createElement)("div", { style: remoteLineStyle }, (0, react.createElement)("div", null, `已更新 ${(result.updated ?? []).length} 项：${(result.updated ?? []).map((id) => id.split("/").pop()).join("、")}`), (0, react.createElement)("div", null, `另有 ${result.disabled ?? 0} 项已禁用（取消勾选），重启 DSH 后不再挂载。`), (0, react.createElement)("div", null, `聚合 bundle 已重建（含 ${result.bundledCount ?? "?"} 个子插件），重启 DSH 后生效。`)), phase === "error" && (0, react.createElement)("div", { style: {
+			})), applying && (0, react.createElement)("div", { style: hintStyle }, "正在下载并安装选中项，请稍候…"), phase === "done" && result !== null && (0, react.createElement)("div", { style: remoteLineStyle }, (0, react.createElement)("div", null, `已更新 ${(result.updated ?? []).length} 项：${(result.updated ?? []).map((id) => id.split("/").pop()).join("、")}`), (0, react.createElement)("div", null, `聚合 bundle 已重建（含 ${result.bundledCount ?? "?"} 个子插件），重启 DSH 后生效。`)), phase === "error" && (0, react.createElement)("div", { style: {
 				...remoteLineStyle,
 				borderColor: "var(--dsw-alias-state-danger, #e05c5c)"
 			} }, `更新失败：${errorText}`)), (0, react.createElement)("div", { style: footStyle }, (0, react.createElement)("span", { style: hintStyle }, ready && plugins.length > 0 ? `已选 ${checked.size} / ${plugins.length} 项` : ""), (0, react.createElement)("div", { style: {
@@ -12023,6 +12023,12 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 			if (value >= 1e4) return `${(value / 1e4).toFixed(value >= 1e6 ? 1 : 2)}万`;
 			if (value >= 1e3) return `${(value / 1e3).toFixed(1)}千`;
 			return String(value);
+		}
+		/** 命中率百分比去尾零：整数显示整数(100 → "100")，非整数保留真实小数
+		*  (94.96 → "94.96"，94.90 → "94.9")。禁止裸 toFixed(2)——它在真值恰为整数
+		*  时产出 "100.00"/"0.00" 伪精度。所有命中率文案必须走这。 */
+		function fmtPct(value) {
+			return value.toFixed(2).replace(/\.?0+$/, "");
 		}
 		/** Format money with the snapshot currency. */
 		function money(value, currency) {
@@ -12334,7 +12340,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
       </div>
       <div class="${NS}-body">
         <div class="${NS}-page active" data-page="overview">
-        <section>
+        <section style="display:none" aria-hidden="true">
           <div class="${NS}-section-title">账户</div>
           <div class="${NS}-balance">
             <div class="${NS}-balance-top">
@@ -12642,8 +12648,8 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 				const hitInput = todayModel ? todayModel.cacheHitTokens + todayModel.cacheMissTokens : 0;
 				if (todayModel !== void 0 && hitInput > 0) {
 					const hitPct = todayModel.cacheHitTokens / hitInput * 100;
-					stateFields.hitRate.textContent = `命中率 ${hitPct.toFixed(2)}%`;
-					stateFields.hitRate.dataset.tip = `今日输入缓存命中 ${compact(todayModel.cacheHitTokens)} / ${compact(hitInput)}（${hitPct.toFixed(2)}%）`;
+					stateFields.hitRate.textContent = `命中率 ${fmtPct(hitPct)}%`;
+					stateFields.hitRate.dataset.tip = `今日输入缓存命中 ${compact(todayModel.cacheHitTokens)} / ${compact(hitInput)}（${fmtPct(hitPct)}%）`;
 					setRealHitRate(hitPct);
 				} else {
 					stateFields.hitRate.textContent = "命中率 --";
@@ -13028,7 +13034,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
           data-output="${point.outputTokens}"
           data-cache-read="${point.cacheReadTokens}"
           data-cache-write="${point.cacheWriteTokens}"
-          data-hit-rate="${pointHitRate(point).toFixed(1)}"/>
+          data-hit-rate="${fmtPct(pointHitRate(point))}"/>
       `).join("")
 					};
 				});
@@ -13067,7 +13073,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
             <span class="${NS}-chart-title">${escapeHtml(model)}</span>
             ${legend}
           </span>
-          <span class="${NS}-chart-total">${compact(total)} Tokens · 命中率 ${totalHitRate.toFixed(1)}%</span>
+          <span class="${NS}-chart-total">${compact(total)} Tokens · 命中率 ${fmtPct(totalHitRate)}%</span>
         </div>
         <svg class="${NS}-chart-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeHtml(model)} 用量趋势">
           ${gridLines}
@@ -13110,7 +13116,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
           <div>输出 ${compact(output)}</div>
           <div>缓存命中 ${compact(cacheRead)}</div>
           <div>缓存未命中 ${compact(cacheWrite)}</div>
-          <div>命中率 ${hitRate.toFixed(1)}%</div>
+          <div>命中率 ${fmtPct(hitRate)}%</div>
         </div>
       `;
 				}).join("");
@@ -13349,8 +13355,7 @@ body:not([data-ds-dark-theme]) [data-${NS}] .${NS}-btn:hover{ background:rgba(15
 				if (enabled) {
 					load();
 					if (pollTimer === void 0) pollTimer = setInterval(() => {
-						// 范围感知轮询：非「当天」时用范围数据重渲染，避免把用户选的范围视图覆盖回今天。
-						void refreshOverviewRange();
+						load();
 					}, POLL_MS);
 				} else {
 					if (pollTimer !== void 0) {
