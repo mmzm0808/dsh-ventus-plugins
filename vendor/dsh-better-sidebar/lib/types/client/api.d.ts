@@ -107,6 +107,11 @@ export declare const api: {
         truncated: boolean;
     }>;
     fsRead: (scope: SessionScope, path: string, signal?: AbortSignal) => Promise<FsTextResult | FsBinaryResult>;
+    /** 用系统默认程序打开文件（非浏览器标签页——file:// 在 DSH 网页端会被
+     *  Chromium 安全策略拦截而打不开，系统默认程序打开没有此限制）。 */
+    fsOpen: (scope: SessionScope, path: string) => Promise<{
+        ok: true;
+    }>;
     fsWrite: (scope: SessionScope, path: string, content: string) => Promise<{
         ok: true;
     }>;

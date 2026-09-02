@@ -22,6 +22,7 @@ export declare const zh: {
     editorExplorerSplit: string;
     editorExplorerSplitDesc: string;
     editorTreeToggle: string;
+    editorRefresh: string;
     editorPathPlaceholder: string;
     editorSearchPlaceholder: string;
     editorSearchNoResults: string;

@@ -30,6 +30,7 @@ export const WEBUI_MODULE_KEYS = [
     'ctrlEnter', // 输入框 Ctrl+Enter 换行
     'sessionMotion', // 会话切换柔和过渡
     'sessionPin', // 会话置顶 / 归档 / 右键菜单
+    'perfPanel', // 侧边栏「性能」栏目（各功能性能概览）
     'titleRename', // 对话区标题点击重命名
     'rewind', // 对话退回（文件回退 + 上下文分支）
     'screenshot', // 单条消息截图 / 会话长图
@@ -64,8 +65,8 @@ export const WEBUI_MODULE_KEYS = [
     'sidebarFloat', // 悬浮侧边栏
     'updater', // 壳管理更新
     'proxy', // 网络代理
-    // ── 团队编排 ──
-    'team', // 多团队 / 多角色 agent 编排（team 模块）
+    // ── 团队协作 ──
+    'team', // 团队面板 + 对话团队开关 + 执行 HUD
 ];
 const KEY_SET = new Set(WEBUI_MODULE_KEYS);
 /**

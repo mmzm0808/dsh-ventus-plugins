@@ -288715,7 +288715,7 @@ body.${BODY_CLASS$1}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-
 		* @param role - user（纯文本，暖橙）或 assistant（markdown 渲染）。
 		* @param text - 该条消息的文本内容；为空则不渲染。
 		*/
-		function MessageScreenshotButton({ role, text, sessionId }) {
+		function MessageScreenshotButton({ role, text, sessionId, modelName }) {
 			const [busy, setBusy] = (0, react.useState)(false);
 			const [result, setResult] = (0, react.useState)(null);
 			const [error, setError] = (0, react.useState)(null);
@@ -288733,7 +288733,8 @@ body.${BODY_CLASS$1}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-
 						role,
 						text,
 						sessionId,
-						theme: shotTheme()
+						theme: shotTheme(),
+						...modelName !== void 0 && modelName !== "" ? { model: modelName } : {}
 					})
 				}).then((res) => res.json()).then((r) => {
 					if (r.ok === true && typeof r.path === "string") setResult({
@@ -288750,7 +288751,8 @@ body.${BODY_CLASS$1}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-
 				busy,
 				role,
 				text,
-				sessionId
+				sessionId,
+				modelName
 			]);
 			const copyPath = (0, react.useCallback)(() => {
 				if (result === null) return;
@@ -288838,10 +288840,11 @@ body.${BODY_CLASS$1}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-
 		}
 		/**
 		* assistant 消息的截图按钮（挂在 conversation.chat.assistant-actions，
-		* 渲染在复制和「分支」之间）。通过 useSession 从 messageId 反查该条回复的文本。
+		* 渲染在复制和「分支」之间）。通过 useSession 从 messageId 反查该条回复的文本；
+		* 通过注入的模型目录 store 读取当前会话使用的模型名，随截图一起声明来源。
 		*/
 		function AssistantScreenshotAction(props) {
-			const { messageId, useSession, sessionId } = props;
+			const { messageId, useSession, sessionId, directory } = props;
 			const text = useSession((snapshot) => {
 				for (const key of snapshot.chat.order) {
 					const node = snapshot.chat.nodes.get(key);
@@ -288852,19 +288855,38 @@ body.${BODY_CLASS$1}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-
 				}
 				return "";
 			});
+			const modelName = useModelName(directory);
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)(MessageScreenshotButton, {
 				role: "assistant",
 				text,
-				sessionId
+				sessionId,
+				modelName
 			});
+		}
+		/** 从模型目录 store 读取当前会话模型的显示名（空串表示未知/未选）。 */
+		function useModelName(directory) {
+			const state = (0, react.useSyncExternalStore)((0, react.useCallback)((onStoreChange) => directory?.subscribe(onStoreChange) ?? (() => {}), [directory]), (0, react.useCallback)(() => directory?.getSnapshot() ?? null, [directory]));
+			const current = state?.current;
+			if (current === null || current === void 0) return "";
+			return state?.groups.flatMap((group) => group.models).find((model) => model.id === current.model)?.name ?? current.model ?? "";
 		}
 		/** 注册 assistant 消息截图按钮（conversation.chat.assistant-actions）。 */
 		function applyMessageScreenshot(ctx) {
-			ctx.slots.inject("conversation.chat.assistant-actions", () => ctx.slots.register({
-				name: "conversation.chat.assistant-actions",
-				id: "webui-screenshot",
-				order: 5
-			}, AssistantScreenshotAction));
+			ctx.inject(["slots", "modelDirectories"], (scope) => {
+				const models = scope.modelDirectories;
+				scope.slots.inject("conversation.chat.assistant-actions", () => scope.slots.register({
+					name: "conversation.chat.assistant-actions",
+					id: "webui-screenshot",
+					order: 5,
+					inject: (sessionId) => {
+						try {
+							return { directory: models.directoryFor(sessionId).store };
+						} catch {
+							return {};
+						}
+					}
+				}, AssistantScreenshotAction));
+			});
 		}
 		//#endregion
 		//#region src/client/ctrl-enter-newline.ts

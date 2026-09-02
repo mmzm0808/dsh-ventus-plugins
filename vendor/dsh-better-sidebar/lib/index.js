@@ -1,11 +1,11 @@
 import { createRequire } from "node:module";
 import { mkdir, open, opendir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
+import { spawn } from "node:child_process";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { WebSocket, WebSocketServer } from "ws";
 import z from "schemastery";
 import { createHash, randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
-import { spawn } from "node:child_process";
 import { SettingsConflictError, settingsNamespace } from "@deepseek-ai/dsh-settings";
 import { chmodSync, existsSync, readFileSync, realpathSync } from "node:fs";
 import { homedir, userInfo } from "node:os";
@@ -2536,6 +2536,30 @@ function buildApi(ctx, ptyManager, agentPtyRegistry, resolved, terminalShell, ge
 				await rm(tmp, { force: true }).catch(() => {});
 				throw new SidebarError("fs-error", `cannot write "${path}": ${error instanceof Error ? error.message : String(error)}`, 400);
 			}
+			return { ok: true };
+		},
+		"fs.open": async (payload) => {
+			const { cwd } = cwdOf(payload);
+			const path = requireAbsolute(requireString(payload, "path"));
+			if (!isWithin(cwd, path)) throw new SidebarError("fs-error", `"${path}" is outside the session cwd`, 400);
+			if ((await stat(path).catch((error) => {
+				throw new SidebarError("fs-error", `cannot open "${path}": ${error instanceof Error ? error.message : String(error)}`, 400);
+			})).isDirectory()) throw new SidebarError("fs-error", `"${path}" is a directory`, 400);
+			const cmd = process.platform === "win32" ? "cmd" : process.platform === "darwin" ? "open" : "xdg-open";
+			const args = process.platform === "win32" ? [
+				"/c",
+				"start",
+				"",
+				path
+			] : [path];
+			await new Promise((resolve) => {
+				const child = spawn(cmd, args, {
+					detached: true,
+					stdio: "ignore"
+				});
+				child.on("error", () => resolve());
+				child.on("exit", () => resolve());
+			});
 			return { ok: true };
 		},
 		"git.status": async (payload) => {
