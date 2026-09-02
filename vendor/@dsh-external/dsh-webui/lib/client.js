@@ -288841,26 +288841,43 @@ body.${BODY_CLASS$1}.${NO_ANIM_CLASS} div:has(> [data-shell-overlay]) > div:nth-
 		/**
 		* assistant 消息的截图按钮（挂在 conversation.chat.assistant-actions，
 		* 渲染在复制和「分支」之间）。通过 useSession 从 messageId 反查该条回复的文本；
-		* 通过注入的模型目录 store 读取当前会话使用的模型名，随截图一起声明来源。
+		* 模型名优先取那条消息生成时记录的 provenance（每条 assistant 消息的
+		* AssistantMessageNode.provenance 是官方契约 → 正确标注"这条回复由哪模型生成"，
+		* 而不是当前会话模型）；无 provenance 时降级到模型目录 store 的当前模型。
 		*/
 		function AssistantScreenshotAction(props) {
 			const { messageId, useSession, sessionId, directory } = props;
-			const text = useSession((snapshot) => {
+			const { text, originProvider, originModel } = useSession((snapshot) => {
+				let text = "";
+				let provider = "";
+				let model = "";
 				for (const key of snapshot.chat.order) {
 					const node = snapshot.chat.nodes.get(key);
 					if (node === void 0 || node.kind !== "turn-tail") continue;
 					const closing = node.data.closing;
 					if (closing?.finalNode?.messageId !== messageId) continue;
-					return closing.blocks?.filter((block) => block.kind === "text" && typeof block.text === "string").map((block) => block.text).join("") ?? "";
+					text = closing.blocks?.filter((block) => block.kind === "text" && typeof block.text === "string").map((block) => block.text).join("") ?? "";
 				}
-				return "";
+				for (const node of snapshot.chat.nodes.values()) {
+					if (node === void 0 || node.kind !== "assistant") continue;
+					const data = node.data;
+					if (data.messageId !== messageId) continue;
+					provider = data.provenance?.provider ?? "";
+					model = data.provenance?.model ?? "";
+					if (model !== "") break;
+				}
+				return {
+					text,
+					originProvider: provider,
+					originModel: model
+				};
 			});
-			const modelName = useModelName(directory);
+			const fallbackModel = useModelName(directory);
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)(MessageScreenshotButton, {
 				role: "assistant",
 				text,
 				sessionId,
-				modelName
+				modelName: originModel !== "" && originModel !== void 0 ? originModel : fallbackModel
 			});
 		}
 		/** 从模型目录 store 读取当前会话模型的显示名（空串表示未知/未选）。 */
